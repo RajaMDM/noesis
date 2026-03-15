@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-03-15T15:24:41.201Z"
+stopped_at: Completed 01-foundation-01-PLAN.md
+last_updated: "2026-03-15T15:27:13.326Z"
 last_activity: 2026-03-15 — Roadmap created, 6 phases derived from 33 v1 requirements
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -51,6 +51,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *Updated after each plan completion*
 | Phase 01-foundation P03 | 1 | 1 tasks | 3 files |
+| Phase 01-foundation P01 | 3 | 2 tasks | 25 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,9 @@ Recent decisions affecting current work:
 - [Init]: Dark/immersive design direction — signals quality, differentiates from generic ed-tech
 - [Phase 01-foundation]: NEXT_PUBLIC_BASE_PATH=/NotebookLM for GitHub Pages; Vercel migration requires only env var change, zero code changes (INFRA-03)
 - [Phase 01-foundation]: .nojekyll in noesis/public/ so Next.js copies it to out/ during static export
+- [Phase 01-foundation]: basePath controlled by NEXT_PUBLIC_BASE_PATH env var — GitHub Pages uses /noesis, Vercel uses empty string, zero code change needed for platform switch
+- [Phase 01-foundation]: images.unoptimized: true required in next.config.ts for static export (no Next.js Image Optimization server in SSG)
+- [Phase 01-foundation]: Test stubs use describe.todo/test.todo — vitest/playwright report pending, not failing, enabling Wave 0 setup before component implementation
 
 ### Pending Todos
 
@@ -77,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T15:24:41.199Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-03-15T15:27:13.323Z
+Stopped at: Completed 01-foundation-01-PLAN.md
 Resume file: None
