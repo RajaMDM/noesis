@@ -44,4 +44,39 @@ test.describe('Homepage', () => {
     await expect(page).toHaveURL(/.*data-sources.*/);
     await expect(page.getByRole('heading', { name: 'Data Sources' })).toBeVisible();
   });
+
+  test('"Start Here" CTA links to /topics/data-sources', async ({ page }) => {
+    const startHereLink = page.getByRole('link', { name: 'Start Here' });
+    await expect(startHereLink).toBeVisible();
+    await expect(startHereLink).toHaveAttribute('href', '/topics/data-sources');
+  });
+
+  test('testimonials section shows at least 3 cards by default', async ({ page }) => {
+    const section = page.locator('#testimonials');
+    await expect(section).toBeVisible();
+    const cards = section.locator('[class*="GlassCard"], .backdrop-blur-\\[10px\\]');
+    // At least 3 testimonial cards visible
+    await expect(cards.first()).toBeVisible();
+  });
+
+  test('"Show all 6 endorsements" button expands testimonials', async ({ page }) => {
+    const expandButton = page.getByText('Show all 6 endorsements →');
+    await expect(expandButton).toBeVisible();
+    await expandButton.click();
+    // Button should disappear after clicking
+    await expect(expandButton).not.toBeVisible();
+  });
+
+  test('About Raja section is visible', async ({ page }) => {
+    const aboutSection = page.locator('#about');
+    await expect(aboutSection).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Raja Shahnawaz Soni' })).toBeVisible();
+  });
+
+  test('logo strip shows company names', async ({ page }) => {
+    const logoSection = page.locator('#logos');
+    await expect(logoSection).toBeVisible();
+    await expect(page.getByText('Alshaya Group')).toBeVisible();
+    await expect(page.getByText('Informatica')).toBeVisible();
+  });
 });

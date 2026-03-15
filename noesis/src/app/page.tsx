@@ -453,6 +453,90 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ─── About Raja ─────────────────────────────────────────── */}
+      <section
+        id="about"
+        className="w-full bg-[var(--color-noir-95)] px-4 sm:px-6 md:px-8 py-16 md:py-24 border-t border-[var(--color-glass-border)]"
+      >
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+              <div className="flex-1">
+                <p className="text-xs font-mono text-[var(--color-accent-blue)] uppercase tracking-wider mb-4">
+                  About the Author
+                </p>
+                <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                  Raja Shahnawaz Soni
+                </h2>
+                <p className="text-[var(--color-text-secondary)] leading-relaxed mb-4">
+                  Senior Data Architect and MDM Lead with 20+ years of experience designing
+                  enterprise data management programs across 70+ brands in retail, logistics,
+                  banking, and CPG. Currently leading data architecture at Alshaya Group,
+                  one of the world&apos;s largest franchise operators.
+                </p>
+                <p className="text-[var(--color-text-secondary)] leading-relaxed mb-6">
+                  Platform-agnostic specialist in Informatica IDMC, Microsoft Power Platform,
+                  and Salesforce. Builder of AI-powered data agents. Practitioner-educator
+                  who believes real understanding comes from seeing how data management works —
+                  and breaks — at enterprise scale.
+                </p>
+
+                {/* Credentials strip */}
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    'Speaker · Informatica World 2023',
+                    'ARC Award 2025',
+                    '20+ Years Experience',
+                    'Dubai, UAE',
+                  ].map((credential) => (
+                    <span
+                      key={credential}
+                      className="text-xs font-mono px-3 py-1 rounded-full border border-[var(--color-glass-border)] bg-[var(--color-glass-bg)] text-[var(--color-text-secondary)]"
+                    >
+                      {credential}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quick links */}
+              <div className="flex flex-col gap-3 min-w-[200px]">
+                <p className="text-xs font-mono text-[var(--color-text-muted)] uppercase tracking-wider">
+                  Connect
+                </p>
+                <a
+                  href="https://linkedin.com/in/raja-shahnawaz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)] border border-[var(--color-glass-border)] bg-[var(--color-glass-bg)] hover:border-[var(--color-accent-blue)] transition-colors"
+                >
+                  <span className="text-white text-sm group-hover:text-[var(--color-accent-blue)] transition-colors">
+                    LinkedIn
+                  </span>
+                  <ExternalLink className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent-blue)] transition-colors ml-auto" />
+                </a>
+                <a
+                  href="https://github.com/rajamdm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)] border border-[var(--color-glass-border)] bg-[var(--color-glass-bg)] hover:border-[var(--color-accent-blue)] transition-colors"
+                >
+                  <span className="text-white text-sm group-hover:text-[var(--color-accent-blue)] transition-colors">
+                    GitHub
+                  </span>
+                  <ExternalLink className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent-blue)] transition-colors ml-auto" />
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ─── Footer ─────────────────────────────────────────────── */}
       <footer className="w-full bg-[var(--color-noir)] border-t border-[var(--color-glass-border)] px-4 sm:px-6 md:px-8 py-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--color-text-muted)]">
