@@ -43,7 +43,7 @@ jobs:
         env:
           # Set basePath to repo name for GitHub Pages subdirectory deployment
           # For custom domain or Vercel: set to '' or leave unset — zero code change required (INFRA-03)
-          NEXT_PUBLIC_BASE_PATH: /NotebookLM
+          NEXT_PUBLIC_BASE_PATH: /noesis
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
