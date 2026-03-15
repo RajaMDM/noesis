@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-content/02-04-PLAN.md
-last_updated: "2026-03-15T18:11:20.983Z"
-last_activity: 2026-03-15 — 7 diagram components created, diagrams.test.tsx updated with real tests
+stopped_at: Completed 02-content/02-05-PLAN.md
+last_updated: "2026-03-15T22:20:00.000Z"
+last_activity: 2026-03-15 — testimonials section, logo strip, and About Raja section added to homepage
 progress:
   total_phases: 6
   completed_phases: 0
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-15)
 ## Current Position
 
 Phase: 2 of 6 (Content) — IN PROGRESS
-Plan: 3 of 8 in Phase 2 (COMPLETE)
-Status: Phase 2 Plan 03 complete — all 7 SVG diagram components built, 21 tests passing
-Last activity: 2026-03-15 — 7 diagram components created, diagrams.test.tsx updated with real tests
+Plan: 5 of 8 in Phase 2 (COMPLETE)
+Status: Phase 2 Plan 05 complete — testimonials, logo strip, and About Raja section on homepage
+Last activity: 2026-03-15 — testimonials section, logo strip, and About Raja section added to homepage
 
 Progress: [██████░░░░] 55%
 
@@ -92,6 +92,9 @@ Recent decisions affecting current work:
 - [Phase 02-content]: TopicContent.whereToGoNext.nextTopicSlug typed as string | null to handle ai-in-data-management as terminal topic with no next
 - [Phase 02-content]: diagramMap typed as Record<string, () => React.ReactElement> avoids React.ComponentType generic complexity while satisfying TypeScript
 - [Phase 02-content]: whitespace-pre-line applied to multi-paragraph overview and howAIApplies fields to preserve line breaks in TypeScript content data strings
+- [Phase 02-content P05]: Testimonials use progressive disclosure (3 shown, useState toggle reveals all 6) — reduces initial page length while preserving full social proof
+- [Phase 02-content P05]: Company logos are text-based pill badges (SVG brand kits unavailable at plan time) — upgrade path clear when SVGs are provided
+- [Phase 02-content P05]: About Raja is an inline homepage section (not /about route) — fulfills BRAND-01 with minimal complexity
 
 ### Pending Todos
 

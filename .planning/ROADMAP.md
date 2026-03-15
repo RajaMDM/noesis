@@ -60,7 +60,7 @@ Plans:
 - [ ] 02-02-PLAN.md — TopicContent schema (lib/topic-content.ts with all 7 entries), ProgressStrip, VideoSection components
 - [ ] 02-03-PLAN.md — All 7 SVG diagram components (noesis/src/components/diagrams/)
 - [ ] 02-04-PLAN.md — Topic page template wiring (all sections rendered) and Start Here CTA on homepage
-- [ ] 02-05-PLAN.md — Homepage additions: testimonials, logo strip, About Raja section
+- [x] 02-05-PLAN.md — Homepage additions: testimonials, logo strip, About Raja section
 - [ ] 02-06-PLAN.md — Human visual review of all 7 topic pages and YouTube video approval
 
 ### Phase 3: Discovery

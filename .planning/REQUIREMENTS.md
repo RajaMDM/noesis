@@ -53,9 +53,9 @@
 
 ### Personal Brand & Practitioner Identity
 
-- [ ] **BRAND-01**: About/Bio section features Raja Shahnawaz Soni prominently — name, credentials, speaker history, awards
+- [x] **BRAND-01**: About/Bio section features Raja Shahnawaz Soni prominently — name, credentials, speaker history, awards
 - [x] **BRAND-02**: Each topic page includes at least one "From the Field" callout — anonymized real enterprise insight from Raja's 20+ years
-- [ ] **BRAND-03**: Platform lineage (Data Alchemist → SYNAPTIQ → Noesis) is visible and linked from the homepage
+- [x] **BRAND-03**: Platform lineage (Data Alchemist → SYNAPTIQ → Noesis) is visible and linked from the homepage
 - [x] **BRAND-04**: Raja's published AI agents (RSPDQ, MatchMind) are contextually linked from relevant topic pages (Data Quality, MDM)
 - [x] **BRAND-05**: Raja's LinkedIn publications are surfaced as supplementary reading on relevant topics
 
