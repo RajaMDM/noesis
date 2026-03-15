@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-foundation/01-02-PLAN.md (design system + components)
-last_updated: "2026-03-15T15:29:58.829Z"
+stopped_at: Completed 01-foundation/01-04-PLAN.md (homepage, topic stubs, 404, E2E tests)
+last_updated: "2026-03-15T15:36:34.228Z"
 last_activity: 2026-03-15 — Roadmap created, 6 phases derived from 33 v1 requirements
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P03 | 1 | 1 tasks | 3 files |
 | Phase 01-foundation P01 | 3 | 2 tasks | 25 files |
 | Phase 01-foundation P02 | 8 | 2 tasks | 13 files |
+| Phase 01-foundation P04 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Topic interface uses Icon: LucideIcon (component reference) rather than iconName: string — enables direct JSX rendering without a lookup map
 - [Phase 01-foundation]: Glassmorphism values locked: rgba(255,255,255,0.05) bg, 10px blur, rgba(255,255,255,0.10) border — tasteful frost per CONTEXT.md
 - [Phase 01-foundation]: useReducedMotion() from Framer Motion gates all animation props on TopicCard — accessibility compliance
+- [Phase 01-foundation]: Next.js 16 app router requires params as Promise<{slug}> — awaited in generateMetadata and page component for topic pages
+- [Phase 01-foundation]: Link-wrapping pattern for button-as-link confirmed: <Link href='...'><Button>Label</Button></Link> — no asChild used
 
 ### Pending Todos
 
@@ -85,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T15:29:58.825Z
-Stopped at: Completed 01-foundation/01-02-PLAN.md (design system + components)
+Last session: 2026-03-15T15:36:34.225Z
+Stopped at: Completed 01-foundation/01-04-PLAN.md (homepage, topic stubs, 404, E2E tests)
 Resume file: None
