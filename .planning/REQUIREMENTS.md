@@ -14,7 +14,7 @@
 - [ ] **CONT-03**: Each topic shows how AI applies to and is evolving that specific domain
 - [ ] **CONT-04**: User is shown a recommended learning path through the 7 topics (guided progression)
 - [ ] **CONT-05**: User can freely jump to any topic regardless of recommended path (free exploration override)
-- [ ] **CONT-06**: Each topic page includes visual aids: diagrams, architecture flows, and/or images
+- [x] **CONT-06**: Each topic page includes visual aids: diagrams, architecture flows, and/or images
 - [ ] **CONT-07**: Each topic page includes at least one embedded video (YouTube or Vimeo)
 - [ ] **CONT-08**: User sees cross-topic concept links inline — related topics and concepts surfaced within content
 
@@ -125,7 +125,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-03 | Phase 2 | Pending |
 | CONT-04 | Phase 2 | Pending |
 | CONT-05 | Phase 2 | Pending |
-| CONT-06 | Phase 2 | Pending |
+| CONT-06 | Phase 2 | Complete |
 | CONT-07 | Phase 2 | Pending |
 | CONT-08 | Phase 2 | Pending |
 | DISC-01 | Phase 3 | Pending |

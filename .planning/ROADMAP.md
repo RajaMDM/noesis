@@ -115,7 +115,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-03-15 |
-| 2. Content | 1/6 | In Progress|  |
+| 2. Content | 2/6 | In Progress|  |
 | 3. Discovery | 0/TBD | Not started | - |
 | 4. BYOK Chat | 0/TBD | Not started | - |
 | 5. Socratic Dialogue | 0/TBD | Not started | - |
