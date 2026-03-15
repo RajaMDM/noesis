@@ -261,7 +261,7 @@ export default function HomePage() {
                   </div>
                   {/* Platform-agnostic credential strip */}
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {['Informatica IDMC', 'Microsoft Power Platform', 'Salesforce CRM', 'Oracle Fusion', 'Custom AI Builds'].map((p) => (
+                    {['Informatica IDMC', 'Microsoft Power Platform', 'Salesforce CRM', 'GPT · Gemini · Claude', 'Custom AI Builds'].map((p) => (
                       <span key={p} className="text-xs font-mono px-2 py-0.5 rounded border border-[var(--color-glass-border)] text-[var(--color-text-muted)]">
                         {p}
                       </span>
