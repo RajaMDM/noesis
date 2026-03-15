@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { topics } from '@/lib/topics';
 import { TopicCard } from '@/components/TopicCard';
@@ -9,10 +9,60 @@ import { Button } from '@/components/Button';
 import { GlassCard } from '@/components/GlassCard';
 import { Key, Brain, Briefcase, ExternalLink, ArrowRight } from 'lucide-react';
 
+const testimonials = [
+  {
+    text: "I'm truly grateful for the guidance and support I received from Raja, who has been an exceptional mentor in the early years of my career. His ability to simplify complex ideas, offer honest and actionable feedback, and lead by example has profoundly shaped both my professional growth and my communication skills. Raja consistently encouraged me to think bigger, stay focused, and approach challenges with confidence. I highly recommend Raja to anyone seeking a leader who inspires, empowers, and genuinely invests in people.",
+    name: 'Sandeep Deshpande',
+    title: 'Senior Software Engineer @ Vivicta',
+    date: 'November 2025',
+  },
+  {
+    text: "Meeting new people when joining a new company can sometimes be stressful, and I was very relieved that Raja has this calm and welcoming attitude that made my experience easy and pleasant. Raja is an expert in his field, which was clear from the get go, and that meant we got the job done right; but it doesn't end there because Raja also goes the extra mile. Any company in need of his skillset in Master Data Management would be lucky to have him.",
+    name: 'Frederick Khoury',
+    title: 'Senior Solutions Engineer at Snowflake',
+    date: 'February 2022',
+  },
+  {
+    text: "I have had the pleasure of working with Raja on a Customer 360 MDM implementation project for one of the leading Food distributors in North America during my tenure at Infosys. He is one of the best minds I have worked with. Learned a lot from him on MDM strategy and technical implementation and I was a witness to his solid grasp on the Informatica MDM multi-domain edition and CC360 tools! Highly energetic person and extremely comfortable to work with. I highly recommend Raja for any Data Management/Analytics initiatives.",
+    name: 'Venkitaraman S',
+    title: 'Senior Data Engineer at Coast Capital Savings, ex-Infosys',
+    date: 'September 2020',
+  },
+  {
+    text: "I've had the chance to work with Raja on several projects, and I have to say that it has always been a pleasure collaborating with him for the success of our customers. He is a great professional, nice to work with, pretty well organized, with a high sense of customer relationship, in addition to his high and various technical skills. Always willing to learn more, and to improve his way of doing things, he is also prompt in sharing his knowledge and ideas with all colleagues, with the sake of always improving the quality of our work. You can really rely on him in every circumstance.",
+    name: 'Mohit Juneja',
+    title: 'Global Service Manager @ The Adecco Group',
+    date: 'April 2018',
+  },
+  {
+    text: "Raja and I have been working together in various projects for a few years now. The first thing you notice about is his attitude — excellent!! You can throw a challenge at him and be assured that he will come out with flying colors. His ability to troubleshoot from a technical point of view is another strength I have seen. I am confident that he will continue to push the limits on his career growth more and more. I would be happy to work with him again! Top strengths: Great technical depth, Excellent Attitude, Personable.",
+    name: 'Nilay Mardikar',
+    title: 'Co-Founder, FinnovaNest',
+    date: 'December 2011',
+  },
+  {
+    text: "Raja is a dedicated software professional. He possesses a 'can do' attitude and is always ready for more work. Raja also has a lot of other good traits that makes him a favorite among his peer group. I have seen him add color to the team and becoming the binding glue for the group. At work, he has completed many assignments successfully and in some cases exhibited his leadership skills to complete the work on time!",
+    name: 'Deepak Manjarekar',
+    title: 'Global Head, Data HBU at Coforge',
+    date: 'February 2011',
+  },
+];
+
+const companyLogos = [
+  { name: 'Alshaya Group', type: 'employer' },
+  { name: 'MAGNOOS', type: 'employer' },
+  { name: 'Infosys', type: 'employer' },
+  { name: 'Tietoevry', type: 'employer' },
+  { name: 'Informatica', type: 'platform' },
+  { name: 'Microsoft', type: 'platform' },
+  { name: 'Salesforce', type: 'platform' },
+];
+
 export default function HomePage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const prefersReducedMotion = useReducedMotion();
+  const [showAllTestimonials, setShowAllTestimonials] = useState(false);
 
   const heroY = useTransform(scrollY, [0, 400], [0, prefersReducedMotion ? 0 : 80]);
 
@@ -319,6 +369,87 @@ export default function HomePage() {
               </div>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* ─── Testimonials ──────────────────────────────────────── */}
+      <section
+        id="testimonials"
+        className="w-full bg-[var(--color-noir-95)] px-4 sm:px-6 md:px-8 py-16 md:py-24 border-t border-[var(--color-glass-border)]"
+      >
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              What Colleagues Say
+            </h2>
+            <p className="text-[var(--color-text-secondary)] max-w-xl mx-auto">
+              Endorsements from engineers, consultants, and leaders across 15+ years of collaboration.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {(showAllTestimonials ? testimonials : testimonials.slice(0, 3)).map((t, idx) => (
+              <motion.div
+                key={t.name}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.1 }}
+              >
+                <GlassCard className="h-full flex flex-col">
+                  <p className="text-[var(--color-text-secondary)] leading-relaxed text-sm flex-1 mb-6">
+                    &ldquo;{t.text}&rdquo;
+                  </p>
+                  <div className="border-t border-[var(--color-glass-border)] pt-4">
+                    <p className="text-white font-semibold text-sm">{t.name}</p>
+                    <p className="text-[var(--color-text-muted)] text-xs font-mono mt-0.5">{t.title}</p>
+                    <p className="text-[var(--color-text-muted)] text-xs font-mono opacity-60 mt-0.5">{t.date} · LinkedIn</p>
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+
+          {!showAllTestimonials && (
+            <div className="text-center mt-8">
+              <button
+                onClick={() => setShowAllTestimonials(true)}
+                className="text-[var(--color-accent-blue)] text-sm font-mono hover:underline underline-offset-2 transition-colors"
+              >
+                Show all 6 endorsements →
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── Company & Platform Logos ───────────────────────────── */}
+      <section
+        id="logos"
+        className="w-full bg-[var(--color-noir)] px-4 sm:px-6 md:px-8 py-12 border-t border-[var(--color-glass-border)]"
+      >
+        <div className="max-w-4xl mx-auto">
+          <p className="text-xs font-mono text-[var(--color-text-muted)] uppercase tracking-wider text-center mb-8">
+            Experience &amp; Platforms
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
+            {companyLogos.map((logo) => (
+              <div
+                key={logo.name}
+                className="px-4 py-2 rounded-[var(--radius-sm)] border border-[var(--color-glass-border)] bg-[var(--color-glass-bg)]"
+              >
+                <span className="text-[var(--color-text-secondary)] text-sm font-medium opacity-70">
+                  {logo.name}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
