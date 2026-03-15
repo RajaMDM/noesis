@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-foundation-01-PLAN.md
-last_updated: "2026-03-15T15:27:13.326Z"
+stopped_at: Completed 01-foundation/01-02-PLAN.md (design system + components)
+last_updated: "2026-03-15T15:29:58.829Z"
 last_activity: 2026-03-15 — Roadmap created, 6 phases derived from 33 v1 requirements
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 *Updated after each plan completion*
 | Phase 01-foundation P03 | 1 | 1 tasks | 3 files |
 | Phase 01-foundation P01 | 3 | 2 tasks | 25 files |
+| Phase 01-foundation P02 | 8 | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: basePath controlled by NEXT_PUBLIC_BASE_PATH env var — GitHub Pages uses /noesis, Vercel uses empty string, zero code change needed for platform switch
 - [Phase 01-foundation]: images.unoptimized: true required in next.config.ts for static export (no Next.js Image Optimization server in SSG)
 - [Phase 01-foundation]: Test stubs use describe.todo/test.todo — vitest/playwright report pending, not failing, enabling Wave 0 setup before component implementation
+- [Phase 01-foundation]: Topic interface uses Icon: LucideIcon (component reference) rather than iconName: string — enables direct JSX rendering without a lookup map
+- [Phase 01-foundation]: Glassmorphism values locked: rgba(255,255,255,0.05) bg, 10px blur, rgba(255,255,255,0.10) border — tasteful frost per CONTEXT.md
+- [Phase 01-foundation]: useReducedMotion() from Framer Motion gates all animation props on TopicCard — accessibility compliance
 
 ### Pending Todos
 
@@ -81,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T15:27:13.323Z
-Stopped at: Completed 01-foundation-01-PLAN.md
+Last session: 2026-03-15T15:29:58.825Z
+Stopped at: Completed 01-foundation/01-02-PLAN.md (design system + components)
 Resume file: None

@@ -51,8 +51,8 @@
 
 ### Design & UX
 
-- [ ] **DSGN-01**: Portal uses a rich, immersive dark-mode aesthetic with gradients and motion/animation
-- [ ] **DSGN-02**: Portal is fully responsive and usable on mobile and tablet
+- [x] **DSGN-01**: Portal uses a rich, immersive dark-mode aesthetic with gradients and motion/animation
+- [x] **DSGN-02**: Portal is fully responsive and usable on mobile and tablet
 - [x] **DSGN-03**: Design system is consistent across all pages (typography, spacing, color, components)
 
 ### Hosting & Infrastructure
@@ -137,8 +137,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COMM-02 | Phase 6 | Pending |
 | COMM-03 | Phase 6 | Pending |
 | COMM-04 | Phase 6 | Pending |
-| DSGN-01 | Phase 1 | Pending |
-| DSGN-02 | Phase 1 | Pending |
+| DSGN-01 | Phase 1 | Complete |
+| DSGN-02 | Phase 1 | Complete |
 | DSGN-03 | Phase 1 | Complete |
 | INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 1 | Complete |
