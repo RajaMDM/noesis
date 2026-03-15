@@ -53,7 +53,15 @@ Plans:
   6. Each topic page includes at least one diagram or architecture flow and at least one embedded video
   7. Inline cross-topic concept links appear within content
   8. Raja's AI agents (RSPDQ, MatchMind) are contextually linked from Data Quality and MDM topic pages
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Wave 0: Test infrastructure stubs and react-lite-youtube-embed install
+- [ ] 02-02-PLAN.md — TopicContent schema (lib/topic-content.ts with all 7 entries), ProgressStrip, VideoSection components
+- [ ] 02-03-PLAN.md — All 7 SVG diagram components (noesis/src/components/diagrams/)
+- [ ] 02-04-PLAN.md — Topic page template wiring (all sections rendered) and Start Here CTA on homepage
+- [ ] 02-05-PLAN.md — Homepage additions: testimonials, logo strip, About Raja section
+- [ ] 02-06-PLAN.md — Human visual review of all 7 topic pages and YouTube video approval
 
 ### Phase 3: Discovery
 **Goal**: Learners can find content quickly and track what they have already explored
@@ -107,7 +115,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-03-15 |
-| 2. Content | 0/TBD | Not started | - |
+| 2. Content | 0/6 | Not started | - |
 | 3. Discovery | 0/TBD | Not started | - |
 | 4. BYOK Chat | 0/TBD | Not started | - |
 | 5. Socratic Dialogue | 0/TBD | Not started | - |
@@ -117,3 +125,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 *Roadmap created: 2026-03-15*
 *Requirements coverage: 33/33 v1 requirements mapped*
 *Phase 1 planned: 2026-03-15 — 5 plans, 4 waves*
+*Phase 2 planned: 2026-03-15 — 6 plans, 5 waves*
