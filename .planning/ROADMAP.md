@@ -41,16 +41,18 @@ Plans:
 - [x] 01-05-PLAN.md — Full test suite, deployment trigger, and human visual/responsive verification
 
 ### Phase 2: Content
-**Goal**: Learners can explore all 7 data management topics with curated content, visual aids, and a guided learning path
+**Goal**: Learners can explore all 7 data management topics with curated content, visual aids, guided learning path, and Raja's practitioner signature throughout
 **Depends on**: Phase 1
-**Requirements**: CONT-01, CONT-02, CONT-03, CONT-04, CONT-05, CONT-06, CONT-07, CONT-08, DISC-03
+**Requirements**: CONT-01, CONT-02, CONT-03, CONT-04, CONT-05, CONT-06, CONT-07, CONT-08, DISC-03, BRAND-01, BRAND-02, BRAND-03, BRAND-04, BRAND-05
 **Success Criteria** (what must be TRUE):
-  1. User can navigate to a dedicated landing page for each of the 7 topics (Data Sources, Data Integration, Data Quality, Master Data Management, Reverse Integration, Data Governance, AI in Data Management)
-  2. Each topic page shows curated explanations, real-world context, and how AI applies to that specific domain
-  3. A recommended learning path guides new users through all 7 topics in logical progression
-  4. User can bypass the recommended path and jump directly to any topic at any time
-  5. Each topic page includes at least one diagram or architecture flow and at least one embedded video
-  6. Inline cross-topic concept links appear within content so learners can follow related ideas
+  1. User can navigate to a dedicated landing page for each of the 7 topics
+  2. Each topic page shows curated explanations, real-world context, and how AI applies to that domain
+  3. Each topic page includes at least one "From the Field" callout — real enterprise insight, not textbook theory
+  4. A recommended learning path guides new users through all 7 topics in logical progression
+  5. User can bypass the recommended path and jump directly to any topic at any time
+  6. Each topic page includes at least one diagram or architecture flow and at least one embedded video
+  7. Inline cross-topic concept links appear within content
+  8. Raja's AI agents (RSPDQ, MatchMind) are contextually linked from Data Quality and MDM topic pages
 **Plans**: TBD
 
 ### Phase 3: Discovery

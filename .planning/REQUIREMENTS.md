@@ -34,13 +34,15 @@
 - [ ] **CHAT-06**: Chat responses stream in real-time (not a full-page reload per response)
 - [ ] **CHAT-07**: User receives a clear error message if their API key is invalid or rate-limited
 
-### AI — Socratic Dialogue
+### AI — Think Through It (Mentor Mode)
 
-- [ ] **SOCR-01**: User can switch into Socratic Dialogue mode from the chat interface
-- [ ] **SOCR-02**: In Socratic mode, the AI never directly answers questions — it responds only with guiding questions
-- [ ] **SOCR-03**: Socratic mode has visually distinct UI from Standard Chat (different color, label, layout)
-- [ ] **SOCR-04**: Socratic dialogue maintains context across turns — AI builds on previous questions in the session
-- [ ] **SOCR-05**: User can exit Socratic mode and return to Standard Chat at any time
+> **Naming decision (2026-03-15):** The Socratic Dialogue mode is marketed as **"Think Through It"** on the UI. "Socratic" remains the internal/technical name in code and docs. The AI Mentor Mode framing replaces all BYOK-first messaging.
+
+- [ ] **SOCR-01**: User can switch into Think Through It (Mentor Mode) from the chat interface
+- [ ] **SOCR-02**: In Think Through It mode, the AI never directly answers questions — it responds only with guiding questions
+- [ ] **SOCR-03**: Think Through It mode has visually distinct UI from Standard Chat (different color, label, layout)
+- [ ] **SOCR-04**: Think Through It dialogue maintains context across turns — AI builds on previous questions in the session
+- [ ] **SOCR-05**: User can exit Think Through It mode and return to Standard Chat at any time
 
 ### Community Content
 
@@ -48,6 +50,14 @@
 - [ ] **COMM-02**: Admin can view, approve, or reject community submissions via a moderation queue
 - [ ] **COMM-03**: Approved community content is published to the relevant topic page
 - [ ] **COMM-04**: Community-contributed content is visually labeled as community-sourced
+
+### Personal Brand & Practitioner Identity
+
+- [ ] **BRAND-01**: About/Bio section features Raja Shahnawaz Soni prominently — name, credentials, speaker history, awards
+- [ ] **BRAND-02**: Each topic page includes at least one "From the Field" callout — anonymized real enterprise insight from Raja's 20+ years
+- [ ] **BRAND-03**: Platform lineage (Data Alchemist → SYNAPTIQ → Noesis) is visible and linked from the homepage
+- [ ] **BRAND-04**: Raja's published AI agents (RSPDQ, MatchMind) are contextually linked from relevant topic pages (Data Quality, MDM)
+- [ ] **BRAND-05**: Raja's LinkedIn publications are surfaced as supplementary reading on relevant topics
 
 ### Design & UX
 
