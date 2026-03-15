@@ -12,7 +12,7 @@ Noesis ships in six phases aligned to the dependency order of its features. Infr
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Next.js project with design system, CI/CD, and GitHub Pages deployment
+- [x] **Phase 1: Foundation** - Next.js project with design system, CI/CD, and GitHub Pages deployment
 - [ ] **Phase 2: Content** - All 7 topic areas with curated explanations, visual aids, embedded video, and guided learning path
 - [ ] **Phase 3: Discovery** - Full-text search across all topics and per-user progress tracking
 - [ ] **Phase 4: BYOK Chat** - Client-side API key storage with context-aware streaming chat (OpenAI, Anthropic, Google)
@@ -34,11 +34,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 5 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Scaffold Next.js 15 app and Wave 0 test infrastructure (Vitest + Playwright)
-- [ ] 01-02-PLAN.md — Design system: CSS tokens, GlassCard, Button, Navigation, TopicCard components
-- [ ] 01-03-PLAN.md — GitHub Actions CI/CD pipeline for automated GitHub Pages deployment
-- [ ] 01-04-PLAN.md — Homepage (hero + topic grid + differentiators) and topic page stubs
-- [ ] 01-05-PLAN.md — Full test suite, deployment trigger, and human visual/responsive verification
+- [x] 01-01-PLAN.md — Scaffold Next.js 15 app and Wave 0 test infrastructure (Vitest + Playwright)
+- [x] 01-02-PLAN.md — Design system: CSS tokens, GlassCard, Button, Navigation, TopicCard components
+- [x] 01-03-PLAN.md — GitHub Actions CI/CD pipeline for automated GitHub Pages deployment
+- [x] 01-04-PLAN.md — Homepage (hero + topic grid + differentiators) and topic page stubs
+- [x] 01-05-PLAN.md — Full test suite, deployment trigger, and human visual/responsive verification
 
 ### Phase 2: Content
 **Goal**: Learners can explore all 7 data management topics with curated content, visual aids, and a guided learning path
@@ -104,7 +104,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 3/5 | In Progress|  |
+| 1. Foundation | 5/5 | Complete | 2026-03-15 |
 | 2. Content | 0/TBD | Not started | - |
 | 3. Discovery | 0/TBD | Not started | - |
 | 4. BYOK Chat | 0/TBD | Not started | - |
