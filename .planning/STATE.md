@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-15T14:15:35.860Z"
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-03-15T15:24:41.201Z"
 last_activity: 2026-03-15 — Roadmap created, 6 phases derived from 33 v1 requirements
 progress:
   total_phases: 6
   completed_phases: 0
-  total_plans: 0
+  total_plans: 5
   completed_plans: 0
   percent: 0
 ---
@@ -50,6 +50,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01-foundation P03 | 1 | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,8 @@ Recent decisions affecting current work:
 - [Init]: Socratic Dialogue is a distinct mode (not just a system prompt tweak) — visually separate, AI never answers
 - [Init]: Community + curation content model — no dedicated content team, maintainers curate contributions
 - [Init]: Dark/immersive design direction — signals quality, differentiates from generic ed-tech
+- [Phase 01-foundation]: NEXT_PUBLIC_BASE_PATH=/NotebookLM for GitHub Pages; Vercel migration requires only env var change, zero code changes (INFRA-03)
+- [Phase 01-foundation]: .nojekyll in noesis/public/ so Next.js copies it to out/ during static export
 
 ### Pending Todos
 
@@ -74,6 +77,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T14:15:35.852Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation/01-CONTEXT.md
+Last session: 2026-03-15T15:24:41.199Z
+Stopped at: Completed 01-03-PLAN.md
+Resume file: None

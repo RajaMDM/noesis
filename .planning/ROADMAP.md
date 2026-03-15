@@ -31,7 +31,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The site is fully usable on mobile and tablet without layout breakage
   4. Every page shares a consistent design language (typography, spacing, color, component library)
   5. The project can be migrated to Vercel deployment with no code changes — only environment/config changes
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Scaffold Next.js 15 app and Wave 0 test infrastructure (Vitest + Playwright)
+- [ ] 01-02-PLAN.md — Design system: CSS tokens, GlassCard, Button, Navigation, TopicCard components
+- [ ] 01-03-PLAN.md — GitHub Actions CI/CD pipeline for automated GitHub Pages deployment
+- [ ] 01-04-PLAN.md — Homepage (hero + topic grid + differentiators) and topic page stubs
+- [ ] 01-05-PLAN.md — Full test suite, deployment trigger, and human visual/responsive verification
 
 ### Phase 2: Content
 **Goal**: Learners can explore all 7 data management topics with curated content, visual aids, and a guided learning path
@@ -97,7 +104,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/5 | Planned    |  |
 | 2. Content | 0/TBD | Not started | - |
 | 3. Discovery | 0/TBD | Not started | - |
 | 4. BYOK Chat | 0/TBD | Not started | - |
@@ -107,3 +114,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 ---
 *Roadmap created: 2026-03-15*
 *Requirements coverage: 33/33 v1 requirements mapped*
+*Phase 1 planned: 2026-03-15 — 5 plans, 4 waves*

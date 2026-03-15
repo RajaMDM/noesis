@@ -57,9 +57,9 @@
 
 ### Hosting & Infrastructure
 
-- [ ] **INFRA-01**: Portal is deployed and publicly accessible via GitHub Pages (free, no account required beyond GitHub)
-- [ ] **INFRA-02**: Deployments trigger automatically from git pushes via GitHub Actions (CI/CD)
-- [ ] **INFRA-03**: Architecture supports one-step migration to Vercel (free, signs in with GitHub) or AWS/GCP without rebuild
+- [x] **INFRA-01**: Portal is deployed and publicly accessible via GitHub Pages (free, no account required beyond GitHub)
+- [x] **INFRA-02**: Deployments trigger automatically from git pushes via GitHub Actions (CI/CD)
+- [x] **INFRA-03**: Architecture supports one-step migration to Vercel (free, signs in with GitHub) or AWS/GCP without rebuild
 
 ---
 
@@ -140,9 +140,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DSGN-01 | Phase 1 | Pending |
 | DSGN-02 | Phase 1 | Pending |
 | DSGN-03 | Phase 1 | Pending |
-| INFRA-01 | Phase 1 | Pending |
-| INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Complete |
+| INFRA-02 | Phase 1 | Complete |
+| INFRA-03 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 33 total
