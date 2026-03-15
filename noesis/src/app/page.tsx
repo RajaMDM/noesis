@@ -191,9 +191,9 @@ export default function HomePage() {
                   Practitioner Insights
                 </p>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed text-sm">
-                  Every topic includes real enterprise context — what textbooks don&apos;t tell you,
-                  what actually breaks in production, and what the theory misses. Drawn from
-                  20+ years across 70+ brands.
+                  Every topic includes real enterprise context — what it actually looks like
+                  to implement this across complex, multi-brand environments. Platform-agnostic
+                  thinking, drawn from 20+ years across 70+ brands.
                 </p>
               </GlassCard>
             </motion.div>
@@ -243,12 +243,13 @@ export default function HomePage() {
               <div className="absolute -left-4 top-0 bottom-0 w-0.5 bg-[var(--color-accent-blue)] opacity-60 rounded-full" />
               <blockquote className="pl-8">
                 <p className="text-lg sm:text-xl md:text-2xl text-white leading-relaxed mb-6 font-light">
-                  &ldquo;I&apos;ve spent 20 years fixing data problems that shouldn&apos;t have existed.
-                  Bad master data, broken governance, expensive tools that didn&apos;t need to be there.
-                  Most of it came down to one thing: people didn&apos;t have a clear picture of how
-                  data actually works in an enterprise. Noesis is my attempt to fix that.&rdquo;
+                  &ldquo;20 years. Every kind of environment — enterprise platforms, custom builds,
+                  everything in between. What I&apos;ve learned is this: the platform is the weapon.
+                  You pick the right one for the job and you execute. What makes data management
+                  actually work isn&apos;t the technology — it&apos;s the framework, the ownership, and
+                  the people who understand why it matters. Noesis exists to build that understanding.&rdquo;
                 </p>
-                <footer className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <footer className="flex flex-col gap-2">
                   <div>
                     <p className="text-white font-semibold">Raja Shahnawaz Soni</p>
                     <p className="text-[var(--color-text-muted)] text-sm font-mono">
@@ -257,6 +258,14 @@ export default function HomePage() {
                     <p className="text-[var(--color-text-muted)] text-sm font-mono">
                       Speaker, Informatica World 2023 · ARC Award 2025
                     </p>
+                  </div>
+                  {/* Platform-agnostic credential strip */}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {['Informatica IDMC', 'Microsoft Power Platform', 'Salesforce CRM', 'Oracle Fusion', 'Custom AI Builds'].map((p) => (
+                      <span key={p} className="text-xs font-mono px-2 py-0.5 rounded border border-[var(--color-glass-border)] text-[var(--color-text-muted)]">
+                        {p}
+                      </span>
+                    ))}
                   </div>
                 </footer>
               </blockquote>
