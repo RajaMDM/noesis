@@ -56,7 +56,7 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Wave 0: Test infrastructure stubs and react-lite-youtube-embed install
+- [x] 02-01-PLAN.md — Wave 0: Test infrastructure stubs and react-lite-youtube-embed install
 - [ ] 02-02-PLAN.md — TopicContent schema (lib/topic-content.ts with all 7 entries), ProgressStrip, VideoSection components
 - [ ] 02-03-PLAN.md — All 7 SVG diagram components (noesis/src/components/diagrams/)
 - [ ] 02-04-PLAN.md — Topic page template wiring (all sections rendered) and Start Here CTA on homepage
@@ -115,7 +115,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete    | 2026-03-15 |
-| 2. Content | 0/6 | Not started | - |
+| 2. Content | 1/6 | In Progress|  |
 | 3. Discovery | 0/TBD | Not started | - |
 | 4. BYOK Chat | 0/TBD | Not started | - |
 | 5. Socratic Dialogue | 0/TBD | Not started | - |

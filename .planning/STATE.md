@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 01-foundation/01-05-PLAN.md (visual verification checkpoint — Phase 1 complete)
-last_updated: "2026-03-15T16:26:05.450Z"
-last_activity: "2026-03-15 — Phase 1 complete; Noesis live at https://RajaMDM.github.io/noesis/"
+stopped_at: Completed 02-content/02-01-PLAN.md
+last_updated: "2026-03-15T17:58:56.612Z"
+last_activity: 2026-03-15 — Wave 0 test stubs created; react-lite-youtube-embed installed
 progress:
   total_phases: 6
   completed_phases: 0
-  total_plans: 5
-  completed_plans: 4
-  percent: 17
+  total_plans: 11
+  completed_plans: 5
+  percent: 20
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-15)
 
 **Core value:** A learner exploring any data management topic leaves with genuine understanding through AI-guided discovery, rich visuals, and a Socratic AI that teaches by asking, not telling.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 2 — Content
 
 ## Current Position
 
-Phase: 1 of 6 (Foundation) — COMPLETE
-Plan: 5 of 5 in Phase 1
-Status: Phase 1 complete — ready for Phase 2
-Last activity: 2026-03-15 — Phase 1 complete; Noesis live at https://RajaMDM.github.io/noesis/
+Phase: 2 of 6 (Content) — IN PROGRESS
+Plan: 1 of 8 in Phase 2 (COMPLETE)
+Status: Phase 2 Plan 01 complete — Wave 0 test infrastructure ready
+Last activity: 2026-03-15 — Wave 0 test stubs created; react-lite-youtube-embed installed
 
-Progress: [██░░░░░░░░] 17%
+Progress: [██░░░░░░░░] 20%
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Progress: [██░░░░░░░░] 17%
 | Phase 01-foundation P02 | 8 | 2 tasks | 13 files |
 | Phase 01-foundation P04 | 4 | 2 tasks | 6 files |
 | Phase 01-foundation P05 | checkpoint | 1 task | 1 file |
+| Phase 02-content P01 | 70s | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Link-wrapping pattern for button-as-link confirmed: <Link href='...'><Button>Label</Button></Link> — no asChild used
 - [Phase 01-foundation P05]: Human visual approval received ("approved") — noir aesthetic met design bar on first attempt, no rework needed
 - [Phase 01-foundation P05]: Live URL confirmed as https://RajaMDM.github.io/noesis/ (repo path is /noesis, not /NotebookLM)
+- [Phase 02-content P01]: react-lite-youtube-embed@3.5.1 added as production dependency (component ships in static bundle)
+- [Phase 02-content P01]: topics.test.ts uses real tests (not todos) — lib/topics.ts already exists from Phase 1
+- [Phase 02-content P01]: E2E stubs use test.skip (not test.todo) — Playwright skip semantics are more reliable for pre-implementation stubs
 
 ### Pending Todos
 
@@ -91,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-15T16:00:00.000Z
-Stopped at: Completed 01-foundation/01-05-PLAN.md (visual verification checkpoint — Phase 1 complete)
+Last session: 2026-03-15T17:58:56.609Z
+Stopped at: Completed 02-content/02-01-PLAN.md
 Resume file: None
