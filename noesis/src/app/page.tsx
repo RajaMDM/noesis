@@ -75,11 +75,11 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="#topics">
-              <Button size="lg">Explore Topics</Button>
+            <Link href="/topics/data-sources">
+              <Button size="lg">Start Here</Button>
             </Link>
-            <Link href="#from-the-field">
-              <Button variant="outline" size="lg">The Story Behind This</Button>
+            <Link href="#topics">
+              <Button variant="outline" size="lg">Explore All Topics</Button>
             </Link>
           </div>
         </motion.div>
