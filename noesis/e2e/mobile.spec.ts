@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 // These tests run in the 'Mobile Safari' project (iPhone 14 viewport from playwright.config.ts)
+// beforeEach explicitly sets mobile viewport so tests pass on all configured projects
 test.describe('Mobile layout', () => {
   test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
   });
 

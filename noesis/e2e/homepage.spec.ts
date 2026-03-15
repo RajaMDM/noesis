@@ -30,12 +30,17 @@ test.describe('Homepage', () => {
 
   test('"What makes Noesis different" section is visible below fold', async ({ page }) => {
     await expect(page.getByText('What Makes Noesis Different')).toBeVisible();
-    await expect(page.getByText('Bring Your Own Key')).toBeVisible();
-    await expect(page.getByText('Socratic Dialogue Mode')).toBeVisible();
+    // Use role-based locator to avoid strict mode violation (badge and heading both contain 'Bring Your Own Key')
+    await expect(page.getByRole('heading', { name: 'Bring Your Own Key' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Socratic Dialogue Mode' })).toBeVisible();
   });
 
   test('topic card links to correct topic page', async ({ page }) => {
-    await page.getByText('Data Sources').first().click();
+    // Scroll to bring topic cards into view (whileInView animation requires intersection)
+    await page.evaluate(() => window.scrollTo(0, 400));
+    await page.waitForTimeout(300);
+    const dataSourcesLink = page.getByRole('link', { name: /Data Sources/ }).first();
+    await dataSourcesLink.click();
     await expect(page).toHaveURL(/.*data-sources.*/);
     await expect(page.getByRole('heading', { name: 'Data Sources' })).toBeVisible();
   });

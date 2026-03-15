@@ -59,7 +59,7 @@ export function Navigation() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2 text-white"
+          className="md:hidden p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-white"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         >
