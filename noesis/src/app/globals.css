@@ -1,26 +1,63 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Colors — noir palette */
+  --color-noir: #080808;
+  --color-noir-95: #0d0d0d;
+  --color-noir-90: #141414;
+
+  /* Accent — electric blue/cyan */
+  --color-accent-blue: #00d9ff;
+  --color-accent-blue-dark: #00a8cc;
+  --color-accent-blue-glow: rgba(0, 217, 255, 0.6);
+
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #606060;
+
+  /* Glass surfaces */
+  --color-glass-bg: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.10);
+  --color-glass-border-hover: rgba(255, 255, 255, 0.20);
+  --color-glass-bg-hover: rgba(255, 255, 255, 0.10);
+
+  /* Typography */
+  --font-inter: var(--font-inter-var), "Inter", sans-serif;
+  --font-mono: var(--font-jetbrains-var), "JetBrains Mono", monospace;
+
+  /* Border radius — 12–16px range as locked in CONTEXT.md */
+  --radius-sm: 0.75rem;   /* 12px */
+  --radius-md: 1rem;      /* 16px */
+  --radius-lg: 1.5rem;    /* 24px */
+
+  /* Shadows */
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(0, 217, 255, 0.6);
+  --shadow-glow-strong: 0 0 30px rgba(0, 217, 255, 0.8);
+
+  /* Backdrop blur for glass effect */
+  --blur-glass: blur(10px);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base styles */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-noir);
+  color: var(--color-text-primary);
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
