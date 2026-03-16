@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // ── Simple inline markdown renderer ──────────────────────────────────────────
 function renderLine(text: string, key: number) {
@@ -60,22 +60,16 @@ const PREVIEWS: Record<string, {
     icon: '🤖',
     label: 'AI Tutor',
     color: '#0071e3',
-    exchanges: (title) => [
-      {
-        role: 'assistant',
-        content: `Hi! I'm your AI tutor for **${title}**.\n\nWhat would you like to understand? No question is too basic — start anywhere.`,
-        delay: 600,
-        typingBefore: 900,
-      },
+    exchanges: (_title) => [
       {
         role: 'user',
-        content: 'Can you give me a real-world example of why this matters?',
-        delay: 2800,
+        content: "What's the difference between Data Quality and Data Governance? Aren't they the same thing?",
+        delay: 800,
       },
       {
         role: 'assistant',
-        content: `The best way to understand **${title}** is through what *breaks* when it's wrong.\n\nImagine a business decision made from a report that's technically built on unmanaged data — duplicate records, inconsistent definitions, stale values. The decision is wrong. Nobody knows why for months.\n\n**That's the data management problem in practice.** Let's dig into the specifics →`,
-        delay: 5200,
+        content: `They're not — and confusing them is why most DQ projects fail within a year.\n\n**Data Quality is a measurement.** It tells you the current state of your data against defined standards: 94% email completeness, 12% duplicate rate, 3% invalid postcodes.\n\n**Data Governance is the operating model** that determines who defines those standards, who enforces them, and who's accountable when they're breached.\n\nHere's the test that makes it real: your best data engineer runs a DQ sprint — cleans 200,000 records. Six months later, the same problems are back. Why?\n\nBecause DQ without Governance is a event, not a system. You fixed symptoms. The cause — no ownership, no prevention rules, no accountability — was never touched.\n\n**Governance is what makes Quality sustainable.** One without the other is either unsustainable or theoretical. Which one does your organisation currently have more of?`,
+        delay: 4500,
         typingBefore: 1400,
       },
     ],
@@ -84,23 +78,23 @@ const PREVIEWS: Record<string, {
     icon: '⚡',
     label: 'Quiz Me',
     color: '#d97706',
-    exchanges: (title) => [
+    exchanges: (_title) => [
       {
         role: 'assistant',
-        content: `⚡ **Quiz time.** Topic: **${title}**. I'll start easy and get harder.\n\nQuestion 1: Name the six dimensions of Data Quality.`,
+        content: `⚡ **One question. Deceptively simple.**\n\nA retailer runs MDM deduplication across their systems.\n\nBefore: **2.1 million** customer records.\nAfter: **890,000** golden records.\n\nThe CEO walks in and asks: *"How many customers do we have?"*\n\nWhat number do you give — and why?`,
         delay: 600,
-        typingBefore: 900,
+        typingBefore: 1000,
       },
       {
         role: 'user',
-        content: 'Accuracy, completeness, consistency, timeliness... and two more?',
-        delay: 3000,
+        content: "890,000 — that's the real deduplicated count. The 2.1M had duplicates.",
+        delay: 4800,
       },
       {
         role: 'assistant',
-        content: `✅ **4/6 — solid start.** The two you're missing: **uniqueness** (no duplicates) and **validity** (data conforms to defined rules and formats).\n\nNow harder: which of those six is most critical for **${title}** data — and why? Think before you answer.`,
-        delay: 5500,
-        typingBefore: 1200,
+        content: `✅ Partially right. But there's a trap — and most practitioners fall into it.\n\n**890,000** is correct for: marketing reach, loyalty analysis, customer profitability, personalisation.\n\n**2.1 million** is still the right number for: system migration scope, legacy reporting continuity, capacity planning, support ticket volumes.\n\nNeither is universally "correct". The CEO's question has no single answer — **until your organisation has a governed definition of 'Customer' that everyone agrees on.**\n\nMost don't. That's why the CFO and CMO quote different numbers in the same board meeting and both feel justified.\n\n**Harder follow-up:** what is the *first governance artefact* you'd create to resolve this permanently? Not a tool. Not a project. One document.`,
+        delay: 8500,
+        typingBefore: 1600,
       },
     ],
   },
@@ -108,23 +102,23 @@ const PREVIEWS: Record<string, {
     icon: '🎤',
     label: 'Teach It Back',
     color: '#7c3aed',
-    exchanges: (title) => [
+    exchanges: (_title) => [
       {
         role: 'assistant',
-        content: `Teach me **${title}** in your own words — as if I knew nothing.\n\nStart wherever feels natural. I'll listen, ask questions, and surface the gaps.`,
+        content: `Teach me MDM — assume I know nothing.\n\nStart anywhere. I'll listen, and I'll push back where I find gaps.`,
         delay: 600,
-        typingBefore: 800,
+        typingBefore: 700,
       },
       {
         role: 'user',
-        content: "It's basically about making sure data is clean and in the right place across systems",
-        delay: 2900,
+        content: "MDM creates a single source of truth so everyone in the business uses the same data",
+        delay: 3200,
       },
       {
         role: 'assistant',
-        content: `Good — you've got the spirit of it.\n\nBut push deeper on "clean". What makes data *unclean* specifically in **${title}**? Give me a concrete example of a dirty record and trace what it causes downstream. That's where the real understanding lives.`,
-        delay: 5400,
-        typingBefore: 1300,
+        content: `"Single source of truth" — I hear this phrase constantly. I want to challenge it.\n\nAfter MDM is implemented, the CRM still exists. The ERP still exists. The loyalty platform still exists. Three systems, all still running.\n\n**MDM didn't eliminate multiple sources. So how can there be a "single" source of truth?**\n\nWhat MDM actually does is subtler — and more powerful. It governs *which system is authoritative for which attribute*, and *how the others sync to it*. The CRM owns email. The ERP owns payment terms. The golden record holds the reconciled view.\n\nThat's not "one source". It's **governed authority distribution**.\n\nNow revise your explanation with that in mind. What does MDM *actually* do — in one sentence that a CFO would understand?`,
+        delay: 7200,
+        typingBefore: 1600,
       },
     ],
   },
@@ -132,23 +126,23 @@ const PREVIEWS: Record<string, {
     icon: '🎪',
     label: 'Confession Booth',
     color: '#dc2626',
-    exchanges: (title) => [
+    exchanges: (_title) => [
       {
         role: 'assistant',
-        content: `Welcome to the Confession Booth.\n\nTell me about a real data problem you've seen or lived through — related to **${title}**. No judgment. Just diagnosis and a path forward.`,
+        content: `Welcome to the Confession Booth.\n\nTell me your data sin. No judgment — just an honest diagnosis and a realistic path forward.`,
         delay: 600,
-        typingBefore: 900,
+        typingBefore: 800,
       },
       {
         role: 'user',
-        content: "We had a data quality issue go undetected for months and it corrupted our quarterly reporting",
-        delay: 3000,
+        content: "We spent 18 months and £2M building a data warehouse. Nobody uses it.",
+        delay: 3200,
       },
       {
         role: 'assistant',
-        content: `That's one of the most common confessions — and one of the costliest.\n\nThe root cause is almost always the same: **no data quality monitoring, no SLAs, no ownership**. Quality issues are invisible until they're catastrophic.\n\nTwo questions: How did you eventually catch it? And when you did — who owned the fix?`,
-        delay: 5600,
-        typingBefore: 1400,
+        content: `I've heard this confession more than any other. And I can tell you exactly what happened — without knowing anything else about your organisation.\n\n**One of three things. Possibly all three.**\n\n**① The data isn't trusted.** Someone ran a report, found a number that didn't match their spreadsheet, and went back to the spreadsheet. The warehouse became a monument to distrust. Every number in it is now assumed guilty until proven innocent.\n\n**② It answers the wrong questions.** The team built what *they thought* the business needed. Nobody validated with actual users before a line of code was written. The business needed something else.\n\n**③ No self-service layer.** The data is there — but users have to raise a ticket with IT for every report. So they stopped asking. IT thinks it's a success because "the pipeline runs clean". The business thinks it's useless.\n\nWhich one resonates most?\n\nBecause the fix for each is completely different — and **conflating them is how organisations spend another 18 months arriving at the same place.**`,
+        delay: 7500,
+        typingBefore: 1800,
       },
     ],
   },
@@ -156,23 +150,23 @@ const PREVIEWS: Record<string, {
     icon: '🏛️',
     label: 'Socratic',
     color: '#0891b2',
-    exchanges: (title) => [
+    exchanges: (_title) => [
       {
         role: 'assistant',
-        content: `Let's think together about **${title}**.\n\nI won't give you answers — I'll ask questions until you find them yourself.\n\nFirst: why do organisations struggle with data management even when they have good intentions?`,
+        content: `Here's a question that sounds simple but isn't:\n\nEquipment **depreciates** — it loses value with use and age, and appears on the balance sheet accordingly.\n\nData does the **opposite**: a customer record becomes more valuable over time as you add purchase history, behavioural signals, and interaction context.\n\n**If data appreciates like a financial asset — why does almost no organisation treat it like one?**`,
         delay: 600,
-        typingBefore: 1000,
+        typingBefore: 1100,
       },
       {
         role: 'user',
-        content: "It's hard to prioritise — data problems are invisible until something goes wrong",
-        delay: 3100,
+        content: "Because it's intangible? Hard to put a number on it?",
+        delay: 5200,
       },
       {
         role: 'assistant',
-        content: `Exactly right — and that's the key insight.\n\nSo if data problems are *invisible* until they become *crises*... what would need to be true for an organisation to invest in **${title}** *before* the crisis hits? What needs to change — in culture, in accountability, in metrics?`,
-        delay: 5800,
-        typingBefore: 1300,
+        content: `True — but push further. "Hard to value" is the symptom, not the cause.\n\nWhen a *physical* asset appreciates — a property, a piece of specialist equipment — what do organisations do? They insure it. They maintain it. They assign an owner. They track it.\n\n**Data gets none of that rigour** in most organisations. No owner. No maintenance schedule. No insurance against loss or corruption.\n\nNow here's the real question — and take your time:\n\nIf your organisation *did* treat its customer data like a property portfolio — with assigned stewards, maintenance schedules, and quarterly valuations — **what is the single most uncomfortable change that would require?**\n\nNot technically. Organisationally. Politically. Who would have to give something up?`,
+        delay: 9500,
+        typingBefore: 1600,
       },
     ],
   },
@@ -188,9 +182,13 @@ export function ChatPreview({ topicTitle, modeId }: ChatPreviewProps) {
   const [visibleCount, setVisibleCount] = useState(0);
   const [showTyping, setShowTyping] = useState(false);
   const [loopKey, setLoopKey] = useState(0);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const preview = PREVIEWS[modeId];
   const exchanges = preview?.exchanges(topicTitle) ?? [];
+
+  // Auto-scroll to bottom as new messages appear
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [visibleCount, showTyping]);
 
   // Reset loopKey when mode or topic changes so the new preview starts at iteration 0
   useEffect(() => { setLoopKey(0); }, [modeId, topicTitle]);
@@ -228,7 +226,7 @@ export function ChatPreview({ topicTitle, modeId }: ChatPreviewProps) {
   const color = preview?.color ?? '#0071e3';
 
   return (
-    <div className="h-56 overflow-y-auto px-4 py-4 space-y-3 scroll-smooth">
+    <div className="h-72 overflow-y-auto px-4 py-4 space-y-3 scroll-smooth">
       {exchanges.slice(0, visibleCount).map((msg, i) => (
         <div
           key={`${modeId}-${i}`}
@@ -262,9 +260,15 @@ export function ChatPreview({ topicTitle, modeId }: ChatPreviewProps) {
 
       {visibleCount === 0 && !showTyping && (
         <div className="flex items-center justify-center h-full">
-          <p className="text-xs text-[var(--color-text-muted)]">Starting preview…</p>
+          <div className="flex gap-1 items-center">
+            {[0,1,2].map(i => (
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-[var(--color-text-muted)] animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+            ))}
+          </div>
         </div>
       )}
+
+      <div ref={bottomRef} />
 
       <style>{`
         @keyframes chatMsgIn {
