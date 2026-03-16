@@ -182,13 +182,16 @@ export function ChatPreview({ topicTitle, modeId }: ChatPreviewProps) {
   const [visibleCount, setVisibleCount] = useState(0);
   const [showTyping, setShowTyping] = useState(false);
   const [loopKey, setLoopKey] = useState(0);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const preview = PREVIEWS[modeId];
   const exchanges = preview?.exchanges(topicTitle) ?? [];
 
-  // Auto-scroll to bottom as new messages appear
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [visibleCount, showTyping]);
+  // Scroll only the preview container — never the outer page
+  useEffect(() => {
+    const el = containerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [visibleCount, showTyping]);
 
   // Reset loopKey when mode or topic changes so the new preview starts at iteration 0
   useEffect(() => { setLoopKey(0); }, [modeId, topicTitle]);
@@ -226,7 +229,7 @@ export function ChatPreview({ topicTitle, modeId }: ChatPreviewProps) {
   const color = preview?.color ?? '#0071e3';
 
   return (
-    <div className="h-72 overflow-y-auto px-4 py-4 space-y-3 scroll-smooth">
+    <div ref={containerRef} className="h-72 overflow-y-auto px-4 py-4 space-y-3">
       {exchanges.slice(0, visibleCount).map((msg, i) => (
         <div
           key={`${modeId}-${i}`}
@@ -267,8 +270,6 @@ export function ChatPreview({ topicTitle, modeId }: ChatPreviewProps) {
           </div>
         </div>
       )}
-
-      <div ref={bottomRef} />
 
       <style>{`
         @keyframes chatMsgIn {
