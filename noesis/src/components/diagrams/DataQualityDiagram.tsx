@@ -1,125 +1,161 @@
+'use client';
+
+import { useState } from 'react';
+
+const DIMS = [
+  {
+    id: 'accuracy',
+    label: 'Accuracy',
+    icon: '🎯',
+    color: '#0071e3',
+    angle: 0,
+    def: 'Does the data correctly reflect the real-world entity it represents?',
+    example: 'Customer address shows Dubai, but they moved to Abu Dhabi 6 months ago — technically filled, factually wrong.',
+    mistake: 'Assuming data from a trusted source is automatically accurate. Validate against authoritative systems.',
+  },
+  {
+    id: 'completeness',
+    label: 'Completeness',
+    icon: '🧩',
+    color: '#059669',
+    angle: 1,
+    def: 'Are all required fields populated with meaningful values?',
+    example: 'Customer record with no email address — 80% complete, but unusable for digital marketing.',
+    mistake: 'Confusing completeness with accuracy. A field can be filled with "N/A" and be complete but not valid.',
+  },
+  {
+    id: 'consistency',
+    label: 'Consistency',
+    icon: '🔄',
+    color: '#d97706',
+    angle: 2,
+    def: 'Is the same data represented the same way across all systems?',
+    example: 'CRM shows DOB as 1990-01-15. ERP shows 15/01/90. Same person, same fact — different format, different risk.',
+    mistake: 'Treating consistency as a formatting issue only. It\'s also about conflicting values across systems.',
+  },
+  {
+    id: 'uniqueness',
+    label: 'Uniqueness',
+    icon: '☝️',
+    color: '#e11d48',
+    angle: 3,
+    def: 'Is each real-world entity represented exactly once — no duplicates?',
+    example: '"John Smith" and "J. Smith" in the same CRM — two records, one person, one corrupted analytics view.',
+    mistake: 'Treating deduplication as a one-time project. Duplicates re-enter continuously from source systems.',
+  },
+  {
+    id: 'validity',
+    label: 'Validity',
+    icon: '✅',
+    color: '#6d28d9',
+    angle: 4,
+    def: 'Does the data conform to required formats, types, and domain rules?',
+    example: 'Email field containing "N/A" — completeness check passes, validity check fails.',
+    mistake: 'Conflating validity with accuracy. Data can be in a valid format but still factually wrong.',
+  },
+  {
+    id: 'timeliness',
+    label: 'Timeliness',
+    icon: '⏱️',
+    color: '#0891b2',
+    angle: 5,
+    def: 'Is the data current enough for its intended use?',
+    example: 'Contact data last refreshed 2 years ago — technically correct history, practically useless for outreach.',
+    mistake: 'Focusing on recency without defining what "timely enough" means for the specific use case.',
+  },
+];
+
 export function DataQualityDiagram() {
+  const [selected, setSelected] = useState<string | null>(null);
+
+  const cx = 160, cy = 160, R = 120, r = 44;
+  const n = DIMS.length;
+
+  const selectedDim = DIMS.find(d => d.id === selected);
+
   return (
-    <div
-      className="w-full max-w-4xl mx-auto my-8 rounded-2xl overflow-hidden"
-      style={{ background: '#f8f8fa', boxShadow: '0 2px 20px rgba(0,0,0,0.08)' }}
-    >
-      <svg
-        viewBox="0 0 760 440"
-        className="w-full"
-        role="img"
-        aria-label="Radial spoke diagram showing six data quality dimensions — Accuracy, Completeness, Consistency, Timeliness, Uniqueness, and Validity — radiating from a central Data Quality hub"
-      >
-        <defs>
-          <filter id="cardShadow-dq" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.08)" />
-          </filter>
-          <marker id="arrow-dq" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill="#0071e3" opacity="0.7" />
-          </marker>
-          <style>{`
-            @keyframes fadeInUp-dq {
-              from { opacity: 0; transform: translateY(6px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-            @keyframes drawLine-dq {
-              from { stroke-dashoffset: 300; }
-              to { stroke-dashoffset: 0; }
-            }
-          `}</style>
-        </defs>
+    <div className="w-full max-w-4xl mx-auto my-8 rounded-2xl overflow-hidden" style={{ background: '#f8f8fa', boxShadow: '0 2px 20px rgba(0,0,0,0.08)' }}>
+      <div style={{ padding: 24 }}>
+        <p style={{ fontSize: 10, color: '#0071e3', letterSpacing: 2, fontWeight: 700, marginBottom: 16, textTransform: 'uppercase' }}>
+          🔬 The 6 Data Quality Dimensions — click any segment
+        </p>
+        <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          {/* SVG Wheel */}
+          <svg width="320" height="320" viewBox="0 0 320 320" style={{ flex: '0 0 320px', cursor: 'pointer' }} role="img" aria-label="Interactive data quality dimensions wheel">
+            <defs>
+              <filter id="segShadow">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.12)" />
+              </filter>
+            </defs>
+            {DIMS.map((d, i) => {
+              const a1 = (i / n) * Math.PI * 2 - Math.PI / 2;
+              const a2 = ((i + 1) / n) * Math.PI * 2 - Math.PI / 2;
+              const midAngle = (a1 + a2) / 2;
+              // Outer arc points
+              const x1 = cx + R * Math.cos(a1), y1 = cy + R * Math.sin(a1);
+              const x2 = cx + R * Math.cos(a2), y2 = cy + R * Math.sin(a2);
+              // Inner arc points
+              const xi1 = cx + r * Math.cos(a1), yi1 = cy + r * Math.sin(a1);
+              const xi2 = cx + r * Math.cos(a2), yi2 = cy + r * Math.sin(a2);
+              // Label position
+              const lx = cx + (R + r) / 2 * Math.cos(midAngle);
+              const ly = cy + (R + r) / 2 * Math.sin(midAngle);
+              const isSelected = selected === d.id;
 
-        {/* ── Center hub ── */}
-        <g style={{ animation: 'fadeInUp-dq 0.4s ease forwards', animationDelay: '0s' }}>
-          <circle cx={380} cy={220} r={60} fill="#eff6ff" stroke="#0071e3" strokeWidth={2} filter="url(#cardShadow-dq)" />
-          <text x={380} y={213} textAnchor="middle" fill="#1d1d1f" fontSize={14} fontWeight={700}
-            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Data</text>
-          <text x={380} y={233} textAnchor="middle" fill="#1d1d1f" fontSize={14} fontWeight={700}
-            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Quality</text>
-        </g>
+              return (
+                <g key={d.id} onClick={() => setSelected(selected === d.id ? null : d.id)} style={{ cursor: 'pointer' }}>
+                  <path
+                    d={`M ${xi1} ${yi1} L ${x1} ${y1} A ${R} ${R} 0 0 1 ${x2} ${y2} L ${xi2} ${yi2} A ${r} ${r} 0 0 0 ${xi1} ${yi1}`}
+                    fill={isSelected ? d.color : d.color + '22'}
+                    stroke="white"
+                    strokeWidth="3"
+                    style={{
+                      transition: 'all 0.2s',
+                      filter: isSelected ? `drop-shadow(0 4px 8px ${d.color}55)` : 'none',
+                    }}
+                  />
+                  <text x={lx} y={ly - 8} textAnchor="middle" fontSize="18" style={{ pointerEvents: 'none' }}>{d.icon}</text>
+                  <text x={lx} y={ly + 10} textAnchor="middle" fontSize="9" fontWeight="700"
+                    fill={isSelected ? 'white' : d.color}
+                    fontFamily="system-ui, -apple-system, sans-serif"
+                    style={{ pointerEvents: 'none' }}>
+                    {d.label}
+                  </text>
+                </g>
+              );
+            })}
+            {/* Center hub */}
+            <circle cx={cx} cy={cy} r={r - 4} fill="white" stroke="#e5e5e7" strokeWidth="1.5" />
+            <text x={cx} y={cy - 6} textAnchor="middle" fontSize="18">🔬</text>
+            <text x={cx} y={cy + 10} textAnchor="middle" fontSize="9" fontWeight="700" fill="#6e6e73" fontFamily="system-ui, -apple-system, sans-serif">DQ</text>
+          </svg>
 
-        {/* ── Connector lines from center to each dimension node ── */}
-        {/* Accuracy (top, 270°): center=380,220 → 380,50 */}
-        <line x1={380} y1={160} x2={380} y2={70}
-          stroke="#0071e3" strokeWidth={1.5} opacity={0.3}
-          strokeDasharray="300" strokeDashoffset="300"
-          style={{ animation: 'drawLine-dq 0.6s ease forwards', animationDelay: '0.1s' }}
-        />
-        {/* Completeness (top-right, 330°): center=380,220 → 514,97 */}
-        <line x1={432} y1={172} x2={507} y2={97}
-          stroke="#0071e3" strokeWidth={1.5} opacity={0.3}
-          strokeDasharray="300" strokeDashoffset="300"
-          style={{ animation: 'drawLine-dq 0.6s ease forwards', animationDelay: '0.15s' }}
-        />
-        {/* Consistency (bottom-right, 30°): center=380,220 → 514,343 */}
-        <line x1={432} y1={268} x2={507} y2={343}
-          stroke="#0071e3" strokeWidth={1.5} opacity={0.3}
-          strokeDasharray="300" strokeDashoffset="300"
-          style={{ animation: 'drawLine-dq 0.6s ease forwards', animationDelay: '0.2s' }}
-        />
-        {/* Timeliness (bottom, 90°): center=380,220 → 380,390 */}
-        <line x1={380} y1={280} x2={380} y2={370}
-          stroke="#0071e3" strokeWidth={1.5} opacity={0.3}
-          strokeDasharray="300" strokeDashoffset="300"
-          style={{ animation: 'drawLine-dq 0.6s ease forwards', animationDelay: '0.25s' }}
-        />
-        {/* Uniqueness (bottom-left, 150°): center=380,220 → 246,343 */}
-        <line x1={328} y1={268} x2={253} y2={343}
-          stroke="#0071e3" strokeWidth={1.5} opacity={0.3}
-          strokeDasharray="300" strokeDashoffset="300"
-          style={{ animation: 'drawLine-dq 0.6s ease forwards', animationDelay: '0.3s' }}
-        />
-        {/* Validity (top-left, 210°): center=380,220 → 246,97 */}
-        <line x1={328} y1={172} x2={253} y2={97}
-          stroke="#0071e3" strokeWidth={1.5} opacity={0.3}
-          strokeDasharray="300" strokeDashoffset="300"
-          style={{ animation: 'drawLine-dq 0.6s ease forwards', animationDelay: '0.35s' }}
-        />
+          {/* Detail panel */}
+          <div style={{ flex: 1, minWidth: 200 }}>
+            {selectedDim ? (
+              <div style={{ background: 'white', border: `2px solid ${selectedDim.color}30`, borderRadius: 16, padding: 20, animation: 'fadeInDetail 0.2s ease' }}>
+                <style>{`@keyframes fadeInDetail { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+                <div style={{ fontSize: 24, marginBottom: 8 }}>{selectedDim.icon}</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: selectedDim.color, marginBottom: 14, fontFamily: 'system-ui' }}>{selectedDim.label}</div>
 
-        {/* ── Dimension nodes ── */}
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#86868b', letterSpacing: 1, marginBottom: 4, textTransform: 'uppercase' }}>Definition</div>
+                <div style={{ fontSize: 13, color: '#1d1d1f', marginBottom: 14, lineHeight: 1.7 }}>{selectedDim.def}</div>
 
-        {/* Accuracy (top): rect x=320, y=30, w=120, h=40 */}
-        <g style={{ animation: 'fadeInUp-dq 0.4s ease forwards', animationDelay: '0.1s' }}>
-          <rect x={320} y={30} width={120} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-dq)" />
-          <text x={380} y={55} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
-            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Accuracy</text>
-        </g>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#86868b', letterSpacing: 1, marginBottom: 4, textTransform: 'uppercase' }}>Real-world example</div>
+                <div style={{ fontSize: 13, color: '#6e6e73', marginBottom: 14, lineHeight: 1.7, fontStyle: 'italic' }}>{selectedDim.example}</div>
 
-        {/* Completeness (top-right): rect x=454, y=77, w=130, h=40 */}
-        <g style={{ animation: 'fadeInUp-dq 0.4s ease forwards', animationDelay: '0.15s' }}>
-          <rect x={454} y={77} width={130} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-dq)" />
-          <text x={519} y={102} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
-            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Completeness</text>
-        </g>
-
-        {/* Consistency (bottom-right): rect x=454, y=323, w=130, h=40 */}
-        <g style={{ animation: 'fadeInUp-dq 0.4s ease forwards', animationDelay: '0.2s' }}>
-          <rect x={454} y={323} width={130} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-dq)" />
-          <text x={519} y={348} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
-            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Consistency</text>
-        </g>
-
-        {/* Timeliness (bottom): rect x=320, y=370, w=120, h=40 */}
-        <g style={{ animation: 'fadeInUp-dq 0.4s ease forwards', animationDelay: '0.25s' }}>
-          <rect x={320} y={370} width={120} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-dq)" />
-          <text x={380} y={395} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
-            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Timeliness</text>
-        </g>
-
-        {/* Uniqueness (bottom-left): rect x=176, y=323, w=120, h=40 */}
-        <g style={{ animation: 'fadeInUp-dq 0.4s ease forwards', animationDelay: '0.3s' }}>
-          <rect x={176} y={323} width={120} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-dq)" />
-          <text x={236} y={348} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
-            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Uniqueness</text>
-        </g>
-
-        {/* Validity (top-left): rect x=176, y=77, w=110, h=40 */}
-        <g style={{ animation: 'fadeInUp-dq 0.4s ease forwards', animationDelay: '0.35s' }}>
-          <rect x={176} y={77} width={110} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-dq)" />
-          <text x={231} y={102} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
-            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Validity</text>
-        </g>
-      </svg>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#e11d48', letterSpacing: 1, marginBottom: 4, textTransform: 'uppercase' }}>⚠️ Common mistake</div>
+                <div style={{ fontSize: 13, color: '#e11d48', lineHeight: 1.7 }}>{selectedDim.mistake}</div>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', color: '#86868b', paddingTop: 60 }}>
+                <div style={{ fontSize: 36, marginBottom: 12 }}>👆</div>
+                <div style={{ fontSize: 13, lineHeight: 1.6 }}>Click any segment to explore that dimension — definition, real-world example, and the mistake everyone makes.</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

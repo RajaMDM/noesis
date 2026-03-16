@@ -6,6 +6,8 @@ export interface FromTheField {
 export interface TopicContent {
   slug: string;
   title: string;
+  tagline: string;     // One punchy sentence: the whole topic in 10 words
+  analogy: string;     // One emoji analogy sentence
 
   // Mandatory sections — all 7 must exist on every topic
   overview: string;
@@ -45,6 +47,8 @@ export const topicContent: Record<string, TopicContent> = {
   'data-sources': {
     slug: 'data-sources',
     title: 'Data Sources',
+    tagline: "Before you can trust any data, you need to know where it lives.",
+    analogy: "🏗️ Like a construction audit before demolition — you can't fix what you haven't mapped.",
     overview: `Your marketing team pulls a customer report. Your finance team pulls another. Both are looking at the same metric, from the same CRM, on the same day — and they get different numbers.
 
 This is the data sources problem. Not a single system, but dozens of them, each with its own version of the truth. Before you can integrate anything, analyse anything, or trust anything, you need to understand where your data actually comes from.
@@ -78,6 +82,8 @@ Perhaps the most valuable capability is schema drift detection. When an upstream
   'data-integration': {
     slug: 'data-integration',
     title: 'Data Integration',
+    tagline: "Data doesn't move itself. Architecture decides the consequences.",
+    analogy: "🚰 ETL filters water before the pipe. ELT pumps first, filters at the tap. Same destination — very different behaviour under pressure.",
     overview: `Twelve ERP systems. Five countries. Six different date formats. That was the reality for a logistics company I worked with that had grown through three years of acquisitions. The data existed. It just existed in isolation — locked in systems that had never been designed to talk to each other.
 
 Data integration is the discipline of making data move reliably between systems. It's the connective tissue of the modern data stack. Without it, every source system is an island, and analytics, AI, and reporting are impossible at any scale that matters.
@@ -113,6 +119,8 @@ The third area is operational intelligence. ML models monitor running pipelines 
   'data-quality': {
     slug: 'data-quality',
     title: 'Data Quality',
+    tagline: "Garbage in, garbage out. With AI: garbage in, confidently wrong output at scale.",
+    analogy: "🍕 DQ checks your ingredients before they hit the oven — not after you've served a thousand slices.",
     overview: `A customer once complained that she'd received three copies of the same promotional mailer — addressed to three slightly different name variants, sent to three addresses she'd lived at over the past decade. The company hadn't been sloppy. They'd been thorough. They'd stored every address and name variation ever given, and nobody had ever decided which one was current.
 
 That's a data quality failure — not in collection, but in curation.
@@ -167,6 +175,8 @@ RSPDQ — Raja's Semantic Pattern Duplicate Query — represents a newer class o
   'master-data-management': {
     slug: 'master-data-management',
     title: 'Master Data Management',
+    tagline: "One truth. No duplicates. No excuses.",
+    analogy: "👑 Every department has their own 'Customer John'. MDM is the royal decree: THIS is the one true John.",
     overview: `Three systems. One customer. Three different records. Your CRM shows "Mrs. Alicia Johnson, New York." Your billing system has "A. Johnson, NY." Your loyalty program says "Alicia M. Johnson-Williams, Manhattan."
 
 Is that one customer or three? If it's one — which record is right? Which address do you mail to? Which name do you invoice? Which phone number do you call when there's a problem?
@@ -215,6 +225,8 @@ The result of combining these capabilities: higher match precision, lower manual
   'reverse-integration': {
     slug: 'reverse-integration',
     title: 'Reverse Integration',
+    tagline: "Your best insights are useless if they never leave the warehouse.",
+    analogy: "📊 You wrote the world's most accurate report. Reverse integration decides who actually gets to read it.",
     overview: `Your analytics team just finished a churn prediction model. It's 87% accurate. It correctly identifies at-risk customers 90 days before they cancel. It runs on two years of behavioral data and it works.
 
 It lives in your data warehouse. Your sales reps — the people who could actually call those customers — have no idea it exists.
@@ -260,6 +272,8 @@ The architecture that emerges is powerful: raw data flows in, AI computes intell
   'data-governance': {
     slug: 'data-governance',
     title: 'Data Governance',
+    tagline: "The constitution that governs everything else.",
+    analogy: "🏛️ Governance is the constitution. DQ is the police. MDM is the census bureau. Without it, everyone makes their own rules.",
     overview: `Two business units. One company. A simple question: who owns the customer record?
 
 Finance says it's them — they invoice the customer. Marketing says it's them — they acquired the customer. IT says it's them — they maintain the system. Three legitimate claims. Zero clear answer.
@@ -306,6 +320,8 @@ The stewards aren't replaced. They're freed from the volume work to focus on the
   'ai-in-data-management': {
     slug: 'ai-in-data-management',
     title: 'AI in Data Management',
+    tagline: "AI needs data management more than analytics ever did.",
+    analogy: "✈️ Modern aircraft fly themselves — but the pilot's job evolved into oversight and judgment on edge cases. So does yours.",
     overview: `Here's the paradox at the center of modern AI: the models are remarkable. GPT-4, Claude, Gemini — they can reason, summarise, generate, and explain in ways that seemed impossible five years ago. But they are only as good as the data they are trained and grounded on. Bad data doesn't just produce bad outputs. It produces confidently wrong outputs — and confident wrongness is far more dangerous than obvious wrongness.
 
 The data management discipline most organisations built over the past two decades was never designed to feed AI at scale. It was designed for reporting. For dashboards. For the analyst who could apply judgment to imperfect data and caveat their conclusions accordingly. AI systems cannot apply that judgment. They reproduce what they've been given.

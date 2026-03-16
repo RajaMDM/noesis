@@ -14,6 +14,7 @@ import { ReverseIntegrationDiagram } from '@/components/diagrams/ReverseIntegrat
 import { DataGovernanceDiagram } from '@/components/diagrams/DataGovernanceDiagram';
 import { AIDataManagementDiagram } from '@/components/diagrams/AIDataManagementDiagram';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ChatPanel } from '@/components/ChatPanel';
 
 // Map topic slug to its diagram component
 type DiagramComponent = () => React.ReactElement;
@@ -78,25 +79,45 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[var(--color-text-primary)] mb-4 leading-tight">
             {title}
           </h1>
+          {content.tagline && (
+            <p className="text-lg font-semibold text-[var(--color-accent-blue)] mb-3 leading-tight">
+              {content.tagline}
+            </p>
+          )}
           <p className="text-xl text-[var(--color-text-secondary)] max-w-2xl leading-relaxed">
             {description}
           </p>
+          {content.analogy && (
+            <p className="text-sm text-[var(--color-text-secondary)] mt-3 italic leading-relaxed bg-[rgba(0,113,227,0.04)] border border-[rgba(0,113,227,0.1)] rounded-xl px-4 py-3">
+              {content.analogy}
+            </p>
+          )}
         </div>
 
         {/* 1. Overview */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">Overview</h2>
-          <p className="text-[var(--color-text-secondary)] leading-relaxed text-base whitespace-pre-line">
-            {content.overview}
+          <p className="text-[var(--color-text-secondary)] leading-relaxed text-base">
+            {content.overview.split('\n\n')[0]}
           </p>
+          {content.overview.split('\n\n').length > 1 && (
+            <p className="text-sm text-[var(--color-text-muted)] mt-3 italic">
+              Explore the full picture in the AI Learning Modes below ↓
+            </p>
+          )}
         </section>
 
         {/* 2. How AI Applies */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">How AI Applies</h2>
-          <p className="text-[var(--color-text-secondary)] leading-relaxed text-base whitespace-pre-line">
-            {content.howAIApplies}
+          <p className="text-[var(--color-text-secondary)] leading-relaxed text-base">
+            {content.howAIApplies.split('\n\n')[0]}
           </p>
+          {content.howAIApplies.split('\n\n').length > 1 && (
+            <p className="text-sm text-[var(--color-text-muted)] mt-3 italic">
+              Ask the AI tutor below for the full analysis ↓
+            </p>
+          )}
         </section>
 
         {/* 3. From the Field — GlassCard with electric blue badge */}
@@ -201,7 +222,12 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         {/* 5. Video */}
         <VideoSection youtubeId={content.video.youtubeId} title={content.video.title} />
 
-        {/* 6. Further Reading (optional) */}
+        {/* 6. AI Learning Modes */}
+        <section className="mb-12">
+          <ChatPanel slug={slug} topicTitle={title} />
+        </section>
+
+        {/* 7. Further Reading (optional) */}
         {content.furtherReading && content.furtherReading.length > 0 && (
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">Further Reading</h2>
@@ -223,7 +249,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           </section>
         )}
 
-        {/* 7. Where to Go Next */}
+        {/* 8. Where to Go Next */}
         <section className="mb-12 pt-8 border-t border-[var(--color-glass-border)]">
           <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Where to Go Next</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

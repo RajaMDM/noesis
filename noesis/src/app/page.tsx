@@ -8,6 +8,7 @@ import { TopicCard } from '@/components/TopicCard';
 import { Button } from '@/components/Button';
 import { GlassCard } from '@/components/GlassCard';
 import { Key, Brain, Briefcase, ExternalLink, ArrowRight } from 'lucide-react';
+import { QuoteRotator } from '@/components/QuoteRotator';
 
 const testimonials = [
   {
@@ -124,6 +125,11 @@ export default function HomePage() {
             <Link href="#topics">
               <Button variant="outline" size="lg">Explore All Topics</Button>
             </Link>
+          </div>
+
+          {/* Quote rotator */}
+          <div className="mt-10 max-w-2xl mx-auto">
+            <QuoteRotator />
           </div>
         </motion.div>
 
