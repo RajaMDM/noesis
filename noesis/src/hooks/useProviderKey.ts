@@ -4,19 +4,16 @@ import { useState, useEffect } from 'react';
 
 export type ProviderId = 'anthropic' | 'openai' | 'google' | 'mistral' | 'groq';
 
-export interface ModelOption {
-  id: string;
-  label: string;
-}
-
 export interface ProviderConfig {
   id: ProviderId;
   name: string;
   shortName: string;
-  models: ModelOption[];
+  defaultModel: string;         // pre-filled default — user can overwrite with anything
+  suggestions: string[];        // datalist hints only, not a closed list
+  modelsDocsUrl: string;        // where to browse available models
   docsUrl: string;
   keyPlaceholder: string;
-  keyPrefix: string; // for display hint only
+  keyPrefix: string;
 }
 
 export const PROVIDERS: ProviderConfig[] = [
@@ -24,10 +21,13 @@ export const PROVIDERS: ProviderConfig[] = [
     id: 'anthropic',
     name: 'Anthropic Claude',
     shortName: 'Claude',
-    models: [
-      { id: 'claude-haiku-4-5-20251001', label: 'Haiku 4.5 (fast)' },
-      { id: 'claude-sonnet-4-5-20251022', label: 'Sonnet 4.5 (smart)' },
+    defaultModel: 'claude-haiku-4-5-20251001',
+    suggestions: [
+      'claude-haiku-4-5-20251001',
+      'claude-sonnet-4-5-20251022',
+      'claude-opus-4-5-20251101',
     ],
+    modelsDocsUrl: 'https://docs.anthropic.com/en/docs/about-claude/models',
     docsUrl: 'https://console.anthropic.com/account/keys',
     keyPlaceholder: 'sk-ant-api03-...',
     keyPrefix: 'sk-ant-',
@@ -36,10 +36,9 @@ export const PROVIDERS: ProviderConfig[] = [
     id: 'openai',
     name: 'OpenAI',
     shortName: 'GPT',
-    models: [
-      { id: 'gpt-4o-mini', label: 'GPT-4o Mini (fast)' },
-      { id: 'gpt-4o', label: 'GPT-4o (smart)' },
-    ],
+    defaultModel: 'gpt-4o-mini',
+    suggestions: ['gpt-4o-mini', 'gpt-4o', 'o1', 'o3-mini', 'gpt-4-turbo'],
+    modelsDocsUrl: 'https://platform.openai.com/docs/models',
     docsUrl: 'https://platform.openai.com/api-keys',
     keyPlaceholder: 'sk-proj-...',
     keyPrefix: 'sk-',
@@ -48,10 +47,9 @@ export const PROVIDERS: ProviderConfig[] = [
     id: 'google',
     name: 'Google Gemini',
     shortName: 'Gemini',
-    models: [
-      { id: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (fast)' },
-      { id: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (smart)' },
-    ],
+    defaultModel: 'gemini-2.0-flash',
+    suggestions: ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-pro'],
+    modelsDocsUrl: 'https://ai.google.dev/gemini-api/docs/models',
     docsUrl: 'https://aistudio.google.com/app/apikey',
     keyPlaceholder: 'AIza...',
     keyPrefix: 'AIza',
@@ -60,10 +58,9 @@ export const PROVIDERS: ProviderConfig[] = [
     id: 'mistral',
     name: 'Mistral AI',
     shortName: 'Mistral',
-    models: [
-      { id: 'mistral-small-latest', label: 'Mistral Small (fast)' },
-      { id: 'mistral-large-latest', label: 'Mistral Large (smart)' },
-    ],
+    defaultModel: 'mistral-small-latest',
+    suggestions: ['mistral-small-latest', 'mistral-large-latest', 'mistral-medium-latest', 'open-mistral-nemo'],
+    modelsDocsUrl: 'https://docs.mistral.ai/getting-started/models/models_overview/',
     docsUrl: 'https://console.mistral.ai/api-keys',
     keyPlaceholder: 'your-mistral-key',
     keyPrefix: '',
@@ -72,10 +69,9 @@ export const PROVIDERS: ProviderConfig[] = [
     id: 'groq',
     name: 'Groq (Open Models)',
     shortName: 'Groq',
-    models: [
-      { id: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B' },
-      { id: 'gemma2-9b-it', label: 'Gemma 2 9B' },
-    ],
+    defaultModel: 'llama-3.3-70b-versatile',
+    suggestions: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768', 'gemma2-9b-it'],
+    modelsDocsUrl: 'https://console.groq.com/docs/models',
     docsUrl: 'https://console.groq.com/keys',
     keyPlaceholder: 'gsk_...',
     keyPrefix: 'gsk_',
@@ -95,7 +91,7 @@ export function useProviderKey() {
   useEffect(() => {
     const savedProvider = (localStorage.getItem(PROVIDER_KEY) as ProviderId) || 'anthropic';
     const providerConfig = PROVIDERS.find(p => p.id === savedProvider) || PROVIDERS[0];
-    const savedModel = localStorage.getItem(MODEL_KEY(savedProvider)) || providerConfig.models[0].id;
+    const savedModel = localStorage.getItem(MODEL_KEY(savedProvider)) || providerConfig.defaultModel;
     const savedKey = localStorage.getItem(API_KEY(savedProvider)) || '';
     setProviderState(savedProvider);
     setModelState(savedModel);
@@ -105,7 +101,7 @@ export function useProviderKey() {
 
   function setProvider(p: ProviderId) {
     const providerConfig = PROVIDERS.find(pc => pc.id === p)!;
-    const savedModel = localStorage.getItem(MODEL_KEY(p)) || providerConfig.models[0].id;
+    const savedModel = localStorage.getItem(MODEL_KEY(p)) || providerConfig.defaultModel;
     const savedKey = localStorage.getItem(API_KEY(p)) || '';
     setProviderState(p);
     setModelState(savedModel);

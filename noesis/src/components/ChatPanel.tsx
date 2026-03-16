@@ -277,7 +277,7 @@ function ProviderKeySetup({ onSave }: ProviderKeySetupProps) {
         const r = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true', 'content-type': 'application/json' },
-          body: JSON.stringify({ model: currentProviderConfig.models[0].id, max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] }),
+          body: JSON.stringify({ model: model || currentProviderConfig.defaultModel, max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] }),
         });
         ok = r.status !== 401 && r.status !== 403;
       } else if (provider === 'openai' || provider === 'mistral' || provider === 'groq') {
@@ -321,18 +321,33 @@ function ProviderKeySetup({ onSave }: ProviderKeySetupProps) {
         ))}
       </div>
 
-      {/* Model selector */}
+      {/* Model — free-text with datalist suggestions */}
       <div className="mb-4">
-        <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">Model</label>
-        <select
+        <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">
+          Model
+          <a
+            href={currentProviderConfig.modelsDocsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-2 text-[var(--color-accent-blue)] hover:underline font-normal"
+          >
+            Browse all models →
+          </a>
+        </label>
+        <datalist id={`models-${provider}`}>
+          {currentProviderConfig.suggestions.map(s => <option key={s} value={s} />)}
+        </datalist>
+        <input
+          type="text"
+          list={`models-${provider}`}
           value={model}
           onChange={e => setModel(e.target.value)}
+          placeholder={currentProviderConfig.defaultModel}
           className="w-full text-sm border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--color-text-primary)] bg-white focus:outline-none focus:border-[var(--color-accent-blue)]"
-        >
-          {currentProviderConfig.models.map(m => (
-            <option key={m.id} value={m.id}>{m.label}</option>
-          ))}
-        </select>
+        />
+        <p className="text-[10px] text-[var(--color-text-muted)] mt-1">
+          Type any model name — suggestions above are just a starting point.
+        </p>
       </div>
 
       {/* Key input */}
