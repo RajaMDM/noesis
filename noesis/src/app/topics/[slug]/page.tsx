@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { topics } from '@/lib/topics';
 import { topicContent } from '@/lib/topic-content';
-import { Button } from '@/components/Button';
 import { GlassCard } from '@/components/GlassCard';
 import { ProgressStrip } from '@/components/ProgressStrip';
 import { VideoSection } from '@/components/VideoSection';
@@ -94,140 +93,57 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           )}
         </div>
 
-        {/* 1. Overview */}
+        {/* Key Insights */}
+        <div className="mb-10 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 sm:overflow-visible">
+          {content.keyInsights.map((insight, i) => (
+            <div
+              key={i}
+              className="flex-shrink-0 w-[260px] sm:w-auto snap-start bg-white border border-[var(--color-glass-border)] rounded-2xl p-5 shadow-[var(--shadow-glass)]"
+            >
+              <span className="text-xl mb-3 block">{['💡', '🔍', '⚡'][i]}</span>
+              <p className="text-[var(--color-text-primary)] font-medium text-sm leading-snug">{insight}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* AI Learning Modes — early CTA */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">Overview</h2>
-          <p className="text-[var(--color-text-secondary)] leading-relaxed text-base">
-            {content.overview.split('\n\n')[0]}
-          </p>
-          {content.overview.split('\n\n').length > 1 && (
-            <p className="text-sm text-[var(--color-text-muted)] mt-3 italic">
-              Explore the full picture in the AI Learning Modes below ↓
-            </p>
-          )}
+          <ChatPanel slug={slug} topicTitle={title} />
         </section>
 
-        {/* 2. How AI Applies */}
+        {/* From the Field */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">How AI Applies</h2>
-          <p className="text-[var(--color-text-secondary)] leading-relaxed text-base">
-            {content.howAIApplies.split('\n\n')[0]}
-          </p>
-          {content.howAIApplies.split('\n\n').length > 1 && (
-            <p className="text-sm text-[var(--color-text-muted)] mt-3 italic">
-              Ask the AI tutor below for the full analysis ↓
+          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[rgba(0,113,227,0.05)] to-[rgba(0,113,227,0.01)] border border-[rgba(0,113,227,0.15)] px-8 py-8">
+            <span className="text-6xl font-serif text-[var(--color-accent-blue)] opacity-20 leading-none block -mb-4 -mt-2 select-none">"</span>
+            <p className="text-[var(--color-text-primary)] text-lg leading-relaxed font-medium mb-6">
+              {content.fromTheField.text}
             </p>
-          )}
-        </section>
-
-        {/* 3. From the Field — GlassCard with electric blue badge */}
-        <section className="mb-12">
-          <GlassCard className="border border-[var(--color-accent-blue)] border-opacity-30">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="inline-block px-3 py-1 rounded-full bg-[var(--color-accent-blue)] text-white text-xs font-semibold tracking-wide">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[var(--color-accent-blue)] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                RS
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[var(--color-text-primary)]">Raja Shahnawaz Soni</p>
+                <p className="text-xs text-[var(--color-text-muted)] truncate">{content.fromTheField.anonymization}</p>
+              </div>
+              <span className="ml-auto flex-shrink-0 px-3 py-1 rounded-full bg-[var(--color-accent-blue)] text-white text-xs font-semibold">
                 From the Field
               </span>
             </div>
-            <p className="text-[var(--color-text-primary)] leading-relaxed mb-6 text-base">
-              {content.fromTheField.text}
-            </p>
-            <p className="text-[var(--color-text-muted)] text-sm font-mono">
-              — Raja Shahnawaz Soni · {content.fromTheField.anonymization}
-            </p>
-          </GlassCard>
+          </div>
         </section>
 
-        {/* Topic-specific optional block: Tools (Data Quality, MDM) */}
-        {content.tools && content.tools.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Tools &amp; Agents</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {content.tools.map((tool) => (
-                <GlassCard key={tool.name}>
-                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">{tool.name}</h3>
-                  <p className="text-[var(--color-text-secondary)] text-sm mb-3">{tool.description}</p>
-                  {tool.link && (
-                    <a
-                      href={tool.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[var(--color-accent-blue)] text-sm hover:underline"
-                    >
-                      Learn more <ExternalLink className="w-3 h-3" />
-                    </a>
-                  )}
-                </GlassCard>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Topic-specific: Policy Framework (Data Governance) */}
-        {content.policyFramework && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">Governance Essentials</h2>
-            <div className="text-[var(--color-text-secondary)] leading-relaxed text-base whitespace-pre-line">
-              {content.policyFramework}
-            </div>
-          </section>
-        )}
-
-        {/* Topic-specific: Matching Algorithm (MDM) */}
-        {content.matchingAlgorithm && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">How MDM Matching Works</h2>
-            <div className="text-[var(--color-text-secondary)] leading-relaxed text-base">
-              {content.matchingAlgorithm}
-            </div>
-          </section>
-        )}
-
-        {/* Topic-specific: Activation Examples (Reverse Integration) */}
-        {content.activationExamples && content.activationExamples.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Activation Use Cases</h2>
-            <ul className="space-y-3">
-              {content.activationExamples.map((example, idx) => (
-                <li key={idx} className="flex gap-3">
-                  <span className="text-[var(--color-accent-blue)] font-mono text-sm pt-0.5">→</span>
-                  <span className="text-[var(--color-text-secondary)] text-base">{example}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {/* Topic-specific: Emerging Tools (AI in Data Management) */}
-        {content.emergingTools && content.emergingTools.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Emerging AI Tools</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {content.emergingTools.map((tool) => (
-                <GlassCard key={tool.name}>
-                  <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-2">{tool.name}</h3>
-                  <p className="text-[var(--color-text-secondary)] text-sm">{tool.capability}</p>
-                </GlassCard>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 4. Architecture Diagram */}
+        {/* Architecture */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">Architecture</h2>
           <p className="text-[var(--color-text-muted)] text-sm mb-6">{content.architectureCaption}</p>
           {DiagramComponent && <DiagramComponent />}
         </section>
 
-        {/* 5. Video */}
+        {/* Video */}
         <VideoSection youtubeId={content.video.youtubeId} title={content.video.title} />
 
-        {/* 6. AI Learning Modes */}
-        <section className="mb-12">
-          <ChatPanel slug={slug} topicTitle={title} />
-        </section>
-
-        {/* 7. Further Reading (optional) */}
+        {/* Further Reading (optional) */}
         {content.furtherReading && content.furtherReading.length > 0 && (
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">Further Reading</h2>
@@ -249,7 +165,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           </section>
         )}
 
-        {/* 8. Where to Go Next */}
+        {/* Where to Go Next */}
         <section className="mb-12 pt-8 border-t border-[var(--color-glass-border)]">
           <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Where to Go Next</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
