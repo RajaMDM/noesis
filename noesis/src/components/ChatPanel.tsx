@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import React from 'react';
 import { useProviderKey, PROVIDERS, ProviderId } from '@/hooks/useProviderKey';
+import { ChatPreview, PREVIEWS } from '@/components/ChatPreview';
 
 // ─── Mode definitions (unchanged) ────────────────────────────────────────────
 const MODES = [
@@ -581,12 +582,67 @@ export function ChatPanel({ slug, topicTitle }: ChatPanelProps) {
   const { hasKey, loaded } = useProviderKey();
   const [activeMode, setActiveMode] = useState<string | null>(null);
   const [showSetup, setShowSetup] = useState(false);
+  const [previewMode, setPreviewMode] = useState<string>('tutor');
 
   if (!loaded) return null;
 
   if (showSetup || (!hasKey && !activeMode)) {
     return (
-      <ProviderKeySetup onSave={() => { setShowSetup(false); }} />
+      <div className="space-y-5">
+        {/* Preview section — show value BEFORE asking for key */}
+        <div className="bg-white border border-[var(--color-glass-border)] rounded-2xl overflow-hidden shadow-[var(--shadow-glass)]">
+          {/* Preview header + mode tabs */}
+          <div className="px-5 pt-4 pb-3 border-b border-[var(--color-glass-border)]">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-xs font-bold text-[var(--color-text-primary)]">See it in action</p>
+                <p className="text-[10px] text-[var(--color-text-muted)]">Choose a mode to preview — then unlock with your API key below</p>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[rgba(0,113,227,0.08)] text-[var(--color-accent-blue)]">Preview</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {Object.entries(PREVIEWS).map(([id, mode]) => (
+                <button
+                  key={id}
+                  onClick={() => setPreviewMode(id)}
+                  className={[
+                    'flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold border transition-all',
+                    previewMode === id
+                      ? 'text-white border-transparent'
+                      : 'bg-white border-[var(--color-glass-border)] text-[var(--color-text-secondary)] hover:border-[rgba(0,113,227,0.3)]',
+                  ].join(' ')}
+                  style={previewMode === id ? { background: mode.color, borderColor: mode.color } : {}}
+                >
+                  <span>{mode.icon}</span>
+                  <span>{mode.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Animated preview */}
+          <div className="bg-[rgba(0,0,0,0.01)]">
+            <ChatPreview topicTitle={topicTitle} modeId={previewMode} />
+          </div>
+
+          {/* Value prop footer */}
+          <div className="px-5 py-3 border-t border-[var(--color-glass-border)] bg-[rgba(0,113,227,0.02)]">
+            <p className="text-[10px] text-[var(--color-text-muted)] text-center">
+              5 modes · Anthropic, OpenAI, Gemini, Mistral, Groq · Your key stays in your browser only
+            </p>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="relative flex items-center gap-3">
+          <div className="flex-1 h-px bg-[var(--color-glass-border)]" />
+          <span className="text-[10px] text-[var(--color-text-muted)] font-medium whitespace-nowrap">Your conversation. Your AI.</span>
+          <div className="flex-1 h-px bg-[var(--color-glass-border)]" />
+        </div>
+
+        {/* Key setup */}
+        <ProviderKeySetup onSave={() => { setShowSetup(false); }} />
+      </div>
     );
   }
 
