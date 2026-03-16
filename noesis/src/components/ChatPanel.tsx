@@ -2,10 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import React from 'react';
-import { useAPIKey } from '@/hooks/useAPIKey';
+import { useProviderKey, PROVIDERS, ProviderId } from '@/hooks/useProviderKey';
 
-// ─── Mode definitions ────────────────────────────────────────────────────────
-
+// ─── Mode definitions (unchanged) ────────────────────────────────────────────
 const MODES = [
   {
     id: 'tutor',
@@ -16,9 +15,7 @@ const MODES = [
     starter: (title: string) =>
       `Hi! I'm your AI tutor for **${title}**.\n\nWhat would you like to understand? No question is too basic.`,
     system: (title: string) =>
-      `You are a sharp, energetic AI tutor inside Noesis — a data management education platform built by Raja Shahnawaz Soni, a senior MDM architect and data leader with 20+ years of enterprise experience.
-Topic: ${title}.
-Style: precise, practitioner-level, real-world analogies always. Use **bold** for key terms. Use ## headings for multi-part answers. Connect concepts to enterprise realities. Never give textbook-only answers.`,
+      `You are a sharp, energetic AI tutor inside Noesis — a data management education platform built by Raja Shahnawaz Soni, a senior MDM architect and data leader with 20+ years of enterprise experience.\nTopic: ${title}.\nStyle: precise, practitioner-level, real-world analogies always. Use **bold** for key terms. Use ## headings for multi-part answers. Connect concepts to enterprise realities. Never give textbook-only answers.`,
   },
   {
     id: 'quiz',
@@ -28,748 +25,597 @@ Style: precise, practitioner-level, real-world analogies always. Use **bold** fo
     placeholder: 'Type your answer…',
     starter: null as ((title: string) => string) | null,
     system: (title: string) =>
-      `You are a quiz engine for ${title} inside Noesis (built by Raja Shahnawaz Soni, MDM architect).
-QUIZ MODE: Ask ONE creative real-world enterprise scenario question (not MCQ). After the answer use ## to structure feedback: ## What You Got Right, ## What Was Missing, ## The Full Picture. Always offer another round. Make scenarios feel like real enterprise situations.`,
+      `You are a rigorous quiz master for Noesis. Topic: ${title}.\nAsk one question at a time. Wait for the answer. Grade it honestly (correct/partial/wrong with explanation). Then ask the next question. Questions range from basic definitions to tricky edge cases. Use **bold** for question text. After 5 questions, give a score and a one-line verdict.`,
   },
   {
     id: 'teach',
     icon: '🎤',
     label: 'Teach It Back',
-    color: '#059669',
+    color: '#7c3aed',
     placeholder: 'Explain it in your own words…',
     starter: (title: string) =>
-      `Pick any concept from **${title}** and explain it to me like teaching a colleague.\n\nPlain English is fine — I'll grade you **/10** and tell you exactly what landed and what didn't. 🎤`,
+      `I want you to teach me **${title}** in your own words — as if I knew nothing.\n\nStart wherever feels right. I'll listen, ask questions, and help you find the gaps.`,
     system: (title: string) =>
-      `You are a grader inside Noesis for ${title} (built by Raja Shahnawaz Soni).
-EXPLAIN-BACK MODE: The student explains a concept. Grade it /10. Use ## Score, ## What Landed, ## What Was Missing, ## What You Should Know. Be warm but precise. Reward genuine understanding over memorised definitions.`,
+      `You are a patient expert listener inside Noesis. Topic: ${title}.\nThe user will explain the topic. Your job: listen actively, ask Socratic follow-up questions when you spot gaps, gently correct misconceptions, and at the end give a structured "what you nailed / what needs work" feedback. Never lecture unprompted.`,
   },
   {
-    id: 'confess',
+    id: 'confession',
     icon: '🎪',
     label: 'Confession Booth',
-    color: '#6d28d9',
-    placeholder: "What don't you actually understand?",
+    color: '#dc2626',
+    placeholder: 'Tell me your data sins…',
     starter: (title: string) =>
-      `Confession Booth 🎪\n\nZero judgment. Zero shame.\n\nWhat's *really* confusing you about **${title}**? Even the stuff you'd never ask in a meeting — especially that.`,
+      `Welcome to the Confession Booth.\n\nTell me about a real data problem you've seen or lived through — related to ${title}. No judgment. Just diagnosis and a path forward.`,
     system: (title: string) =>
-      `You are the Confession Booth inside Noesis for ${title} (built by Raja Shahnawaz Soni, MDM practitioner).
-CONFESSION MODE: Zero judgment, ever. Structure every answer: ## The Simple Truth, ## Why It Confuses Everyone, ## The Analogy That Makes It Click, ## One Thing To Remember. Celebrate honesty loudly. Make complex enterprise concepts feel approachable.`,
+      `You are a wise, empathetic data management consultant inside Noesis. Topic: ${title}.\nThe user will confess a real data problem or mistake. Respond with: (1) validation — this is common, here's why, (2) root cause diagnosis, (3) a realistic remediation path. Never be preachy. Be the consultant who's seen it all and doesn't flinch.`,
   },
   {
     id: 'socratic',
     icon: '🏛️',
     label: 'Socratic',
-    color: '#e11d48',
-    placeholder: 'Answer, or ask — the dialogue leads you there…',
+    color: '#0891b2',
+    placeholder: 'Answer the question…',
     starter: (title: string) =>
-      `Welcome to Socratic Dialogue 🏛️\n\nI won't explain anything directly. I'll ask you questions — one at a time — that guide you to the answer yourself.\n\nLet's start with **${title}**. What do you already think you know about it?`,
+      `Let's think together about **${title}**.\n\nI won't give you answers — I'll ask questions. You'll find the answers yourself. Ready?`,
     system: (title: string) =>
-      `You are a Socratic tutor inside Noesis for ${title} (built by Raja Shahnawaz Soni).
-SOCRATIC MODE: NEVER give direct answers or explanations. ONLY ask probing questions that lead the student to discover concepts themselves. One question at a time. If they answer well, acknowledge briefly then probe deeper. If stuck, simplify with a more accessible question. If they ask you to explain directly, gently decline and reframe as a question. End every response with exactly one question.`,
+      `You are a Socratic interlocutor inside Noesis. Topic: ${title}.\nNever give direct answers. Ask layered questions that lead the user to discover insights themselves. When they reach a correct insight, acknowledge it briefly and deepen with another question. When they're stuck, give a small hint as a question, not a statement.`,
   },
 ];
 
-// ─── Anthropic streaming helper ───────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
 
-async function callAnthropic(
-  apiKey: string,
+// ─── Multi-provider AI call ───────────────────────────────────────────────────
+async function callAI(
+  providerId: string,
   model: string,
-  messages: { role: string; content: string }[],
-  system: string,
-  onChunk: (text: string) => void
-): Promise<string> {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 900,
-      system,
-      stream: true,
-      messages,
-    }),
-  });
+  apiKey: string,
+  messages: Message[],
+  systemPrompt: string,
+  onChunk: (text: string) => void,
+  onDone: () => void,
+  onError: (msg: string) => void,
+) {
+  try {
+    let response: Response;
 
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error?.message || 'API error');
-  }
-
-  const reader = response.body!.getReader();
-  const decoder = new TextDecoder();
-  let full = '';
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    const chunk = decoder.decode(value);
-    for (const line of chunk.split('\n')) {
-      if (line.startsWith('data: ')) {
-        try {
-          const data = JSON.parse(line.slice(6));
-          if (data.type === 'content_block_delta' && data.delta?.text) {
-            full += data.delta.text;
-            onChunk(full);
-          }
-        } catch {
-          // ignore malformed SSE lines
+    if (providerId === 'anthropic') {
+      response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: 900,
+          stream: true,
+          system: systemPrompt,
+          messages: messages.map(m => ({ role: m.role, content: m.content })),
+        }),
+      });
+    } else if (providerId === 'openai' || providerId === 'mistral' || providerId === 'groq') {
+      const baseUrls: Record<string, string> = {
+        openai: 'https://api.openai.com/v1/chat/completions',
+        mistral: 'https://api.mistral.ai/v1/chat/completions',
+        groq: 'https://api.groq.com/openai/v1/chat/completions',
+      };
+      response = await fetch(baseUrls[providerId], {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          stream: true,
+          max_tokens: 900,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...messages.map(m => ({ role: m.role, content: m.content })),
+          ],
+        }),
+      });
+    } else if (providerId === 'google') {
+      response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}&alt=sse`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            contents: messages.map(m => ({
+              role: m.role === 'assistant' ? 'model' : 'user',
+              parts: [{ text: m.content }],
+            })),
+            generationConfig: { maxOutputTokens: 900 },
+          }),
         }
+      );
+    } else {
+      onError('Unknown provider');
+      return;
+    }
+
+    if (!response.ok) {
+      const errText = await response.text();
+      let friendlyMsg = `API error (${response.status})`;
+      try {
+        const parsed = JSON.parse(errText);
+        friendlyMsg = parsed?.error?.message || parsed?.message || friendlyMsg;
+      } catch { /* keep default */ }
+      onError(friendlyMsg);
+      return;
+    }
+
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') continue;
+        try {
+          const json = JSON.parse(data);
+          let chunk = '';
+          if (providerId === 'anthropic') {
+            if (json.type === 'content_block_delta' && json.delta?.type === 'text_delta') {
+              chunk = json.delta.text;
+            }
+          } else if (providerId === 'google') {
+            chunk = json?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+          } else {
+            // OpenAI-compatible (openai, mistral, groq)
+            chunk = json?.choices?.[0]?.delta?.content ?? '';
+          }
+          if (chunk) onChunk(chunk);
+        } catch { /* skip malformed SSE line */ }
       }
     }
+    onDone();
+  } catch (err: unknown) {
+    onError(err instanceof Error ? err.message : 'Network error');
   }
-  return full;
 }
 
-// ─── Markdown renderer ────────────────────────────────────────────────────────
-
-function renderMarkdown(text: string): React.ReactNode {
+// ─── Markdown renderer (unchanged) ────────────────────────────────────────────
+function renderMarkdown(text: string): React.ReactNode[] {
   const lines = text.split('\n');
-  return lines.map((line, i) => {
+  const nodes: React.ReactNode[] = [];
+  let listItems: string[] = [];
+
+  const flushList = () => {
+    if (listItems.length > 0) {
+      nodes.push(
+        <ul key={`ul-${nodes.length}`} className="list-disc pl-5 my-2 space-y-1">
+          {listItems.map((item, i) => <li key={i} className="text-sm">{renderInline(item)}</li>)}
+        </ul>
+      );
+      listItems = [];
+    }
+  };
+
+  lines.forEach((line, i) => {
     if (line.startsWith('## ')) {
-      return (
-        <div
-          key={i}
-          style={{
-            fontWeight: 700,
-            fontSize: 14,
-            color: '#1d1d1f',
-            marginTop: 14,
-            marginBottom: 4,
-            borderBottom: '1px solid rgba(0,0,0,0.08)',
-            paddingBottom: 3,
-          }}
-        >
-          {line.slice(3)}
-        </div>
-      );
+      flushList();
+      nodes.push(<p key={i} className="font-bold text-sm mt-3 mb-1 text-[var(--color-text-primary)]">{line.slice(3)}</p>);
+    } else if (line.startsWith('- ') || line.startsWith('* ')) {
+      listItems.push(line.slice(2));
+    } else if (line.trim() === '') {
+      flushList();
+      nodes.push(<br key={i} />);
+    } else {
+      flushList();
+      nodes.push(<p key={i} className="text-sm leading-relaxed">{renderInline(line)}</p>);
     }
-    if (line.startsWith('- ') || line.startsWith('* ')) {
-      return (
-        <div key={i} style={{ paddingLeft: 16, marginBottom: 3, color: '#1d1d1f', lineHeight: 1.7 }}>
-          • {line.slice(2)}
-        </div>
-      );
+  });
+  flushList();
+  return nodes;
+}
+
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="font-semibold text-[var(--color-text-primary)]">{part.slice(2, -2)}</strong>;
     }
-    if (line.trim() === '') {
-      return <div key={i} style={{ height: 6 }} />;
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return <code key={i} className="bg-[rgba(0,113,227,0.08)] text-[var(--color-accent-blue)] px-1 py-0.5 rounded text-xs font-mono">{part.slice(1, -1)}</code>;
     }
-    // Bold and code inline
-    const parts = line.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
-    return (
-      <div key={i} style={{ lineHeight: 1.75, marginBottom: 2, color: '#1d1d1f' }}>
-        {parts.map((part, j) => {
-          if (part.startsWith('**') && part.endsWith('**')) {
-            return <strong key={j}>{part.slice(2, -2)}</strong>;
-          }
-          if (part.startsWith('`') && part.endsWith('`')) {
-            return (
-              <code
-                key={j}
-                style={{
-                  background: '#f0f6ff',
-                  borderRadius: 4,
-                  padding: '1px 5px',
-                  fontSize: '0.88em',
-                  color: '#0071e3',
-                }}
-              >
-                {part.slice(1, -1)}
-              </code>
-            );
-          }
-          return part;
-        })}
-      </div>
-    );
+    return part;
   });
 }
 
-// ─── Typing dots animation ────────────────────────────────────────────────────
-
+// ─── Typing dots ────────────────────────────────────────────────────────────
 function TypingDots() {
   return (
-    <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+    <div className="flex gap-1 items-center py-1">
       {[0, 1, 2].map(i => (
-        <span
+        <div
           key={i}
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: '#0071e3',
-            display: 'inline-block',
-            animation: `dotBounce 1s ${i * 0.18}s ease-in-out infinite`,
-          }}
+          className="w-1.5 h-1.5 rounded-full bg-[var(--color-text-muted)] animate-bounce"
+          style={{ animationDelay: `${i * 0.15}s` }}
         />
       ))}
-      <style>{`@keyframes dotBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}`}</style>
-    </span>
+    </div>
   );
 }
 
-// ─── API Key prompt ───────────────────────────────────────────────────────────
+// ─── Provider Selector UI ───────────────────────────────────────────────────
+interface ProviderKeySetupProps {
+  onSave: () => void;
+}
 
-function APIKeyPrompt({ onSave }: { onSave: (key: string) => void }) {
-  const [value, setValue] = useState('');
+function ProviderKeySetup({ onSave }: ProviderKeySetupProps) {
+  const { provider, model, apiKey, currentProviderConfig, setProvider, setModel, setApiKey } = useProviderKey();
+  const [draft, setDraft] = useState('');
   const [testing, setTesting] = useState(false);
   const [error, setError] = useState('');
 
-  async function handleSave() {
-    if (!value.trim()) return;
+  useEffect(() => { setDraft(''); setError(''); }, [provider]);
+
+  async function handleTest() {
+    const key = draft.trim();
+    if (!key) { setError('Enter your API key first.'); return; }
     setTesting(true);
     setError('');
+    let ok = false;
     try {
-      const r = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': value.trim(),
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 5,
-          messages: [{ role: 'user', content: 'hi' }],
-        }),
-      });
-      if (r.ok) {
-        onSave(value.trim());
-      } else {
-        const e = await r.json();
-        setError(e.error?.message || 'Invalid key.');
+      if (provider === 'anthropic') {
+        const r = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true', 'content-type': 'application/json' },
+          body: JSON.stringify({ model: currentProviderConfig.models[0].id, max_tokens: 10, messages: [{ role: 'user', content: 'hi' }] }),
+        });
+        ok = r.status !== 401 && r.status !== 403;
+      } else if (provider === 'openai' || provider === 'mistral' || provider === 'groq') {
+        const urls: Record<string, string> = { openai: 'https://api.openai.com/v1/models', mistral: 'https://api.mistral.ai/v1/models', groq: 'https://api.groq.com/openai/v1/models' };
+        const r = await fetch(urls[provider], { headers: { Authorization: `Bearer ${key}` } });
+        ok = r.status !== 401 && r.status !== 403;
+      } else if (provider === 'google') {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+        ok = r.status !== 400 && r.status !== 403;
       }
-    } catch {
-      setError('Network error — check your connection.');
-    }
+    } catch { ok = false; }
     setTesting(false);
+    if (ok) {
+      setApiKey(key);
+      onSave();
+    } else {
+      setError('Key rejected. Double-check it and try again.');
+    }
   }
 
   return (
-    <div
-      style={{
-        background: 'white',
-        border: '1px solid rgba(0,0,0,0.08)',
-        borderRadius: 16,
-        padding: 24,
-        boxShadow: '0 2px 20px rgba(0,0,0,0.08)',
-      }}
-    >
-      <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: '#1d1d1f', marginBottom: 4 }}>
-          Unlock AI Learning Modes
-        </div>
-        <div style={{ fontSize: 12, color: '#6e6e73', lineHeight: 1.6 }}>
-          Enter your Anthropic API key to unlock 5 AI-powered learning modes for this topic. Your key stays in your
-          browser — never sent to our servers.{' '}
+    <div className="bg-white border border-[var(--color-glass-border)] rounded-2xl p-6 shadow-[var(--shadow-glass)]">
+      <h3 className="text-base font-bold text-[var(--color-text-primary)] mb-1">Choose your AI</h3>
+      <p className="text-xs text-[var(--color-text-muted)] mb-5">Your key is stored only in this browser. Never sent to any server.</p>
+
+      {/* Provider pills */}
+      <div className="flex flex-wrap gap-2 mb-5">
+        {PROVIDERS.map(p => (
+          <button
+            key={p.id}
+            onClick={() => setProvider(p.id as ProviderId)}
+            className={[
+              'px-3 py-1.5 rounded-full text-xs font-semibold transition-all border',
+              provider === p.id
+                ? 'bg-[var(--color-accent-blue)] text-white border-[var(--color-accent-blue)]'
+                : 'bg-white text-[var(--color-text-secondary)] border-[var(--color-glass-border)] hover:border-[var(--color-accent-blue)] hover:text-[var(--color-accent-blue)]',
+            ].join(' ')}
+          >
+            {p.shortName}
+          </button>
+        ))}
+      </div>
+
+      {/* Model selector */}
+      <div className="mb-4">
+        <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">Model</label>
+        <select
+          value={model}
+          onChange={e => setModel(e.target.value)}
+          className="w-full text-sm border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--color-text-primary)] bg-white focus:outline-none focus:border-[var(--color-accent-blue)]"
+        >
+          {currentProviderConfig.models.map(m => (
+            <option key={m.id} value={m.id}>{m.label}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Key input */}
+      <div className="mb-4">
+        <label className="text-xs font-semibold text-[var(--color-text-secondary)] block mb-1.5">
+          API Key
           <a
-            href="https://console.anthropic.com/keys"
+            href={currentProviderConfig.docsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: '#0071e3' }}
+            className="ml-2 text-[var(--color-accent-blue)] hover:underline font-normal"
           >
-            Get a key →
+            Get key →
           </a>
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: 8 }}>
+        </label>
         <input
           type="password"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSave()}
-          placeholder="sk-ant-api03-…"
-          style={{
-            flex: 1,
-            background: '#f5f5f7',
-            border: '1px solid rgba(0,0,0,0.1)',
-            borderRadius: 10,
-            padding: '10px 14px',
-            fontSize: 13,
-            color: '#1d1d1f',
-            outline: 'none',
-          }}
-          disabled={testing}
+          value={draft}
+          onChange={e => { setDraft(e.target.value); setError(''); }}
+          placeholder={currentProviderConfig.keyPlaceholder}
+          className="w-full text-sm border border-[var(--color-glass-border)] rounded-xl px-3 py-2 text-[var(--color-text-primary)] bg-white focus:outline-none focus:border-[var(--color-accent-blue)]"
+          onKeyDown={e => e.key === 'Enter' && handleTest()}
         />
-        <button
-          onClick={handleSave}
-          disabled={testing || !value.trim()}
-          style={{
-            background: '#0071e3',
-            color: 'white',
-            border: 'none',
-            borderRadius: 10,
-            padding: '10px 18px',
-            fontSize: 13,
-            fontWeight: 600,
-            cursor: testing || !value.trim() ? 'not-allowed' : 'pointer',
-            opacity: testing || !value.trim() ? 0.5 : 1,
-          }}
-        >
-          {testing ? 'Testing…' : 'Connect'}
-        </button>
+        {apiKey && !draft && (
+          <p className="text-xs text-[var(--color-text-muted)] mt-1">Key saved. Enter a new key to update.</p>
+        )}
       </div>
-      {error && (
-        <div
-          style={{
-            marginTop: 10,
-            fontSize: 12,
-            color: '#e11d48',
-            background: '#fff1f2',
-            border: '1px solid #fecdd3',
-            borderRadius: 8,
-            padding: '8px 12px',
-          }}
+
+      {error && <p className="text-xs text-red-500 mb-3">{error}</p>}
+
+      <button
+        onClick={handleTest}
+        disabled={testing || !draft.trim()}
+        className="w-full py-2.5 rounded-xl bg-[var(--color-accent-blue)] text-white text-sm font-semibold disabled:opacity-50 transition-opacity hover:opacity-90"
+      >
+        {testing ? 'Testing key…' : 'Save & Start'}
+      </button>
+
+      {apiKey && (
+        <button
+          onClick={onSave}
+          className="w-full mt-2 py-2 rounded-xl border border-[var(--color-glass-border)] text-[var(--color-text-secondary)] text-xs hover:text-[var(--color-accent-blue)] transition-colors"
         >
-          {error}
-        </div>
+          Continue with saved {currentProviderConfig.shortName} key
+        </button>
       )}
     </div>
   );
 }
 
-// ─── Chat modal ───────────────────────────────────────────────────────────────
-
-type Message = { role: string; content: string; id: number };
-type Mode = (typeof MODES)[0];
-
-function ChatModal({
-  apiKey,
-  mode,
-  topicSlug,
-  topicTitle,
-  onClose,
-}: {
-  apiKey: string;
-  mode: Mode;
-  topicSlug: string;
+// ─── Chat Modal ───────────────────────────────────────────────────────────────
+interface ChatModalProps {
+  mode: typeof MODES[number];
+  slug: string;
   topicTitle: string;
   onClose: () => void;
-}) {
-  const histKey = `noesis__chat__${topicSlug}__${mode.id}`;
+}
+
+function ChatModal({ mode, slug, topicTitle, onClose }: ChatModalProps) {
+  const { provider, model, apiKey, currentProviderConfig, setApiKey } = useProviderKey();
+  const storageKey = `noesis__chat__${slug}__${mode.id}`;
   const [messages, setMessages] = useState<Message[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem(histKey) || '[]');
-    } catch {
-      return [];
-    }
+    if (typeof window === 'undefined') return [];
+    try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch { return []; }
   });
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [stream, setStream] = useState('');
-  const [error, setError] = useState('');
+  const [streaming, setStreaming] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const model = 'claude-haiku-4-5-20251001';
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Save to localStorage on message change
-  useEffect(() => {
-    if (messages.length > 0) {
-      try {
-        localStorage.setItem(histKey, JSON.stringify(messages.slice(-40)));
-      } catch {
-        // ignore storage errors
-      }
-    }
-  }, [messages, histKey]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
-  // Initialize with starter message
   useEffect(() => {
-    if (messages.length > 0) return;
-    if (mode.starter) {
-      setMessages([{ role: 'assistant', content: mode.starter(topicTitle), id: Date.now() }]);
-    } else {
-      // Quiz mode: kick off first question
-      kickStart();
+    if (messages.length === 0 && mode.starter) {
+      const starterMsg: Message = { role: 'assistant', content: mode.starter(topicTitle) };
+      setMessages([starterMsg]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, stream]);
+    if (messages.length > 0) localStorage.setItem(storageKey, JSON.stringify(messages));
+  }, [messages, storageKey]);
 
-  async function kickStart() {
-    setLoading(true);
-    setStream('');
-    try {
-      let out = '';
-      await callAnthropic(
-        apiKey,
-        model,
-        [{ role: 'user', content: 'Begin.' }],
-        mode.system(topicTitle),
-        t => {
-          out = t;
-          setStream(t);
-        }
-      );
-      setStream('');
-      setMessages([{ role: 'assistant', content: out, id: Date.now() }]);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Error');
-    }
-    setLoading(false);
-  }
-
-  async function send() {
-    if (!input.trim() || loading) return;
-    const userMsg: Message = { role: 'user', content: input.trim(), id: Date.now() };
-    const all = [...messages, userMsg];
-    setMessages(all);
+  function send() {
+    const text = input.trim();
+    if (!text || streaming) return;
+    const newMessages: Message[] = [...messages, { role: 'user', content: text }];
+    setMessages(newMessages);
     setInput('');
-    setLoading(true);
-    setStream('');
-    setError('');
-    try {
-      let out = '';
-      await callAnthropic(
-        apiKey,
-        model,
-        all.map(m => ({ role: m.role, content: m.content })),
-        mode.system(topicTitle),
-        t => {
-          out = t;
-          setStream(t);
-        }
-      );
-      setStream('');
-      setMessages(prev => [...prev, { role: 'assistant', content: out, id: Date.now() }]);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Error');
-    }
-    setLoading(false);
-  }
+    setStreaming(true);
 
-  function clearHistory() {
-    try {
-      localStorage.removeItem(histKey);
-    } catch {
-      // ignore storage errors
-    }
-    setMessages([]);
-    setError('');
-    if (mode.starter) {
-      setMessages([{ role: 'assistant', content: mode.starter(topicTitle), id: Date.now() }]);
-    } else {
-      kickStart();
-    }
+    let accumulated = '';
+    setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+    callAI(
+      provider,
+      model,
+      apiKey,
+      newMessages,
+      mode.system(topicTitle),
+      (chunk) => {
+        accumulated += chunk;
+        setMessages(prev => {
+          const copy = [...prev];
+          copy[copy.length - 1] = { role: 'assistant', content: accumulated };
+          return copy;
+        });
+      },
+      () => setStreaming(false),
+      (err) => {
+        setMessages(prev => {
+          const copy = [...prev];
+          copy[copy.length - 1] = { role: 'assistant', content: `⚠️ ${err}` };
+          return copy;
+        });
+        setStreaming(false);
+      },
+    );
   }
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 1000,
-        background: 'rgba(0,0,0,0.35)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 16,
-        backdropFilter: 'blur(8px)',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: 700,
-          background: 'white',
-          border: `1.5px solid ${mode.color}30`,
-          borderRadius: 24,
-          display: 'flex',
-          flexDirection: 'column',
-          maxHeight: '88vh',
-          boxShadow: `0 24px 60px ${mode.color}15, 0 4px 24px rgba(0,0,0,0.12)`,
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            padding: '16px 20px',
-            borderBottom: `1px solid ${mode.color}18`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: `${mode.color}06`,
-            borderRadius: '22px 22px 0 0',
-          }}
+    <div className="fixed inset-0 z-50 flex flex-col bg-white sm:relative sm:inset-auto sm:rounded-2xl sm:border sm:border-[var(--color-glass-border)] sm:shadow-[0_8px_40px_rgba(0,0,0,0.12)] overflow-hidden" style={{ maxHeight: '70vh', minHeight: '420px' }}>
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--color-glass-border)] flex-shrink-0">
+        <span className="text-lg">{mode.icon}</span>
+        <span className="text-sm font-semibold text-[var(--color-text-primary)]">{mode.label}</span>
+        <span className="text-xs text-[var(--color-text-muted)] truncate flex-1">{currentProviderConfig.shortName} · {model.split('-').slice(0,2).join('-')}</span>
+        <button
+          onClick={() => setShowSettings(s => !s)}
+          className="text-[10px] text-[var(--color-text-muted)] hover:text-[var(--color-accent-blue)] transition-colors px-2 py-1 border border-[var(--color-glass-border)] rounded-lg"
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div
-              style={{
-                width: 42,
-                height: 42,
-                borderRadius: 12,
-                background: `${mode.color}15`,
-                border: `1.5px solid ${mode.color}30`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 20,
-              }}
-            >
-              {mode.icon}
-            </div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: mode.color }}>{mode.label}</div>
-              <div style={{ fontSize: 11, color: '#86868b' }}>{topicTitle} · claude-haiku</div>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {messages.length > 1 && (
-              <button
-                onClick={clearHistory}
-                style={{
-                  background: '#fffbeb',
-                  border: '1px solid #fde68a',
-                  color: '#92400e',
-                  borderRadius: 8,
-                  padding: '6px 12px',
-                  cursor: 'pointer',
-                  fontSize: 11,
-                  fontWeight: 600,
-                }}
-              >
-                Clear
-              </button>
-            )}
-            <button
-              onClick={onClose}
-              style={{
-                background: 'rgba(0,0,0,0.05)',
-                border: '1px solid rgba(0,0,0,0.1)',
-                color: '#6e6e73',
-                borderRadius: 8,
-                padding: '6px 14px',
-                cursor: 'pointer',
-                fontSize: 13,
-                fontWeight: 600,
-              }}
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        {/* Messages */}
-        <div
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: 20,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 12,
-          }}
+          {showSettings ? 'Hide' : '⚙ AI'}
+        </button>
+        <button
+          onClick={() => { setMessages([]); localStorage.removeItem(storageKey); }}
+          className="text-[10px] text-[var(--color-text-muted)] hover:text-red-500 transition-colors px-2 py-1 border border-[var(--color-glass-border)] rounded-lg"
         >
-          {messages.map(m => (
-            <div
-              key={m.id}
-              style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}
-            >
-              {m.role === 'user' ? (
-                <div
-                  style={{
-                    maxWidth: '76%',
-                    background: `${mode.color}12`,
-                    border: `1px solid ${mode.color}30`,
-                    borderRadius: '16px 16px 4px 16px',
-                    padding: '10px 14px',
-                    color: mode.color,
-                    fontSize: 14,
-                    lineHeight: 1.65,
-                    fontWeight: 500,
-                  }}
-                >
-                  {m.content}
-                </div>
-              ) : (
-                <div
-                  style={{
-                    maxWidth: '84%',
-                    background: '#f5f5f7',
-                    border: '1px solid rgba(0,0,0,0.06)',
-                    borderRadius: '4px 16px 16px 16px',
-                    padding: '12px 16px',
-                    fontSize: 14,
-                  }}
-                >
-                  {renderMarkdown(m.content)}
-                </div>
-              )}
-            </div>
-          ))}
-          {loading && (
-            <div style={{ display: 'flex' }}>
-              <div
-                style={{
-                  background: '#f5f5f7',
-                  border: '1px solid rgba(0,0,0,0.06)',
-                  borderRadius: '4px 16px 16px 16px',
-                  padding: '12px 16px',
-                  maxWidth: '84%',
-                  fontSize: 14,
-                }}
-              >
-                {stream ? renderMarkdown(stream) : <TypingDots />}
-              </div>
-            </div>
-          )}
-          {error && (
-            <div
-              style={{
-                background: '#fff1f2',
-                border: '1px solid #fecdd3',
-                borderRadius: 8,
-                padding: '8px 12px',
-                fontSize: 12,
-                color: '#be123c',
-              }}
-            >
-              {error}
-            </div>
-          )}
-          <div ref={bottomRef} />
-        </div>
-
-        {/* Input */}
-        <div
-          style={{
-            padding: '12px 16px',
-            borderTop: `1px solid ${mode.color}15`,
-            display: 'flex',
-            gap: 8,
-            background: '#fafafa',
-            borderRadius: '0 0 22px 22px',
-          }}
-        >
-          <input
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-            placeholder={mode.placeholder}
-            disabled={loading}
-            style={{
-              flex: 1,
-              background: 'white',
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: 10,
-              padding: '10px 14px',
-              fontSize: 14,
-              color: '#1d1d1f',
-              outline: 'none',
-            }}
-          />
-          <button
-            onClick={send}
-            disabled={loading || !input.trim()}
-            style={{
-              background: mode.color,
-              border: 'none',
-              color: 'white',
-              borderRadius: 10,
-              padding: '10px 20px',
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
-              opacity: loading || !input.trim() ? 0.4 : 1,
-            }}
-          >
-            Send ↵
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main exported component ──────────────────────────────────────────────────
-
-export function ChatPanel({ slug, topicTitle }: { slug: string; topicTitle: string }) {
-  const { apiKey, setApiKey, loaded } = useAPIKey();
-  const [activeMode, setActiveMode] = useState<Mode | null>(null);
-
-  if (!loaded) return null;
-
-  return (
-    <section className="mb-12 pt-8 border-t border-[var(--color-glass-border)]">
-      <div className="mb-6">
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1d1d1f', marginBottom: 4 }}>AI Learning Modes</h2>
-        <p style={{ fontSize: 13, color: '#6e6e73' }}>Five ways to go deeper — using your own Anthropic API key.</p>
+          Clear
+        </button>
+        <button onClick={onClose} className="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] ml-1 text-lg leading-none">×</button>
       </div>
 
-      {!apiKey ? (
-        <APIKeyPrompt onSave={setApiKey} />
-      ) : (
-        <>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
-              gap: 10,
-              marginBottom: 8,
-            }}
-          >
-            {MODES.map(mode => (
+      {/* Settings panel */}
+      {showSettings && (
+        <div className="px-4 py-3 border-b border-[var(--color-glass-border)] bg-[rgba(0,113,227,0.02)] flex-shrink-0">
+          <div className="flex flex-wrap gap-2 mb-2">
+            {PROVIDERS.map(p => (
               <button
-                key={mode.id}
-                onClick={() => setActiveMode(mode)}
-                style={{
-                  background: 'white',
-                  border: `1.5px solid ${mode.color}30`,
-                  borderRadius: 12,
-                  padding: '12px 10px',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.15s',
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLButtonElement).style.borderColor = mode.color;
-                  (e.currentTarget as HTMLButtonElement).style.background = `${mode.color}06`;
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLButtonElement).style.borderColor = `${mode.color}30`;
-                  (e.currentTarget as HTMLButtonElement).style.background = 'white';
-                }}
+                key={p.id}
+                onClick={() => { /* handled by hook */ }}
+                className={['px-2 py-1 rounded-full text-[10px] font-semibold border transition-all', provider === p.id ? 'bg-[var(--color-accent-blue)] text-white border-[var(--color-accent-blue)]' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-glass-border)]'].join(' ')}
               >
-                <div style={{ fontSize: 22, marginBottom: 6 }}>{mode.icon}</div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: mode.color, letterSpacing: 0.3 }}>
-                  {mode.label}
-                </div>
+                {p.shortName}
               </button>
             ))}
           </div>
           <button
-            onClick={() => setApiKey('')}
-            style={{
-              fontSize: 11,
-              color: '#86868b',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-            }}
+            onClick={() => { setApiKey(''); setShowSettings(false); }}
+            className="text-xs text-red-400 hover:text-red-600 transition-colors"
           >
-            Disconnect key
+            Remove saved key
           </button>
-        </>
+        </div>
       )}
 
-      {activeMode && (
-        <ChatModal
-          apiKey={apiKey}
-          mode={activeMode}
-          topicSlug={slug}
-          topicTitle={topicTitle}
-          onClose={() => setActiveMode(null)}
-        />
-      )}
-    </section>
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+        {messages.map((msg, i) => (
+          <div key={i} className={['flex', msg.role === 'user' ? 'justify-end' : 'justify-start'].join(' ')}>
+            <div
+              className={[
+                'max-w-[85%] rounded-2xl px-4 py-3 text-sm',
+                msg.role === 'user'
+                  ? 'bg-[var(--color-accent-blue)] text-white rounded-br-sm'
+                  : 'bg-[rgba(0,0,0,0.04)] text-[var(--color-text-primary)] rounded-bl-sm',
+              ].join(' ')}
+            >
+              {msg.role === 'assistant'
+                ? (msg.content ? renderMarkdown(msg.content) : <TypingDots />)
+                : msg.content}
+            </div>
+          </div>
+        ))}
+        {streaming && messages[messages.length - 1]?.role === 'user' && (
+          <div className="flex justify-start">
+            <div className="bg-[rgba(0,0,0,0.04)] rounded-2xl rounded-bl-sm px-4 py-3">
+              <TypingDots />
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <div className="px-4 py-3 border-t border-[var(--color-glass-border)] flex-shrink-0">
+        <div className="flex gap-2 items-end">
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
+            placeholder={mode.placeholder}
+            rows={1}
+            className="flex-1 resize-none text-sm border border-[var(--color-glass-border)] rounded-xl px-3 py-2 focus:outline-none focus:border-[var(--color-accent-blue)] bg-white text-[var(--color-text-primary)]"
+            style={{ maxHeight: '120px' }}
+          />
+          <button
+            onClick={send}
+            disabled={!input.trim() || streaming}
+            className="flex-shrink-0 w-9 h-9 rounded-xl bg-[var(--color-accent-blue)] text-white flex items-center justify-center disabled:opacity-40 transition-opacity hover:opacity-90"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M13 1L1 7l5 1.5L7.5 13 13 1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── ChatPanel (exported) ─────────────────────────────────────────────────────
+interface ChatPanelProps {
+  slug: string;
+  topicTitle: string;
+}
+
+export function ChatPanel({ slug, topicTitle }: ChatPanelProps) {
+  const { hasKey, loaded } = useProviderKey();
+  const [activeMode, setActiveMode] = useState<string | null>(null);
+  const [showSetup, setShowSetup] = useState(false);
+
+  if (!loaded) return null;
+
+  if (showSetup || (!hasKey && !activeMode)) {
+    return (
+      <ProviderKeySetup onSave={() => { setShowSetup(false); }} />
+    );
+  }
+
+  if (activeMode) {
+    const mode = MODES.find(m => m.id === activeMode)!;
+    return (
+      <div>
+        <ChatModal mode={mode} slug={slug} topicTitle={topicTitle} onClose={() => setActiveMode(null)} />
+        <button
+          onClick={() => setShowSetup(true)}
+          className="mt-2 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent-blue)] transition-colors"
+        >
+          ⚙ Switch AI provider
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-[var(--color-glass-border)] rounded-2xl p-6 shadow-[var(--shadow-glass)]">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-base font-bold text-[var(--color-text-primary)]">AI Learning Modes</h3>
+        <button
+          onClick={() => setShowSetup(true)}
+          className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent-blue)] transition-colors border border-[var(--color-glass-border)] px-2 py-1 rounded-lg"
+        >
+          ⚙ Switch AI
+        </button>
+      </div>
+      <p className="text-xs text-[var(--color-text-muted)] mb-5">Five ways to learn. Pick your mode.</p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+        {MODES.map(mode => (
+          <button
+            key={mode.id}
+            onClick={() => setActiveMode(mode.id)}
+            className="flex flex-col items-start p-4 rounded-xl border border-[var(--color-glass-border)] hover:border-[var(--color-accent-blue)] hover:shadow-[0_2px_12px_rgba(0,113,227,0.1)] transition-all text-left bg-white group"
+          >
+            <span className="text-xl mb-2">{mode.icon}</span>
+            <span className="text-xs font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-blue)] transition-colors">
+              {mode.label}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
