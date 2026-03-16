@@ -1,859 +1,1224 @@
+export interface HierarchyNode {
+  level: number; // 0=root, 1=child, 2=grandchild, 3=great-grandchild, 4=deep
+  name: string;
+  description?: string; // short annotation, optional
+}
+
+export interface CrossDomainRelationship {
+  targetSlug: string;
+  targetName: string;
+  dataFlow: string; // what data crosses the boundary (one line)
+  withoutThis: string; // what breaks if this link is dirty (one line)
+}
+
 export interface DomainEntity {
   name: string;
   definition: string;
-  example?: string; // Short concrete example, 1–2 sentences, uses "NouraCo" fictional universe
-}
-
-export interface DomainDMStep {
-  technique: string;
-  why: string;
+  example: string; // a concrete, realistic data example shown alongside the definition
 }
 
 export interface DomainIntegration {
   name: string;
-  category: string;
+  category: string; // e.g. 'ERP', 'CDP', 'DaaS', 'POS', 'HRIS'
   description: string;
 }
 
-export interface DomainScenario {
+export interface BurningScenario {
   title: string;
-  narrative: string;
+  narrative: string; // 3 punchy sentences max — hook, complication, data management implication
   dmConcepts: string[];
 }
 
+export interface DomainJourneyStep {
+  technique: string; // the DM stage name
+  why: string; // why THIS stage matters for THIS domain specifically
+  exampleChallenge: string; // one concrete example challenge in this domain at this stage
+}
+
 export interface DomainContent {
+  slug: string;
   name: string;
   tagline: string;
   analogy: string;
   entities: DomainEntity[];
-  dmJourney: DomainDMStep[];
+  hierarchy: HierarchyNode[];
+  dmJourney: DomainJourneyStep[]; // ALWAYS 6 steps: Sources, Integration, Quality, Governance, MDM, Reverse Integration
   integrations: DomainIntegration[];
-  scenarios: DomainScenario[];
+  scenarios: BurningScenario[];
+  crossDomainRelationships: CrossDomainRelationship[];
 }
 
 export const domainContent: Record<string, DomainContent> = {
   customer: {
-    name: 'Customer Domain',
-    tagline: 'One customer, many faces — your job is to find the single truth.',
+    slug: 'customer',
+    name: 'Customer',
+    tagline: 'Every business thinks it knows its customers. Almost none of them do.',
     analogy:
-      'Managing customer data is like solving a jigsaw puzzle where half the pieces come from different boxes, some are upside down, and new ones keep arriving while you work.',
+      '🪞 The Customer domain is the mirror your business holds up to reality. If the reflection is blurry — duplicate records, wrong emails, merged households — every downstream decision is distorted.',
     entities: [
       {
-        name: 'Individual / Person',
-        definition:
-          'A natural person who interacts with your organisation as a buyer, prospect, or loyalty member. The atomic unit of customer identity.',
-        example:
-          'Sarah Al-Mansouri appears as S-00412 in CRM, LYL-88821 in Loyalty, and USR-2291 in the app. Three IDs. One person.',
+        name: 'Individual',
+        definition: 'A unique person, regardless of how many times they appear in your systems.',
+        example: 'CUST-00012847 | Sarah Mitchell | DOB: 1985-04-12 | Gold Loyalty Member',
       },
       {
         name: 'Household',
-        definition:
-          'A logical grouping of individuals sharing an address or financial relationship — critical for retail, utilities, and financial services targeting.',
-        example:
-          'The Al-Mansouri household: 4 members, 1 billing address, 2 loyalty cards. Targeted as one unit for family meal promotions.',
-      },
-      {
-        name: 'Organisation / Account',
-        definition:
-          'A legal entity that purchases on behalf of a company. In B2B contexts, a single organisation may have dozens of contacts and locations.',
-        example:
-          'Noura Catering LLC: 3 contacts, 2 delivery sites, 1 credit account — and zero unified account ID across ERP, CRM, and billing.',
-      },
-      {
-        name: 'Contact',
-        definition:
-          'A named individual associated with an organisation or household — the human touchpoint for sales, procurement, or account management. Contacts exist in multiple systems with no guarantee of consistency.',
-        example:
-          'Ahmed Ibrahim — Procurement Manager, Noura Catering LLC. Known in CRM. Unknown in the billing system. Two versions of his email exist.',
+        definition: 'Grouped individuals sharing an address — a commercial and analytical unit.',
+        example: 'HH-00834 | 14 Elm Grove, London SE22 | Members: Sarah Mitchell + Tom Mitchell',
       },
       {
         name: 'Loyalty Member',
-        definition:
-          'A customer enrolled in a structured rewards programme, carrying a tier status, points balance, and enrolment history. Loyalty members are frequently duplicated across CRM and loyalty platforms.',
-        example:
-          "Gold tier member 'S. Mansouri' — 14,200 points, joined 2019. Matches 3 CRM records. Exactly one is correct.",
+        definition: 'A customer enrolled in a structured rewards programme with tier and point balance.',
+        example: 'Loyalty ID: NFGLOY-48291 | Tier: Gold | Points: 3,420 | Joined: 2019-03-01',
       },
       {
-        name: 'Consent Record',
-        definition:
-          'A timestamped, channel-specific record of a customer\'s marketing and data processing preferences. Legally required under GDPR and CCPA — the source of truth for what you are permitted to do with a customer\'s data.',
-        example:
-          'Marketing opt-in: Email ✓, SMS ✗, Push ✗. Captured at checkout, 14 Mar 2025. GDPR lawful basis: consent. Stored in OneTrust.',
+        name: 'B2B Account',
+        definition: 'A company as a commercial customer — with its own contacts, spend history, and credit terms.',
+        example: 'ACC-8821 | Acme Catering Ltd | Credit Limit: £25,000 | Account Manager: James Chen',
       },
+      {
+        name: 'Contact',
+        definition: 'A named individual within a B2B account — the person you actually deal with.',
+        example: 'CON-2241 | Helen Rogers | Acme Catering Ltd | Role: Head of Procurement | h.rogers@acme.co.uk',
+      },
+      {
+        name: 'Golden Record',
+        definition: 'The single, authoritative, de-duplicated view of a customer — the output of MDM.',
+        example: 'Survived record: CUST-00012847 (merged from 3 duplicates: CUST-00008821, CUST-01129, CUST-00012847)',
+      },
+    ],
+    hierarchy: [
+      { level: 0, name: 'Customer Domain' },
+      { level: 1, name: 'B2C (Business-to-Consumer)' },
+      { level: 2, name: 'Individual', description: 'unique person' },
+      { level: 3, name: 'Loyalty Member', description: 'enrolled, with tier and points' },
+      { level: 3, name: 'Online Profile', description: 'email/password, behavioural data' },
+      { level: 2, name: 'Household', description: 'co-located group' },
+      { level: 3, name: 'Household Wallet', description: 'combined spend view' },
+      { level: 1, name: 'B2B (Business-to-Business)' },
+      { level: 2, name: 'Contact', description: 'named individual' },
+      { level: 2, name: 'Account', description: 'the company entity' },
+      { level: 3, name: 'Parent Account', description: 'multi-site or regional group' },
+      { level: 4, name: 'Ultimate Parent', description: 'holding company (linked via D&B DUNS)' },
     ],
     dmJourney: [
       {
         technique: 'Data Sources',
-        why: 'Customer data is born in fragments: CRM captures sales interactions, loyalty platforms hold purchase history, e-commerce records browsing and buying behaviour, call centres log service history, and CDPs aggregate digital events. Each system holds a partial truth. None holds the whole person.',
+        why: 'CRM (Salesforce/HubSpot), loyalty platform, e-commerce, call centre, point-of-sale. Each creates customer records independently, with no shared key.',
+        exampleChallenge:
+          "Sarah Mitchell exists as 'S. Mitchell' in Salesforce, 'Sarah M' in the loyalty app, and 'Sarah Mitchell-Jones' in the e-commerce platform — three systems, zero consensus.",
       },
       {
         technique: 'Data Integration',
-        why: 'The customer identity graph is built by integrating CRM events, loyalty transactions, web/app behavioural streams, and third-party enrichment (Experian, Acxiom). Real-time and batch pipelines both apply — batch for nightly CRM syncs, real-time for consent and preference changes that must propagate instantly.',
+        why: 'Customer events must flow from touchpoints → data warehouse → CDP in near real-time. Batch overnight feeds miss same-day interactions.',
+        exampleChallenge:
+          "Sarah purchases at Oxford Street at 6pm. The email campaign fires at 7pm promoting the same item. The batch feed hasn't run yet. She gets a 'buy now' email for something she just bought.",
       },
       {
         technique: 'Data Quality',
-        why: 'Customer DQ is dominated by three failure modes: duplicates (same person, multiple records), incompleteness (missing email, invalid phone, unvalidated address), and staleness (data that was accurate two years ago). Each failure mode has a different fix — dedup requires matching logic; completeness requires enrichment or collection; staleness requires refresh triggers.',
+        why: 'Email deliverability, phone validity, address standardisation, completeness scoring, deduplication rate. Quality = trust = activation.',
+        exampleChallenge:
+          "14% of Noesis Foods Group's loyalty base has an invalid email address. Every campaign misfires on 14% of sends. Nobody knows because open rate is calculated on delivered, not sent.",
       },
       {
         technique: 'Data Governance',
-        why: 'Customer data governance is both a legal obligation and a competitive differentiator. GDPR and CCPA require documented consent, defined retention periods, and the ability to execute subject access and erasure requests. Governance here means: who owns each customer attribute, which system is the record of consent, and who can grant access to PII.',
+        why: 'Consent management (GDPR/CCPA), data retention rules, right-to-erasure, PII access controls, data classification.',
+        exampleChallenge:
+          "Sarah opts out of marketing in-app. The opt-out writes to the loyalty platform. It doesn't propagate to Salesforce or the campaign tool. She receives 3 more emails. Article 17 gives 30 days to respond to her complaint.",
       },
       {
         technique: 'Master Data Management',
-        why: 'MDM creates the customer golden record — one authoritative identity per person, reconciled across CRM, loyalty, e-commerce, and service platforms. Survivor rules decide which system wins on each attribute. Match/merge handles the "John Smith / J. Smith / Jonathan T. Smith" problem at scale. The golden record is the foundation for every downstream activation.',
+        why: 'Match/merge across systems, survivor rules, golden record creation, household linkage, B2B hierarchy assembly.',
+        exampleChallenge:
+          'Post-acquisition of a regional coffee chain: 400,000 new customer records, 30% estimated overlap with existing base, no shared customer ID. Matching must happen before the loyalty migration deadline.',
       },
       {
         technique: 'Reverse Integration',
-        why: 'The golden customer record is only valuable when it flows back into operational systems. Clean records update the CRM, feed the CDP for audience segmentation, synchronise the loyalty platform, and drive personalisation engines. Consent changes must reverse-integrate within hours — not overnight batches — to avoid compliance breaches.',
+        why: 'Golden records flow back to CRM for sales teams, to CDP for campaign activation, to personalisation engines, to loyalty platform for consistent tier display.',
+        exampleChallenge:
+          'The golden record says Sarah is Gold tier. The loyalty app still reads from its own database and shows Silver. She complains at the counter.',
       },
     ],
     integrations: [
       {
-        name: 'Salesforce CRM',
-        category: 'Source',
-        description:
-          'Primary source of B2B account and contact data. Often the "system of record" by default — but rarely the cleanest.',
+        name: 'Salesforce / HubSpot',
+        category: 'CRM',
+        description: 'Primary CRM — source of B2B account and contact records; receives golden record updates via reverse integration.',
       },
       {
-        name: 'Shopify / Magento',
-        category: 'Source',
-        description:
-          'E-commerce platforms that generate transactional customer records, often with duplicate guest checkouts and no deduplication.',
-      },
-      {
-        name: 'Twilio Segment',
+        name: 'Segment / mParticle',
         category: 'CDP',
-        description:
-          'Customer Data Platform that collects behavioural events and attempts identity stitching across web, mobile, and offline touchpoints.',
-      },
-      {
-        name: 'Informatica MDM',
-        category: 'MDM Hub',
-        description:
-          'Enterprise MDM platform providing matching, merging, survivorship, and golden record publication for large-scale customer domains.',
+        description: 'Customer Data Platform — unifies behavioural events from web, app, and POS for real-time activation.',
       },
       {
         name: 'Experian / Acxiom',
-        category: 'Enrichment',
-        description:
-          'Third-party data providers that append demographics, firmographics, and address verification to enrich thin customer records.',
+        category: 'DaaS',
+        description: 'Third-party data enrichment — appends demographics, contact validation, and address standardisation to customer records.',
       },
       {
-        name: 'Snowflake',
-        category: 'Warehouse',
-        description:
-          'Central analytical store where customer golden records are joined with behavioural, transactional, and third-party data for segmentation and analytics.',
-      },
-    ],
-    scenarios: [
-      {
-        title: 'The Loyalty Duplicate Nightmare',
-        narrative:
-          'Your loyalty programme has 2.1 million members. Your CRM has 1.4 million contacts. Your CFO asks: "How many unique customers do we actually have?" No one can answer. Marketing has been emailing the same person three times with different discount codes. One customer complained she received four birthday emails.',
-        dmConcepts: ['Identity Resolution', 'Deduplication', 'Golden Record', 'MDM'],
+        name: 'OneTrust',
+        category: 'Consent Management',
+        description: 'Consent and preference management — GDPR/CCPA opt-in/out records that must propagate to all downstream activation systems.',
       },
       {
-        title: 'GDPR Erasure Request at 3am',
-        narrative:
-          'A customer submits a right-to-erasure request. Your legal team has 30 days. The customer exists in: CRM, loyalty database, e-commerce platform, email marketing tool, data warehouse, and two analytics sandboxes. No one has mapped where customer PII lives. The clock is ticking.',
-        dmConcepts: ['Data Governance', 'Privacy', 'Data Lineage', 'GDPR Compliance'],
-      },
-      {
-        title: 'The Acquisition Integration',
-        narrative:
-          'You acquired a competitor. Their 800,000 customers must be merged into your customer master. Their data uses different naming conventions, a different address format, and no email validation. Overnight, your duplicate rate doubles and your golden record trust score collapses.',
-        dmConcepts: ['MDM', 'Data Quality', 'Identity Resolution', 'Survivorship Rules'],
-      },
-    ],
-  },
-
-  location: {
-    name: 'Location Domain',
-    tagline: 'An address is a contract with geography — get it wrong and nothing arrives.',
-    analogy:
-      'Location data is like GPS coordinates on a treasure map — a single digit wrong and you\'re digging in the wrong field.',
-    entities: [
-      {
-        name: 'Store / Site',
-        definition:
-          'A named, uniquely identified physical trading location with operational attributes: format, trading hours, seating capacity, and status. The atomic unit of the estate.',
-        example:
-          'Noura Kitchen Dubai Mall — Unit G-114, Ground Floor. Format: Inline Dine-In. Status: Trading. Opened: 12 Sep 2021.',
-      },
-      {
-        name: 'Region',
-        definition:
-          'A high-level geographic grouping of districts — typically country or multi-country. Used for financial reporting, leadership accountability, and range planning at scale.',
-        example:
-          'UAE — sits under Gulf Region in the hierarchy. Contains 3 districts, 24 stores, 4 dark kitchens.',
-      },
-      {
-        name: 'District',
-        definition:
-          'A mid-tier grouping of stores managed by a single District Manager. Districts are the operational unit for scheduling, performance management, and local marketing execution.',
-        example:
-          'Downtown Dubai District — 7 stores, 2 dark kitchens, 1 concession. District Manager: Khalid Hassan. Weekly footfall target: 18,000.',
-      },
-      {
-        name: 'Trading Area',
-        definition:
-          'A defined geographic zone around a site used for local marketing spend, range planning, and competitive analysis. Usually defined by drive time or radius, indexed against demographic and spend data.',
-        example:
-          'Downtown Dubai Trading Zone — 1.2km radius, indexed HIGH for casual dining spend. Used for range planning and local marketing budgets.',
-      },
-      {
-        name: 'Catchment',
-        definition:
-          'The actual geographic origin of a site\'s customer transactions, derived from loyalty and card data. Distinct from a trading area — this is measured, not planned.',
-        example:
-          'Noura Kitchen DM catchment: 73% of transactions originate within 3km. Primary draw zones: Downtown Residents + Tourist Corridor.',
-      },
-      {
-        name: 'Format',
-        definition:
-          'A classification of site type based on physical size, service model, and product range. Format drives range allocation, staffing models, and capital expenditure categories.',
-        example:
-          "Inline Dine-In — 85 covers, full kitchen, average transaction AED 120. Distinct from 'Express Kiosk' (no seating, 22 SKUs only).",
-      },
-    ],
-    dmJourney: [
-      {
-        technique: 'Data Sources',
-        why: 'Location data originates from property management systems (lease terms, physical dimensions), planning and permits databases, internal store opening project trackers, Google Business Profile, YEXT, and delivery platform merchant portals. Each source holds different attributes — and frequently contradicts the others on trading hours, address, or format.',
-      },
-      {
-        technique: 'Data Integration',
-        why: 'The location master must ingest from property systems, feed into ERP (for financial and allocation rules), POS (for transaction assignment), loyalty (for earn/burn zone rules), and digital listing platforms. The integration sequence on a new store opening is strict: location master must be populated before any downstream system can be configured — a broken chain delays trading.',
-      },
-      {
-        technique: 'Data Quality',
-        why: 'Location DQ centres on address standardisation (SmartyStreets, Loqate), coordinate validation (lat/long within expected bounds), trading hours completeness, and format/classification accuracy. A single wrong format code ("Express" instead of "Large") triggers incorrect range allocations, wrong delivery radius rules, and suppressed marketing campaigns — all silently.',
-      },
-      {
-        technique: 'Data Governance',
-        why: 'Who has authority to change a store attribute? Without governance, the property team updates trading hours in one system, the ops team updates another, and digital listings inherit whichever wins the last write. Location governance defines the system of record per attribute, the approval workflow for changes, and the propagation SLA — how quickly a change must reach all downstream systems.',
-      },
-      {
-        technique: 'Master Data Management',
-        why: 'Location MDM manages the hierarchy: store → district → region → country → brand. It maintains the golden record per site — one authoritative store ID that all systems reference. For multi-brand or post-acquisition estates, MDM resolves duplicate site records (two systems, same building, different IDs) and rationalises the hierarchy.',
-      },
-      {
-        technique: 'Reverse Integration',
-        why: 'Clean location data is published back to 200+ digital platforms via YEXT, to Google Business Profile API for search visibility, to delivery platforms (Uber Eats, Deliveroo) for trading hours and service radius, and to analytics platforms for estate-level reporting. This is one of the clearest examples of reverse integration in any domain — YEXT exists specifically to solve the "publish once, syndicate everywhere" problem.',
-      },
-    ],
-    integrations: [
-      {
-        name: 'Google Maps Platform',
-        category: 'Geocoding',
-        description:
-          'Industry-standard geocoding, address autocomplete, and place data API. High coverage globally but costs scale with volume.',
-      },
-      {
-        name: 'HERE Technologies',
-        category: 'Geocoding',
-        description:
-          'Enterprise alternative to Google for geocoding and routing, with stronger offline and logistics use cases.',
-      },
-      {
-        name: 'Loqate / GBG',
-        category: 'Address Validation',
-        description:
-          'Global address validation and standardisation service, used in checkout flows and CRM onboarding to prevent bad addresses at entry.',
-      },
-      {
-        name: 'Esri ArcGIS',
-        category: 'GIS',
-        description:
-          'Enterprise GIS platform for spatial analysis, territory management, and geofencing. The standard for site selection and regulatory mapping.',
-      },
-      {
-        name: 'OpenStreetMap / Nominatim',
-        category: 'Open Data',
-        description:
-          'Open-source geocoding and map data. Lower cost, community-maintained, appropriate for non-critical enrichment and analytics.',
-      },
-      {
-        name: 'Avalara',
-        category: 'Tax',
-        description:
-          'Tax compliance platform that consumes location data to determine applicable sales tax rates by jurisdiction — dependent on accurate geocoding.',
+        name: 'Twilio Lookup',
+        category: 'Data Quality',
+        description: 'Phone number validation API — confirms number format, carrier, and line type before campaign sends.',
       },
     ],
     scenarios: [
       {
-        title: 'The Delivery Black Hole',
+        title: '3 Systems, 3 Customer Counts, 1 Board Meeting',
         narrative:
-          'Your e-commerce platform has a 4.2% failed delivery rate. Each failed delivery costs £18 in redelivery and customer service. The root cause: free-text address entry with no validation. "Flat 2A" becomes "Flat2A", "flat 2 a", and "apt 2A" — three records, none geocodable.',
-        dmConcepts: ['Address Validation', 'Data Quality', 'Standardisation', 'Geocoding'],
+          'Your CRM says 2.1 million customers. Your loyalty platform says 890,000 members. Your CEO asks for "total customers" in the board pack. You have 30 minutes. There is no golden record. Every number is defensible and all of them are wrong.',
+        dmConcepts: ['MDM', 'Data Quality', 'Data Governance'],
       },
       {
-        title: 'Tax Jurisdiction Misrouting',
+        title: 'The GDPR Opt-Out That Wasn\'t',
         narrative:
-          'A border postcode sits across two US state tax jurisdictions. Your system assigns all orders to the wrong state. After 18 months, a tax audit reveals $2.3M in under-collected sales tax. The fix requires retroactive geocoding of 400,000 historical orders and a renegotiation with two state revenue departments.',
-        dmConcepts: ['Geocoding', 'Reference Data', 'Administrative Hierarchy', 'Data Quality'],
+          'Sarah Mitchell opts out of marketing on the app in January. Your campaign platform sends her 14 emails between January and March. In April she complains. Article 17 gives you 30 days to respond. Your consent data lives in four systems, none of them the same.',
+        dmConcepts: ['Data Governance', 'Data Integration', 'Data Quality'],
+      },
+      {
+        title: 'The Acquisition That Doubled Your Data Problem',
+        narrative:
+          'You acquire a coffee chain with 400,000 customers. 30% likely overlap with your base. None use the same ID format. 60% have email only. The loyalty migration go-live is in 8 weeks. You haven\'t started matching yet.',
+        dmConcepts: ['MDM', 'Data Integration', 'Data Quality'],
+      },
+    ],
+    crossDomainRelationships: [
+      {
+        targetSlug: 'location',
+        targetName: 'Location',
+        dataFlow: 'Customer address → store catchment matching → footfall attribution',
+        withoutThis: "Catchment analysis is impossible — you can't link customers to their nearest stores",
+      },
+      {
+        targetSlug: 'financial',
+        targetName: 'Financial Domain',
+        dataFlow: 'Customer ID → transaction → GL revenue line → segment P&L',
+        withoutThis: "Revenue by customer segment is a guess; customer profitability analysis doesn't exist",
+      },
+      {
+        targetSlug: 'product-hospitality',
+        targetName: 'F&B · Hospitality',
+        dataFlow: 'Customer purchase history → product affinity → personalised recommendation',
+        withoutThis: 'Personalisation is impossible; every customer gets the same email',
+      },
+      {
+        targetSlug: 'supplier',
+        targetName: 'Supplier',
+        dataFlow: 'B2B customer and supplier may be the same legal entity — party master must link them',
+        withoutThis: 'A company gets treated as a new customer AND a supplier simultaneously, with no relationship visibility',
       },
     ],
   },
 
   supplier: {
-    name: 'Supplier Domain',
-    tagline: 'Your supply chain is only as reliable as your supplier data.',
+    slug: 'supplier',
+    name: 'Supplier',
+    tagline: "You can't manage what you haven't mastered. Most supplier databases are archaeological sites.",
     analogy:
-      'Supplier data is like air traffic control — one wrong identifier and you\'re routing cargo to the wrong airport while the right one sits empty.',
+      '🔗 The supplier domain is the spine of your supply chain. Corrupt data here — a wrong bank account, an expired certificate, a mis-categorised product — sends shockwaves through procurement, finance, and compliance simultaneously.',
     entities: [
       {
-        name: 'Vendor / Supplier',
-        definition:
-          'A legal entity that provides goods or services. Must be uniquely identified across procurement, finance, and logistics systems — a surprisingly rare achievement.',
-        example:
-          'Al Barakah Fresh Foods LLC — D&B DUNS: 34-812-6621. Approved status. 47 active product lines. Primary protein supplier for UAE Noura Kitchen.',
+        name: 'Supplier / Vendor',
+        definition: 'The company that provides goods or services.',
+        example: 'SUP-0892 | Sysco UK Ltd | Type: Food Distributor | Status: Active | D&B DUNS: 21-345-6789',
       },
       {
         name: 'Supplier Site',
-        definition:
-          'A physical location from which a supplier ships goods or issues invoices. One supplier may have multiple sites with different lead times, capabilities, and contacts.',
-        example:
-          'Al Barakah — Ras Al Khor Industrial Area, Unit 12B. Handles Dubai and Abu Dhabi distribution. Cold storage capacity: 800 pallets.',
+        definition: 'A specific physical facility from which supply originates.',
+        example: 'SITE-0892-03 | Sysco UK — Heathrow Distribution Centre | Delivery Lead Time: 2 days | Min Order: £500',
       },
       {
         name: 'Contact',
-        definition:
-          'A named individual at the supplier — account manager, quality lead, or invoicing contact. Supplier contacts change frequently and exist in multiple internal systems without synchronisation.',
-        example:
-          "Fatima Al-Rashidi — Accounts Manager. Holds relationship with 4 buyers. In supplier portal. Not in CRM. Not in ERP contacts. Third system, third record.",
+        definition: 'The key individual at the supplier — commercial, logistics, or quality.',
+        example: 'CON-0892-07 | Mark Davies | Sysco UK | Role: Account Manager | m.davies@sysco.co.uk | Mobile: 07712 334 455',
       },
       {
         name: 'Product Listing',
-        definition:
-          'A specific item offered by the supplier: a purchasable product with its own supplier SKU, unit of measure, pricing, and compliance attributes. The link between supplier catalogue and internal procurement.',
-        example:
-          'ABFF-CHKN-WHL-1.4 — Whole Mandi Chicken, 1.4–1.6kg, chilled, Halal cert #UAE-HAL-2024. Price: AED 28.50/unit. Min order: 20 units.',
+        definition: 'What this supplier supplies — linked to your internal product master.',
+        example: 'PLI-9921 | Sysco SKU: SYS-BB-6OZ | Internal: Beef Patty Frozen 6oz | Price: £2.34/unit | Case: 24 units',
       },
       {
-        name: 'Certificate',
-        definition:
-          'A compliance or quality certification held by the supplier — food safety, ESG, halal, ISO. Certificates expire and must trigger re-qualification workflows. An expired certificate against an active supplier is a regulatory and operational risk.',
-        example:
-          'HACCP Certificate #UAE-2024-0041 — valid: 01 Jan 2024 to 31 Dec 2025. STATUS: EXPIRED. 3 open purchase orders still reference this supplier.',
+        name: 'Compliance Certificate',
+        definition: 'A regulatory or quality document with an expiry date.',
+        example: 'CERT-0892-12 | Food Hygiene Rating 5 | Issued: 2024-09-01 | Expires: 2026-08-31 | Issuer: FSA',
       },
       {
         name: 'Contract',
-        definition:
-          'The formal agreement governing a supplier relationship: pricing tiers, minimum spend, exclusivity clauses, SLAs, and payment terms. Contracts must link to the supplier master — floating contracts are an unmanaged financial and legal risk.',
-        example:
-          'SA-2024-ALB-007 — 2-year supply agreement, min. AED 15,000/week, exclusivity clause on Mandi chicken. Signed: Docusign. Stored: SharePoint (not ERP).',
+        definition: 'The commercial agreement governing terms, pricing, and SLAs.',
+        example: 'CTR-0892-2024 | Sysco UK Framework Agreement | Start: 2024-01-01 | End: 2026-12-31 | Payment Terms: 30 days net',
       },
+    ],
+    hierarchy: [
+      { level: 0, name: 'Supplier Domain' },
+      { level: 1, name: 'Ultimate Parent (D&B Global Ultimate)' },
+      { level: 2, name: 'Legal Entity / Head Office', description: 'registered company' },
+      { level: 3, name: 'Supplier Site', description: 'physical supply facility' },
+      { level: 4, name: 'Contact', description: 'key individual at site' },
+      { level: 4, name: 'Product Listing', description: 'what this site supplies' },
+      { level: 4, name: 'Compliance Certificate', description: 'regulatory docs with expiry' },
+      { level: 3, name: 'Contract', description: 'commercial agreement' },
+      { level: 1, name: 'Independent Supplier (no parent group)' },
+      { level: 2, name: 'Supplier Site' },
+      { level: 3, name: 'Contact' },
+      { level: 3, name: 'Product Listing' },
     ],
     dmJourney: [
       {
         technique: 'Data Sources',
-        why: 'Supplier data enters through onboarding forms, supplier self-service portals, Companies House or GLEIF for legal entity validation, Dun & Bradstreet for global business identity, and ERP purchase order history. Certificate documents (ISO, organic, halal, food hygiene) arrive as PDFs, expiry dates buried in free-text fields or spreadsheets.',
+        why: "Supplier onboarding forms, procurement portals (Coupa/Ariba), Companies House/GLEIF (legal entity validation), D&B (enrichment), legacy supplier spreadsheets.",
+        exampleChallenge:
+          "Sysco UK is onboarded in three systems: the ERP (as 'Sysco UK Ltd'), the procurement portal (as 'SYSCO UK LIMITED'), and a legacy spreadsheet (as 'Sysco'). Three records, one supplier.",
       },
       {
         technique: 'Data Integration',
-        why: 'The supplier master must feed procurement platforms (Coupa, SAP Ariba), ERP for purchase orders and goods receipt, accounts payable for payment execution, and sustainability reporting for ESG metrics. Certificate data must integrate with compliance tracking systems. When any of these integrations lag, the consequences range from delayed payments to regulatory exposure.',
+        why: 'Supplier portal → procurement system → ERP → AP; certificate documents → compliance tracker; price lists → product master.',
+        exampleChallenge:
+          'Sysco updates their price list quarterly. It arrives as a PDF. Someone manually keys the changes into the ERP. Three products are keyed incorrectly. COGS is wrong for the whole quarter.',
       },
       {
         technique: 'Data Quality',
-        why: 'Supplier DQ has a financial dimension that is often underestimated. Bank account completeness and accuracy is not an administrative nicety — wrong bank details mean payments to the wrong account. VAT and tax ID validation prevents fraudulent vendor creation. Certificate expiry tracking is a compliance obligation. Contact completeness determines whether your procurement team can actually reach the supplier.',
+        why: 'Bank account completeness (payment accuracy), VAT/tax ID validation, contact completeness, certificate expiry tracking, product listing accuracy.',
+        exampleChallenge:
+          "Audit season. Prove every food supplier holds a current food hygiene certificate. Your supplier database has 847 vendors. Certificate expiry dates are in a free-text field: some say '2024', some 'March 2025', some are blank.",
       },
       {
         technique: 'Data Governance',
-        why: 'Supplier governance defines who can create, approve, and modify vendor records. Segregation of duties between the person who creates a supplier and the person who approves it is a core financial control (preventing fictitious vendor fraud). Certificate governance means defined owners for expiry alerts, escalation paths, and trading suspension triggers when certificates lapse.',
+        why: 'New supplier approval workflow (who can onboard?), certificate renewal reminders, bank detail change authorisation (fraud risk), procurement policy enforcement.',
+        exampleChallenge:
+          "A supplier requests a bank account change via email. AP updates it in the payment system. It doesn't update in the supplier master. Three months later, £340,000 is paid to the wrong account.",
       },
       {
         technique: 'Master Data Management',
-        why: 'Supplier MDM manages corporate family relationships — the same business can appear as a UK subsidiary, a European parent, and a US holding company, each needing different payment terms and contact details, but linked to the same ultimate beneficial owner. D&B DUNS numbers are the global ID layer. Post-acquisition, supplier master dedup is always one of the largest data migration workstreams.',
+        why: 'Supplier golden record across procurement + ERP + AP; parent-child hierarchy (site vs corporate entity); D&B DUNS as global identifier; post-acquisition supplier master consolidation.',
+        exampleChallenge:
+          'Post-merger: two supplier masters, 1,200 combined vendors, 300 apparent duplicates. Some duplicates are different sites of the same parent company. Some are genuinely different companies with similar names. D&B DUNS resolves 60% automatically. The rest needs manual review.',
       },
       {
         technique: 'Reverse Integration',
-        why: 'The clean supplier master publishes back to the procurement catalogue (so buyers see approved vendors), to the AP system (for payment accuracy), to sustainability platforms like EcoVadis (for ESG scoring), and to the contract management system for renewal tracking. Supplier data publication is often overlooked until a payment fails or a contract auto-renews at the wrong rate.',
+        why: 'Clean supplier records → AP (accurate payments), → procurement catalogue (correct pricing), → sustainability reporting platforms, → risk dashboards.',
+        exampleChallenge:
+          'The ESG report needs Scope 3 emissions by supplier. Clean supplier data with parent-child hierarchy and D&B linkage makes this a database query. Dirty data makes it a 6-week manual exercise.',
       },
     ],
     integrations: [
       {
-        name: 'SAP Ariba',
-        category: 'Procurement',
-        description:
-          'End-to-end procurement platform that is both a source of supplier master data and a consumer of it. Supplier onboarding often starts here.',
+        name: 'D&B / Dun & Bradstreet',
+        category: 'DaaS',
+        description: 'DUNS number, global parent-child hierarchy, financial risk scores, and entity validation for supplier master enrichment.',
       },
       {
-        name: 'Dun & Bradstreet',
-        category: 'Enrichment',
-        description:
-          'D-U-N-S numbers provide a globally unique legal entity identifier. D&B enrichment appends financials, corporate hierarchy, and risk scores to supplier records.',
-      },
-      {
-        name: 'Coupa',
+        name: 'Coupa / SAP Ariba',
         category: 'Procurement',
-        description:
-          'Cloud-based spend management platform with supplier portal for self-service data maintenance — reducing the data entry burden on procurement teams.',
+        description: 'Supplier onboarding portal, procurement catalogue management, and purchase order workflow — primary source of supplier transactional data.',
       },
       {
         name: 'EcoVadis',
         category: 'ESG',
-        description:
-          'Sustainability ratings platform. ESG scores from EcoVadis feed into supplier risk profiles and are increasingly required by large enterprise procurement policies.',
+        description: 'Supplier sustainability ratings — CSR, environmental, labour, and ethics scores linked to supplier master for ESG reporting.',
       },
       {
-        name: 'SAP S/4HANA',
-        category: 'ERP',
-        description:
-          'Core ERP system where vendor master data lives for accounts payable. Mismatches between procurement supplier master and ERP vendor master cause payment failures.',
+        name: 'GLEIF',
+        category: 'DaaS',
+        description: 'Global Legal Entity Identifier Foundation — authoritative source for LEI codes and registered legal entity names across jurisdictions.',
       },
       {
-        name: 'World-Check (Refinitiv)',
-        category: 'Compliance',
-        description:
-          'Sanctions and PEP screening database. New suppliers and periodic re-screens run against World-Check as part of KYS (Know Your Supplier) compliance.',
+        name: 'DocuSign / Icertis',
+        category: 'Contract Management',
+        description: 'Contract lifecycle management — supplier agreements linked to the supplier master with term dates and renewal alerts.',
       },
     ],
     scenarios: [
       {
-        title: 'The Ghost Supplier Fraud',
+        title: 'The Wrong Bank Account',
         narrative:
-          'An internal audit reveals £340,000 paid to a supplier no one in procurement recognises. Investigation shows a vendor record was created with a slight name variation — "Acme Services Ltd" vs existing "Acme Services Limited" — bypassing duplicate detection. The bank account was changed two weeks before payment without approval workflow.',
-        dmConcepts: ['Supplier MDM', 'Data Governance', 'Deduplication', 'Workflow Controls'],
+          "A supplier emails to say their bank details have changed. AP updates the payment system. Nobody updates the supplier master. Three months and four payments later, £340,000 has gone to an account the supplier doesn't recognise. The supplier master said the old details were correct.",
+        dmConcepts: ['Data Governance', 'Data Quality', 'MDM'],
       },
       {
-        title: 'Concentration Risk Invisible Until Crisis',
+        title: 'Certificate Roulette',
         narrative:
-          'A geopolitical event disrupts a key region. Your risk team discovers that 14 of your "different" suppliers are subsidiaries of one parent entity headquartered there. Without corporate hierarchy data in your supplier master, this concentration was invisible — until $8M of orders were at risk simultaneously.',
-        dmConcepts: ['Hierarchy Management', 'Risk Data', 'Supplier MDM', 'Data Governance'],
+          "Audit season. Prove every food supplier has a current food hygiene cert. 847 suppliers. Expiry dates stored in a free-text field — '2024', 'March 2025', blank. You have two days.",
+        dmConcepts: ['Data Quality', 'Data Governance'],
       },
       {
-        title: 'Certification Expiry Cascade',
+        title: 'The Merger Supplier Swamp',
         narrative:
-          'A food supplier\'s allergen management certification expired 47 days ago. Nobody noticed — because certifications were stored in a shared drive, not linked to the supplier master. Your quality team approved three purchase orders against an unqualified supplier. Regulatory exposure: significant.',
-        dmConcepts: ['Reference Data', 'Data Quality', 'Supplier MDM', 'Governance Workflows'],
+          'Two supplier masters. 1,200 combined vendors. 300 apparent duplicates — some are different sites of the same parent company, some are genuinely different companies with similar names. DUNS resolves 60%. Go-live is in 3 weeks.',
+        dmConcepts: ['MDM', 'Data Integration', 'Data Quality'],
       },
     ],
-  },
-
-  fb: {
-    name: 'Food & Beverage Domain',
-    tagline: 'Every ingredient has a story — your data must tell it accurately, or someone gets hurt.',
-    analogy:
-      'F&B product data is like a nutritional label — one missing allergen and the consequences go well beyond a data quality score.',
-    entities: [
+    crossDomainRelationships: [
       {
-        name: 'Menu',
-        definition:
-          'The top-level catalogue of items available for sale at a venue or brand. A menu has a validity window, applies to specific sites, and contains one or more sub-menus. It is the contract between kitchen capability and customer expectation.',
-        example:
-          'Noura Kitchen Lunch Menu — valid Mon–Fri 11:30–15:30 — 42 items across 6 sub-menus. Applies to 12 Dubai outlets. Version: 2.4. POS sync status: ✓.',
+        targetSlug: 'financial',
+        targetName: 'Financial Domain',
+        dataFlow: 'Supplier master → payment terms → AP journal → COGS',
+        withoutThis: 'Wrong payment terms paid; COGS corrupted; supplier disputes take months to resolve',
       },
       {
-        name: 'Sub-Menu',
-        definition:
-          'A logical grouping of menu items within a menu — typically by course, cuisine type, or daypart. Sub-menus drive how items are presented on digital displays and POS screens.',
-        example:
-          '"Grills & Mains" — 9 items, average price AED 95. Position: 3rd on screen. Flagged as upsell target for Mandi upgrade modifiers.',
+        targetSlug: 'product-hospitality',
+        targetName: 'F&B · Hospitality',
+        dataFlow: 'Supplier site → product listing → recipe ingredient → logistical variant',
+        withoutThis: 'Recipe costs are wrong; supply chain risk by ingredient is invisible',
       },
       {
-        name: 'Menu Item',
-        definition:
-          'A named, priced, sellable product as it appears to the customer. A menu item is not the same as a logistical variant — it is the customer-facing representation, assembled from one or more recipe components.',
-        example:
-          '"Chicken Mandi (Serve 1)" — AED 89. Live on POS ✓, live on digital menu ✓, Nutritics nutritional profile calibrated ✓, allergens declared ✓.',
+        targetSlug: 'location',
+        targetName: 'Location',
+        dataFlow: 'Supplier site → delivery zone → store coverage map',
+        withoutThis: 'Cannot identify which stores are at risk if a specific supplier fails',
       },
       {
-        name: 'Logistical Variant',
-        definition:
-          'The physical form in which a product arrives from a supplier — distinct from how it appears on the menu. One menu item may require splitting, portioning, or assembling multiple logistical variants. This is the critical link between supplier data and kitchen operations.',
-        example:
-          '"Whole Mandi Chicken — 1.4–1.6kg, fresh chilled, Halal certified." Arrives as 1 unit from Al Barakah. Kitchen trims and joints it → yields exactly 1 menu serve of Chicken Mandi. The menu never shows this variant.',
-      },
-      {
-        name: 'Recipe',
-        definition:
-          'The ingredient-level specification for a menu item: quantities, preparation method, cooking time, and yield per portion. Recipes are the source of truth for food cost, nutritional calculation, and allergen declarations.',
-        example:
-          'Chicken Mandi Serve 1: 1× whole Mandi chicken LV (1.4kg), 150g long-grain rice, 22g ras el hanout blend, 200ml chicken stock, 15ml vegetable oil. Yield: 1 portion. Cook: 45 min. Food cost: AED 31.20.',
-      },
-      {
-        name: 'Ingredient',
-        definition:
-          'A raw material used in one or more recipes. Each ingredient carries allergen flags, a supplier SKU reference, unit of measure, and cost per unit. Ingredient changes ripple through every recipe that uses them.',
-        example:
-          '"Sesame Oil" — SKU: CHEF-OIL-SES-1L — Allergen: Sesame (MUST DECLARE, EU/UK Natasha\'s Law). Used in 14 recipes. If supplier changes the formulation, all 14 menu items need a nutritional and allergen review.',
-      },
-      {
-        name: 'Modifier',
-        definition:
-          'An optional addition, substitution, or customisation that a customer can apply to a menu item at point of order. Modifiers must link to recipe adjustments and nutritional recalculations — they are not just price changes.',
-        example:
-          '"Saffron Rice Upgrade — +AED 8." Triggers: swap 150g long-grain rice → 150g saffron rice. Recipe delta: +AED 2.40 food cost. Calorie delta: +45 kcal. Allergen delta: none. All must flow to the nutritional display.',
-      },
-      {
-        name: 'Nutritional Profile',
-        definition:
-          'The calculated per-portion nutritional values for a menu item — calories, macros, allergens, and dietary flags. Derived from recipe ingredients via a nutritional DaaS (e.g. Nutritics). Mandatory for sites with 250+ employees under UK/EU calorie labelling legislation.',
-        example:
-          '"Chicken Mandi Serve 1: 847 kcal | 52g protein | 28g fat | 89g carbs." Allergens: gluten (bread garnish), sesame (oil). Calorie label required at 8 of 12 Dubai outlets. Last Nutritics sync: 14 Mar 2026.',
-      },
-    ],
-    dmJourney: [
-      {
-        technique: 'Data Sources',
-        why: 'Menu and recipe data originates in recipe management systems (Fourth, Crunchtime), POS platforms (Oracle Simphony, NCR Aloha), supplier ingredient specifications, and nutritional calculation platforms (Nutritics). Logistical variants — the purchasable form from a supplier — live in the supply chain system and must be mapped to recipe ingredients. These sources rarely speak to each other natively.',
-      },
-      {
-        technique: 'Data Integration',
-        why: 'The integration chain is: supplier ingredient → recipe system → nutritional calculation (Nutritics API) → menu content management → POS → digital menu board → delivery platform. Every link matters. A supplier updating an ingredient specification must trigger a recalculation cascade — from recipe, through nutritional values, to allergen declarations on the published menu.',
-      },
-      {
-        technique: 'Data Quality',
-        why: 'In F&B, data quality is not just operational — it is a legal and safety obligation. Allergen declaration accuracy is governed by Natasha\'s Law and EU Food Information Regulations. Calorie labelling accuracy is mandatory in venues with 250+ employees. Portion yield consistency affects food cost calculations. Every recipe must have complete ingredient coverage — a recipe with missing ingredients is a compliance and cost risk simultaneously.',
-      },
-      {
-        technique: 'Data Governance',
-        why: 'Who has authority to change a recipe? In most hospitality businesses, this is dangerously informal. Governance defines the change control process for recipe modifications (especially allergen-impacting changes), the approval workflow for new menu items, the version history for recipes, and the publication sign-off before changes go live on digital menus or POS. Without governance, a chef\'s tweak becomes a compliance breach.',
-      },
-      {
-        technique: 'Master Data Management',
-        why: 'Menu item MDM becomes critical at scale — particularly after acquisitions. When two brands are merged, hundreds of menu items may be similar but not identical: different portion sizes, different recipe variants, different names for the same dish. MDM defines the golden menu item, maps logistical variants to the correct recipe, and manages the ingredient master (one canonical definition of "chicken breast" across all brands).',
-      },
-      {
-        technique: 'Reverse Integration',
-        why: 'Clean, governed menu and nutritional data must publish back to POS (for correct transaction recording and upsell prompts), digital menu boards, delivery platforms (Uber Eats, Deliveroo, Just Eat), the company website, and regulatory compliance reporting. Some brands manage this via a central menu content platform; others push directly. Either way, this is the publication layer where data quality failures become visible to customers.',
-      },
-    ],
-    integrations: [
-      {
-        name: 'Aptean / Infor Food & Beverage ERP',
-        category: 'ERP',
-        description:
-          'F&B-specific ERP systems with built-in recipe management, batch traceability, and shelf life tracking. The operational core for most mid-to-large F&B manufacturers.',
-      },
-      {
-        name: 'Centric PLM',
-        category: 'PLM',
-        description:
-          'Product lifecycle management for F&B: formulation, regulatory, and labelling workflows in one platform. Reduces the spreadsheet chaos of new product development.',
-      },
-      {
-        name: '1WorldSync / Salsify',
-        category: 'Product Content',
-        description:
-          'Global data pool / PIM platforms used to syndicate product content — including allergens, nutritionals, and images — to retailer portals and GS1 registries.',
-      },
-      {
-        name: 'FoodChain ID',
-        category: 'Regulatory',
-        description:
-          'Testing, certification, and regulatory data management for food safety compliance. Integrates with product master for certification status and expiry tracking.',
-      },
-      {
-        name: 'SAP S/4HANA',
-        category: 'ERP',
-        description:
-          'Large-enterprise ERP where material master, batch management, and quality management modules handle F&B product data at scale.',
-      },
-      {
-        name: 'Trace One',
-        category: 'PLM/Compliance',
-        description:
-          'Retailer-facing product specification and compliance platform. Where private label F&B data is exchanged between manufacturer and retailer.',
-      },
-    ],
-    scenarios: [
-      {
-        title: 'The Undeclared Allergen',
-        narrative:
-          'A recipe reformulation substituted one ingredient for a cost-equivalent alternative. The new ingredient contained traces of sesame. The allergen declaration on the recipe system was updated. The label artwork was not. Three months later, a consumer with a sesame allergy was hospitalised. A product recall followed — 1.2 million units, across 4 markets.',
-        dmConcepts: ['Allergen Data Management', 'Recipe Management', 'Data Quality', 'Change Control'],
-      },
-      {
-        title: 'Retailer Portal Rejection Cascade',
-        narrative:
-          'A major supermarket chain upgraded its supplier portal to require 47 mandatory nutritional and allergen fields. Your product master has 31 of them. The remaining 16 are spread across recipe PDFs, spreadsheets, and one R&D scientist\'s inbox. 340 products were rejected from the portal, blocking £2.1M of ranging.',
-        dmConcepts: ['Product MDM', 'Data Completeness', 'Data Quality', 'Product Content Syndication'],
-      },
-    ],
-  },
-
-  apparel: {
-    name: 'Apparel Domain',
-    tagline: 'One style, fifty variants — and every variant is a data management problem.',
-    analogy:
-      'Apparel data is like a matrix — style × colour × size — and a gap in any cell breaks an order, a replenishment, or a customer experience.',
-    entities: [
-      {
-        name: 'Style',
-        definition:
-          'The design concept that exists independent of colour or size — the parent product from which all variants inherit core attributes. A style has a unique code, a buyer, a season, and a PLM lifecycle status.',
-        example:
-          "NTS-TS-2024-007 'TrailBreaker Tee' — 3 colourways, 6 sizes, 18 SKUs. Season: AW24. Buyer: Reem Al-Hadidi. PLM status: Approved.",
-      },
-      {
-        name: 'SKU',
-        definition:
-          'The atomic sellable unit: one style, one colour, one size. Each SKU requires a full data record — GTIN, dimensions, weight, and stock — to trade across any channel.',
-        example:
-          'NTS-TB-TGR-M — TrailBreaker Tee, Tiger Orange, Size M. GTIN: 06291234500042. WMS stock: 340 units. E-commerce status: Live.',
-      },
-      {
-        name: 'Colorway',
-        definition:
-          'A specific colour variant of a style, with its own canonical name, Pantone reference, and regional market alias. Colourway naming inconsistency is one of the most common causes of digital asset mismatches.',
-        example:
-          "Tiger Orange — Pantone 1585 C. Market alias: 'Orange' (UAE), 'Burnt Orange' (UK). Used across 6 styles in AW24. Photo shoot: confirmed.",
-      },
-      {
-        name: 'Size',
-        definition:
-          'A size variant within a colourway. Sizes differ by market (UK 12 ≠ US 12 ≠ EU 42) and by category. Size harmonisation across markets is a persistent data quality problem.',
-        example:
-          'Size M — NouraSport standard: chest 96–101cm. Maps to UK 12–14, US M, EU 40–42, AU 12. Supplier spec says chest 94cm. Discrepancy flagged.',
-      },
-      {
-        name: 'Supplier',
-        definition:
-          'The manufacturer or sourcing partner responsible for producing the style. In apparel, supplier data includes lead times, fabric specifications, sustainability audit status, and country of origin — all of which affect cost, compliance, and time to market.',
-        example:
-          'PeakThread Bangladesh Ltd — Dhaka Industrial Zone, Unit 4C. Lead time: 84 days. Fabric: moisture-wicking poly-cotton. SEDEX audit: passed Feb 2024.',
-      },
-      {
-        name: 'Season',
-        definition:
-          'The commercial planning period that governs when a range is bought, built, and sold. Seasons define the lifecycle container for styles and SKUs — from buy window to markdown.',
-        example:
-          'AW24 — Buy window: Feb–Mar 2024. Go-live: 01 Aug 2024. Total range: 847 styles, 12,400 SKUs. Markdown start: 01 Jan 2025.',
-      },
-      {
-        name: 'Range Plan',
-        definition:
-          'The structured buying plan for a season and category: target style count, SKU depth, investment budget, and open-to-buy. Range plans are the commercial contract between buying and finance.',
-        example:
-          'AW24 Womenswear Active — planned: 120 styles, 2,160 SKUs. Signed budget: AED 4.2M. 14 styles still awaiting supplier confirmation.',
-      },
-    ],
-    dmJourney: [
-      {
-        technique: 'Data Sources',
-        why: 'Apparel product data is created across the entire product development lifecycle: range plans in Excel, specifications in PLM (Centric, Gerber), fabric and trim details from suppliers, size grading from technical design, GTINs from GS1 registration, and commercial content (descriptions, images) from creative teams. Each source introduces the product to a different system at a different stage — integration is not optional, it is the product\'s journey from concept to shelf.',
-      },
-      {
-        technique: 'Data Integration',
-        why: 'The apparel integration chain runs from PLM (where the product is designed) → ERP (where the style master is created and commercial terms are set) → OMS (where orders are taken) → WMS (where stock is received and picked) → e-commerce (where the product is sold). Breaking this chain — a style not yet in ERP when the warehouse receives stock, or an e-commerce platform without the size chart — creates operational failures that manifest as customer complaints.',
-      },
-      {
-        technique: 'Data Quality',
-        why: 'Apparel DQ has unique complexity: size charts are market-specific (S/M/L in UK, 8/10/12 in Australia, 36/38/40 in Europe), colour names are inconsistently applied across buying seasons and brands, and GTIN completeness is a retail trading requirement. A single missing or wrong GTIN stops a product from being scanned at POS or received into the warehouse. Supplier specification accuracy determines whether the garment produced matches what was ordered.',
-      },
-      {
-        technique: 'Data Governance',
-        why: 'Apparel governance defines who can create a new style, what mandatory attributes must be complete before a style can progress to the next stage (e.g. no purchase order can be raised without a complete size chart), how seasonal data is archived, and how colour and size master records are controlled. Without governance, buying teams create styles ad hoc, size naming drifts, and the product data estate becomes archaeological.',
-      },
-      {
-        technique: 'Master Data Management',
-        why: 'Style master MDM creates one authoritative definition of each product across buying, merchandising, supply chain, and retail. The size master normalises size naming across markets. The colour master maintains canonical colour names with regional aliases. For multi-brand retailers, MDM resolves cases where the same product appears under different style codes in different brands — consolidating or maintaining as deliberate parallel records.',
-      },
-      {
-        technique: 'Reverse Integration',
-        why: 'Complete, governed product data publishes back to e-commerce PDPs (product detail pages with correct images, descriptions, and size guides), wholesale portals (NuOrder, Joor) for B2B ordering, retail POS for scanning and RFID, warehouse management for receiving and picking, and buying analytics for margin and range performance reporting. The quality of the reverse integration determines the quality of the customer experience — literally.',
-      },
-    ],
-    integrations: [
-      {
-        name: 'Centric PLM',
-        category: 'PLM',
-        description:
-          'Fashion and apparel product lifecycle management — from concept sketch to production handoff. Source of style, colour, and material master data.',
-      },
-      {
-        name: 'Akeneo PIM',
-        category: 'PIM',
-        description:
-          'Product Information Management platform widely adopted in apparel for managing SKU attributes, digital assets, and multi-channel syndication at variant level.',
-      },
-      {
-        name: 'Shopify / SFCC',
-        category: 'E-commerce',
-        description:
-          'Direct-to-consumer platforms that consume product data — variants, images, descriptions, and sizing — from the PIM or product master.',
-      },
-      {
-        name: 'Manhattan Associates WMS',
-        category: 'WMS',
-        description:
-          'Warehouse management system that requires SKU-level data (dimensions, weights, storage rules) to allocate pick locations and manage replenishment.',
-      },
-      {
-        name: 'GS1 / GXS',
-        category: 'Standards',
-        description:
-          'Global trade item number (GTIN/EAN/UPC) registry. Each SKU requires a registered barcode — the first step in any retailer onboarding process.',
-      },
-      {
-        name: 'Lectra / Gerber',
-        category: 'Pattern / Grading',
-        description:
-          'CAD systems for pattern making and size grading. Measurement data from these systems should feed the fit data master — but rarely does without integration.',
-      },
-    ],
-    scenarios: [
-      {
-        title: 'The Size Chaos Launch',
-        narrative:
-          'Your brand entered the US market. UK sizes were mapped to US sizes by a spreadsheet maintained by one person who left the company. For six months, US customers received garments one size too small. Return rates hit 34%. Marketplace seller ratings fell below threshold. The root cause: no size harmonisation table in the product master — just a spreadsheet that no one could trust.',
-        dmConcepts: ['Size Harmonisation', 'Product MDM', 'Data Quality', 'Reference Data'],
-      },
-      {
-        title: 'The Image-SKU Mismatch',
-        narrative:
-          'A product photography batch was uploaded with filenames generated by the studio — not by your SKU codes. The DAM team matched by colour name, not colour code. "Midnight Navy" and "Dark Navy" exist in your taxonomy. 847 SKUs ended up with the wrong product image live on site for 11 days before a customer spotted it. By then, 4,200 orders had been placed.',
-        dmConcepts: ['Digital Asset Management', 'Product MDM', 'Data Quality', 'Taxonomy'],
-      },
-      {
-        title: 'Customs Classification Failure',
-        narrative:
-          'A 10,000-unit shipment was held at the port. The customs broker requested HS tariff codes, fibre content percentages, and country of origin for each of 340 styles. None of these fields existed in your ERP. They were in a spreadsheet the buyer had created, without the correct formatting for customs declarations. The shipment sat for 19 days. The cost: £180,000 in demurrage and missed sell-through.',
-        dmConcepts: ['Data Completeness', 'Product MDM', 'Reference Data', 'Data Governance'],
+        targetSlug: 'customer',
+        targetName: 'Customer',
+        dataFlow: 'A B2B customer and a supplier may be the same legal entity',
+        withoutThis: 'No relationship visibility; commercial negotiations happen in silos',
       },
     ],
   },
 
   employee: {
-    name: 'Employee Domain',
-    tagline: 'HR data is the most sensitive in the enterprise — and the most fragmented.',
+    slug: 'employee',
+    name: 'Employee',
+    tagline: 'Headcount is simple arithmetic. Employee data is not.',
     analogy:
-      'Employee data is like a personnel file kept in twelve different cabinets by twelve different departments — each with a slightly different name on the folder.',
+      '👥 Employee data is deceptively simple — name, role, department. Until you reconcile it across payroll, HRIS, Active Directory, access control, and an expense system. Then it becomes the most politically sensitive data in the organisation.',
     entities: [
       {
         name: 'Employee',
-        definition:
-          'The individual — full-time employee, contractor, or agency worker. The atomic unit. Must be uniquely identified across HR, payroll, IT, and facilities systems.',
-        example:
-          'Layla Nasser — Workday ID: EMP-00421, Payroll ID: 8841. Cost centre updated in Workday on 01 Mar. Not yet updated in the expenses system.',
+        definition: 'A person in an employment relationship with the organisation.',
+        example: 'EMP-0441 | James Chen | Operations Manager | Status: Active | Start: 2019-07-01 | Cost Centre: CC-3042',
       },
       {
         name: 'Position',
-        definition:
-          'The job role that exists in the organisational structure, independent of who fills it. Positions can be vacant. One person can hold multiple positions in a matrix organisation.',
-        example:
-          'Senior Data Analyst — Grade 7, Analytics job family. Headcount plan: 3 FTE approved. 1 filled, 2 open. Reports to: Head of Consumer Insight.',
+        definition: 'The role/job family an employee holds — distinct from the person.',
+        example: 'POS-0812 | Operations Manager — Hospitality | Grade: M3 | Band: Manager | Department: Store Operations',
       },
       {
         name: 'Cost Centre',
-        definition:
-          'The financial unit to which an employee\'s salary and expenses are charged. Cost centres exist in both HR and finance systems — and frequently fall out of sync during org changes.',
-        example:
-          'CC-5520 — Digital & Analytics, Dubai HQ. Workday: 14 employees. Payroll: 13 employees. Gap: Layla\'s transfer not yet reflected in payroll.',
+        definition: "The financial unit to which the employee's costs are attributed.",
+        example: 'CC-3042 | Oxford Street Store — Operations | Division: Hospitality UK | P&L Owner: Regional Director',
       },
       {
-        name: 'Org Unit',
-        definition:
-          'Department, team, or division in the organisational hierarchy. Org units determine reporting lines, budget ownership, and access controls. Restructures make org hierarchy the most volatile data in the enterprise.',
-        example:
-          'Digital & Data Division → Analytics Team → Consumer Insights. 8 employees, 2 vacancies, 1 contractor not in Workday.',
+        name: 'Organisational Unit',
+        definition: 'The team, department, or division the employee belongs to.',
+        example: 'ORG-218 | Store Operations — London Region | Head Count: 142 | Manager: VP Ops (EMP-0089)',
       },
       {
         name: 'Contract',
-        definition:
-          'The employment contract: type (permanent, fixed-term, zero-hours), hours, compensation, notice period, and statutory entitlements. Must be maintained with legal precision — the source of truth for payroll and statutory obligations.',
-        example:
-          'Full-time permanent, UAE Labour Law. 30 days annual leave. Gratuity: AED 2,800/year accruing. Notice period: 30 days (not reflected in access policy).',
+        definition: 'The employment terms — type, hours, compensation.',
+        example: 'CTR-EMP-0441 | Full Time, Permanent | Hours: 40pw | Salary: Grade M3 | Probation End: 2019-10-01',
       },
       {
         name: 'Skills / Competencies',
-        definition:
-          'Structured records of qualifications, certifications, and competencies. Essential for workforce planning, role matching, and L&D — but among the least reliably maintained employee data.',
-        example:
-          'Layla Nasser: SQL (Advanced), Python (Intermediate), dbt (Advanced), Tableau (Basic). 2 skills listed on LinkedIn but not validated in Workday.',
+        definition: 'Verified capabilities linked to L&D records and LinkedIn.',
+        example: 'SKILL-0441 | Data Management ✓ | P&L Accountability ✓ | HACCP Certified ✓ | Last Reviewed: 2024-10',
       },
-      {
-        name: 'Work Location',
-        definition:
-          'The physical site where an employee is assigned to work — office, store, or remote designation. Work location drives facilities allocation, access card setup, and in some jurisdictions, local tax obligations.',
-        example:
-          'Dubai HQ — Noesis Tower, Floor 12. Assigned desk: 12-F-044. Badge access profile: last updated when Layla was on Floor 9. Not corrected.',
-      },
+    ],
+    hierarchy: [
+      { level: 0, name: 'Employee Domain — Noesis Foods Group' },
+      { level: 1, name: 'Legal Entity (Noesis Foods UK Ltd)' },
+      { level: 2, name: 'Division (Hospitality UK)' },
+      { level: 3, name: 'Region (London Region)' },
+      { level: 4, name: 'Department / Function (Store Operations)' },
+      { level: 5, name: 'Team (Oxford Street Ops)' },
+      { level: 6, name: 'Position (Operations Manager)' },
+      { level: 7, name: 'Employee (James Chen — EMP-0441)' },
+      { level: 8, name: 'Contract (terms, hours, grade)' },
+      { level: 8, name: 'Skills & Competencies' },
     ],
     dmJourney: [
       {
         technique: 'Data Sources',
-        why: 'Employee data originates in the HRIS (Workday, SuccessFactors) as the intended system of record, but in practice it is fragmented across payroll (ADP, Ceridian), identity management (Microsoft Entra ID, Okta), facilities (desk booking, access control), expense management, and the ATS used for recruitment. Joiners arrive in the HRIS before other systems are ready. Leavers exit the HRIS before all system access is revoked. The gap between these events is where risk accumulates.',
+        why: 'HRIS (Workday/SuccessFactors), recruitment ATS (Greenhouse/Lever), payroll (ADP/Ceridian), Active Directory/Entra ID, badge/access control systems.',
+        exampleChallenge:
+          "James Chen's manager changes. HR updates Workday. Payroll is updated. Active Directory still shows the old manager. The organisation chart tool shows a third name. Three systems, three managers.",
       },
       {
         technique: 'Data Integration',
-        why: 'The joiner/mover/leaver (JML) process is the critical integration workflow. A new hire trigger in the HRIS should automatically provision Active Directory access, create a payroll record, assign a cost centre in finance, and generate a facilities ticket. When these integrations are manual, the failure rate is measured in stale access, missed payroll entries, and wrong cost centre allocations. ServiceNow or similar ITSM platforms often orchestrate the JML chain.',
+        why: 'HRIS → payroll → Active Directory → facilities → analytics; joiner/mover/leaver events trigger provisioning across 8+ downstream systems.',
+        exampleChallenge:
+          "James moves from Oxford Street to the Regional Office. HRIS is updated. The facilities system isn't connected to the JML workflow. His access card still opens Oxford Street. His Regional Office access isn't provisioned for 3 weeks.",
       },
       {
         technique: 'Data Quality',
-        why: 'Employee DQ failures are often invisible until they cause financial or security incidents. Cost centre misassignment silently mis-charges departmental budgets. Job title inconsistency undermines org chart accuracy and succession planning. Leavers not terminated in downstream systems are a security and audit risk. Manager hierarchy gaps break approval workflows. The highest-impact DQ check in this domain is: does every active HRIS record map to an active identity in Active Directory, and vice versa?',
+        why: "Cost centre assignment accuracy, job title standardisation (is 'Senior Manager' the same as 'Principal'?), leavers correctly terminated, location assignment current.",
+        exampleChallenge:
+          "James transfers from Finance to Operations. His cost centre in the expenses system doesn't update for 2 months. His expenses hit the Finance budget. Marketing shows one person short in headcount.",
       },
       {
         technique: 'Data Governance',
-        why: 'Employee data governance carries the highest sensitivity classification in most organisations. Salary, medical, disciplinary, and performance data require strict access controls and audit logging. GDPR mandates defined retention periods (often 7 years post-termination for payroll records, 6 months for interview notes). Data governance here defines who can see what, how long it is kept, and how it is disposed of — with documented justification for every exception.',
+        why: 'PII and sensitive data classification (salary, medical, disciplinary — access tiers); GDPR right to erasure on termination; data retention (7 years in many jurisdictions); audit trails.',
+        exampleChallenge:
+          "A data breach investigation reveals 23 ex-employees still have active system access — one for over 2 years post-termination. The leaver process fired a ServiceNow ticket. Three systems weren't connected to the JML workflow.",
       },
       {
         technique: 'Master Data Management',
-        why: 'Employee MDM is most critical in two scenarios: post-merger integration (reconciling two HRIS systems with overlapping employee populations, mismatched job titles, and conflicting cost centre codes) and multi-system environments (where the same person exists in HRIS, payroll, Active Directory, and an external contractor platform with different IDs and potentially conflicting attributes). For single-HRIS organisations with clean JML processes, MDM scope may reduce to dedup on rehire and golden record maintenance — DQ and Governance may deliver more value than a full MDM implementation.',
+        why: 'Employee golden record across HRIS, payroll, and Active Directory; post-merger employee master consolidation; job title and grade normalisation across organisations. Note: for smaller orgs with a single HRIS, DQ + Governance may suffice — MDM becomes critical at scale or post-acquisition.',
+        exampleChallenge:
+          "Post-merger: two HRIS instances, 1,400 employees to consolidate into one Workday instance, 340 with duplicate entries from cross-company project work. 'Senior Manager' in Company A = 'Principal' in Company B. Go-live in 6 weeks.",
       },
       {
         technique: 'Reverse Integration',
-        why: 'Approved, governed employee data publishes back to payroll (for accurate salary payments), Active Directory (for system access provisioning), facilities management (desk assignments, access cards, car park allocation), L&D platforms (for training assignment based on role and location), and workforce analytics (for headcount, attrition, and cost reporting). The payroll reverse integration is the one with zero tolerance for error — every mistake is visible on payday.',
+        why: 'Clean employee data → payroll (salary accuracy), → Active Directory (system access), → facilities (desk booking, access badges), → L&D platforms, → workforce analytics.',
+        exampleChallenge:
+          'The workforce analytics dashboard shows London Region headcount as 139. The HRIS says 142. Payroll says 141. Three different feeds, three different cut-off dates. The board pack shows whichever number someone chose this quarter.',
       },
     ],
     integrations: [
       {
-        name: 'Workday HCM',
+        name: 'Workday / SAP SuccessFactors',
         category: 'HRIS',
-        description:
-          'Leading cloud HRIS — system of record for employee master data, org hierarchy, and compensation. Often the source of truth for JML triggers.',
+        description: 'Core HR system of record — employee master, organisational hierarchy, position management, and JML event source.',
       },
       {
-        name: 'SAP SuccessFactors',
-        category: 'HRIS',
-        description:
-          'Enterprise HR suite covering core HR, talent, learning, and succession. Complex integration footprint across payroll and IT systems.',
-      },
-      {
-        name: 'Microsoft Active Directory / Entra ID',
-        category: 'Identity',
-        description:
-          'Corporate identity platform. Employee records from HRIS must flow into AD/Entra to provision accounts, email, and access rights. JML latency between HRIS and AD is the most common security finding in enterprise audits.',
-      },
-      {
-        name: 'ADP / Ceridian Dayforce',
+        name: 'ADP / Ceridian',
         category: 'Payroll',
-        description:
-          'Payroll systems that consume employee master data. Discrepancies between HRIS and payroll are the primary source of payroll errors and regulatory penalties.',
+        description: 'Payroll processing — receives employee and cost centre data from HRIS; must stay synchronised for accurate salary and labour cost posting.',
       },
       {
-        name: 'ServiceNow HRSD',
-        category: 'Service Delivery',
-        description:
-          'HR service delivery platform that consumes employee master data to route queries, manage cases, and trigger onboarding workflows.',
+        name: 'Microsoft Entra ID / Okta',
+        category: 'Identity',
+        description: 'Identity and access management — provisioned from HRIS JML events; governs system access across all enterprise applications.',
       },
       {
-        name: 'Okta / CyberArk',
-        category: 'Identity Security',
-        description:
-          'Identity governance platforms that enforce access policies based on employee role and status. Require real-time sync with HRIS to respond to leavers within policy windows.',
+        name: 'ServiceNow',
+        category: 'ITSM',
+        description: 'JML ticketing — joiner/mover/leaver workflows trigger access provisioning and de-provisioning across connected systems.',
+      },
+      {
+        name: 'LinkedIn Talent Insights',
+        category: 'DaaS',
+        description: 'Skills benchmarking and external labour market data — enriches internal skills/competency records with external market context.',
       },
     ],
     scenarios: [
       {
-        title: 'The Ghost Account Security Breach',
+        title: 'The Transfer Nobody Told Systems About',
         narrative:
-          'An employee left the company. Offboarding was completed in Workday. But the IT team\'s joiner/mover/leaver process ran nightly — not in real time. The former employee\'s VPN access remained active for 31 hours. During that window, a competitor reached out. The access logs showed login activity 18 hours after termination. Legal, HR, and IT spent four months in investigation. The fix was a real-time JML integration — the kind that should have been built on day one.',
-        dmConcepts: ['JML Process', 'HR MDM', 'Identity Management', 'Data Governance'],
+          "James Chen moves from Finance to Operations. HR updates the HRIS. The expenses system doesn't update for 2 months. His costs hit the Finance budget. Operations is one person short in headcount. Finance is one over. The CFO asks why Finance headcount is exceeding plan.",
+        dmConcepts: ['Data Quality', 'Data Integration', 'Data Governance'],
       },
       {
-        title: 'The Restructure That Broke Payroll',
+        title: 'Ghost Accounts',
         narrative:
-          'A regional reorganisation moved 340 employees to a new cost centre structure. The change was made in Workday. HR assumed payroll would pick it up automatically. Payroll ran on a different integration schedule and used a cost centre table that wasn\'t updated. Six weeks of payroll was coded to dissolved cost centres. Finance couldn\'t reconcile. Payroll was delayed. Employees complained.',
-        dmConcepts: ['Org Hierarchy', 'Data Integration', 'Reference Data', 'JML Process'],
+          '23 ex-employees still have active system access. One for over 2 years. The leaver process fired a ServiceNow ticket. Three systems weren\'t on the JML workflow. A routine access audit finds it before a breach does. This time.',
+        dmConcepts: ['Data Governance', 'Data Integration'],
       },
       {
-        title: 'The GDPR Subject Access Explosion',
+        title: 'The Merger Org Collapse',
         narrative:
-          'A disgruntled ex-employee submitted a Subject Access Request on their last day. Your legal team has 30 days. The employee\'s data spans: Workday, ADP, performance management system, expense platform, IT ticketing, email archive, and three legacy project management tools. No one has a data map. The DPO starts manually emailing system owners.',
-        dmConcepts: ['Data Privacy', 'Data Governance', 'Data Lineage', 'GDPR Compliance'],
+          'Two HRIS instances, 1,400 employees, 340 duplicates, mismatched job grades, cost centres that don\'t map. Workday go-live in 6 weeks. The first payroll run in the new system will either pay everyone correctly or not.',
+        dmConcepts: ['MDM', 'Data Integration', 'Data Quality'],
+      },
+    ],
+    crossDomainRelationships: [
+      {
+        targetSlug: 'location',
+        targetName: 'Location',
+        dataFlow: 'Employee → location assignment → cost centre → store P&L',
+        withoutThis: 'Labour costs hit wrong store budgets; headcount by location is unreliable',
+      },
+      {
+        targetSlug: 'financial',
+        targetName: 'Financial Domain',
+        dataFlow: 'Employee cost centre → payroll journal → P&L',
+        withoutThis: 'Labour cost per department/store is wrong; performance bonuses calculated on incorrect baselines',
+      },
+      {
+        targetSlug: 'customer',
+        targetName: 'Customer',
+        dataFlow: 'Employee (service staff) → interaction → customer experience',
+        withoutThis: 'No link between staff performance data and customer satisfaction metrics',
+      },
+    ],
+  },
+
+  'product-hospitality': {
+    slug: 'product-hospitality',
+    name: 'F&B · Hospitality',
+    tagline: 'A menu item is not just a name and a price. It is a data contract between your kitchen, your supplier, and your customer.',
+    analogy:
+      '🍽️ Think of a menu as an iceberg. What the customer sees — name, price, photo — is 10%. Below the waterline: recipes, ingredients, allergens, nutritional values, logistical variants, and the integration layer that keeps all of it legally compliant and commercially accurate.',
+    entities: [
+      {
+        name: 'Menu Item',
+        definition: 'The consumer-facing product: name, description, price, photography, dietary badges.',
+        example: 'MNU-0042 | Classic Beef Burger | £10.99 | Available: Dine-In, Takeaway, Delivery | Dietary: N/A',
+      },
+      {
+        name: 'Logistical Variant',
+        definition: 'The purchasable form of an ingredient as it arrives from a supplier — distinct from how it\'s used in a recipe. One of the most misunderstood entities in F&B data.',
+        example: 'LV-0821 | Beef Patty, Frozen, 6oz, Case of 24 | Supplier: Sysco UK (SITE-0892-03) | Price: £2.34/unit',
+      },
+      {
+        name: 'Recipe',
+        definition: 'The ingredient-level breakdown of a Menu Item, including portion weights, cooking instructions, and yield factors.',
+        example: 'RCP-0042 | Classic Beef Burger: Beef Patty 170g + Brioche Bun 1pc + Cheddar 20g + Iceberg Lettuce 15g + Beef Tomato 30g + House Sauce 25ml',
+      },
+      {
+        name: 'Ingredient',
+        definition: 'An input to a recipe with allergen flags, INCI/nutritional links, and supplier origin.',
+        example: 'ING-0319 | Brioche Bun | Allergens: GLUTEN (Wheat), Eggs, Milk, Soy | Supplier: Allied Bakeries | Unit: 1 piece | Weight: 85g',
+      },
+      {
+        name: 'Sub-Menu',
+        definition: 'A grouping of Menu Items within a Menu — time-based (Breakfast/Lunch/Dinner) or category-based (Starters/Mains/Desserts/Drinks).',
+        example: 'SMNU-003 | Mains | Display Order: 2 | Items: 14 | Available: All Day | Brand: Noesis Burger Co.',
+      },
+      {
+        name: 'Menu',
+        definition: 'The published collection of all items available at a brand or site, with a version and effective date.',
+        example: 'MENU-2025-Q1 | Noesis Burger Co. UK | Version: 4.2 | Effective: 2025-01-06 | Sites: 47 | Status: Active',
+      },
+      {
+        name: 'Modifier',
+        definition: 'A customer-requested customisation applied to a Menu Item at point of order — captured at transaction level.',
+        example: 'MOD-0042-001 | Classic Beef Burger → Extra Cheese +£0.80 | No Lettuce | Sauce: Peri Peri',
+      },
+      {
+        name: 'Nutritional Profile',
+        definition: "Per-portion calorie, macro, and allergen declaration. Regulatory in many markets (calorie labelling, Natasha's Law UK).",
+        example: 'NUT-0042 | Classic Beef Burger | 687 kcal | Protein 42g | Carbs 48g | Fat 36g | Salt 2.1g | Allergens: Gluten, Milk, Eggs, Soy',
+      },
+      {
+        name: 'Portion Yield',
+        definition: 'The expected output weight or volume from a recipe after cooking loss is accounted for. Raw weight ≠ served weight.',
+        example: 'YLD-0042 | Beef Patty: Raw 200g → Cooked 170g | Cooking Loss Factor: 15% | Method: Flat Grill 3min each side',
+      },
+    ],
+    hierarchy: [
+      { level: 0, name: 'Product Domain — Food & Beverage — Hospitality' },
+      { level: 1, name: 'Menu', description: 'published collection — Noesis Burger Co. UK, Version 4.2' },
+      { level: 2, name: 'Sub-Menu', description: 'Breakfast / Mains / Sides / Drinks / Desserts' },
+      { level: 3, name: 'Menu Item', description: 'Classic Beef Burger — MNU-0042' },
+      { level: 4, name: 'Modifier', description: 'Extra Cheese, No Lettuce, Sauce swap' },
+      { level: 4, name: 'Nutritional Profile', description: '687 kcal | Allergens: Gluten, Milk, Eggs, Soy' },
+      { level: 1, name: 'Recipe', description: 'ingredient-level makeup — RCP-0042' },
+      { level: 2, name: 'Ingredient', description: 'Brioche Bun — ING-0319' },
+      { level: 3, name: 'Allergen Declaration', description: 'Gluten, Eggs, Milk, Soy' },
+      { level: 3, name: 'Logistical Variant', description: 'Brioche Bun, Sliced, 85g, Box 48 — from Allied Bakeries' },
+      { level: 4, name: 'Supplier Site', description: 'Allied Bakeries — Northampton DC' },
+      { level: 2, name: 'Portion Yield', description: 'Beef Patty: raw 200g → cooked 170g, 15% loss' },
+      { level: 1, name: 'Logistical Variant', description: 'standalone purchasable unit' },
+      { level: 2, name: 'Supplier Site', description: 'source of supply' },
+      { level: 2, name: 'Product Specification', description: 'weight, format, pack size, temperature regime' },
+    ],
+    dmJourney: [
+      {
+        technique: 'Data Sources',
+        why: 'Recipe management system (Fourth/Crunchtime), POS (Oracle Simphony/NCR Aloha), supplier ingredient lists, nutritional DaaS (Nutritics), menu CMS.',
+        exampleChallenge:
+          "The Classic Beef Burger recipe lives in Crunchtime. The supplier ingredient spec for the beef patty lives in a PDF from Sysco. The allergen declaration lives in a spreadsheet. They haven't been reconciled in 14 months.",
+      },
+      {
+        technique: 'Data Integration',
+        why: 'Recipe system → nutritional calculation platform → menu CMS → POS → digital menu boards → delivery platforms (Uber Eats, Deliveroo). One recipe change must cascade across all.',
+        exampleChallenge:
+          'Allied Bakeries changes the brioche bun formulation. New bun contains sesame. The recipe system is updated. The nutritional API isn\'t triggered. Digital menus still show the old allergen profile for 34 items that use the bun.',
+      },
+      {
+        technique: 'Data Quality',
+        why: "Allergen declaration accuracy (life-critical), nutritional value precision (regulatory), portion yield consistency, ingredient coverage (every recipe has defined ingredients), logistical variant → recipe mapping completeness.",
+        exampleChallenge:
+          "Natasha's Law audit: every pre-packed menu item needs a complete allergen label. 23 items have incomplete ingredients. 8 have no recipe defined. 3 have ingredients but missing allergen flags. Trading standards deadline is in 6 weeks.",
+      },
+      {
+        technique: 'Data Governance',
+        why: "Who can change allergen information? Change control for recipe modifications (approval workflow before publish). Regulatory compliance (calorie labelling, Natasha's Law, EU FIC). Version control on recipes.",
+        exampleChallenge:
+          'A chef modifies the house sauce recipe on-site, adding a new ingredient that contains celery (a major allergen). There is no recipe change approval workflow. The menu stays live with an incorrect allergen profile for 3 weeks.',
+      },
+      {
+        technique: 'Master Data Management',
+        why: 'Menu item golden record across brands and sites; logistical variant → menu item mapping; ingredient master (one canonical \'Chicken Breast\' definition); recipe consolidation after acquisition.',
+        exampleChallenge:
+          'Post-acquisition of a restaurant chain: 800 new menu items to integrate with 600 existing. 150 are similar but not identical — different portion sizes, same dish name. Without a logistical variant model, you can\'t reconcile costs or allergens across the merged estate.',
+      },
+      {
+        technique: 'Reverse Integration',
+        why: 'Clean menu data → POS (transaction accuracy), → digital menu boards, → delivery platforms (Uber Eats/Deliveroo must show correct calories and allergens), → nutritional compliance reports, → food cost analysis.',
+        exampleChallenge:
+          "Uber Eats shows the Classic Beef Burger as containing peanuts. The internal system doesn't. The allergen mismatch came from a manual data entry on the Uber Eats portal 18 months ago. Nobody audited the delivery platform data against the recipe master.",
+      },
+    ],
+    integrations: [
+      {
+        name: 'Nutritics',
+        category: 'Nutritional DaaS',
+        description: 'Nutritional calculation platform — connects recipes to EU/FDA nutrient databases; outputs calorie and macro declarations per portion.',
+      },
+      {
+        name: 'Oracle Simphony / NCR Aloha',
+        category: 'POS',
+        description: 'Point-of-sale — receives menu item master including prices, modifiers, and availability; source of transaction data for food cost analysis.',
+      },
+      {
+        name: 'Fourth / Crunchtime',
+        category: 'Recipe Management',
+        description: 'Recipe and food cost management — central repository for recipes, ingredient specs, portion yields, and theoretical food cost calculations.',
+      },
+      {
+        name: 'Allergen Bureau / FoodSwitch',
+        category: 'Allergen Verification',
+        description: 'Third-party allergen data verification — cross-references declared allergens against ingredient databases to catch declaration errors.',
+      },
+      {
+        name: 'Uber Eats / Deliveroo API',
+        category: 'Delivery Platform',
+        description: 'Delivery platform content sync — menu items, descriptions, photos, prices, calorie counts, and allergens pushed from internal menu CMS.',
+      },
+    ],
+    scenarios: [
+      {
+        title: 'The Sauce That Changed Everything',
+        narrative:
+          'A supplier reformulates a pre-made sauce used in 34 menu items across 3 brands. The new version contains sesame. The recipe system is updated. The allergen declaration cascade isn\'t triggered. For 6 weeks, 34 menu items carry an incorrect allergen profile on your digital menu, your website, and Deliveroo.',
+        dmConcepts: ['Data Quality', 'Data Integration', 'Data Governance'],
+      },
+      {
+        title: "The 150 Menu Items Nobody Can Classify",
+        narrative:
+          "You've acquired a restaurant chain. 800 items to integrate with 600 existing. 150 are similar but not identical — same dish, different portion, different recipe variant. Without a logistical variant model, you can't reconcile ingredients, costs, or allergens. The MDM project hasn't started. The systems migration has.",
+        dmConcepts: ['MDM', 'Data Integration', 'Data Quality'],
+      },
+      {
+        title: 'Calorie Labelling Deadline in 6 Weeks',
+        narrative:
+          'Regulation requires calorie counts on every menu item sold by outlets with 250+ employees. Your nutritional data comes from Nutritics, calculated per recipe. Your menu system displays per portion. The conversion logic lives in a spreadsheet with 3 owners and no version history.',
+        dmConcepts: ['Data Governance', 'Data Quality', 'Data Integration'],
+      },
+    ],
+    crossDomainRelationships: [
+      {
+        targetSlug: 'supplier',
+        targetName: 'Supplier',
+        dataFlow: 'Logistical variant → supplier site → ingredient spec → allergen declaration',
+        withoutThis: 'Recipe allergen accuracy is only as good as the ingredient data from the supplier. If supplier data is wrong, the allergen label is wrong.',
+      },
+      {
+        targetSlug: 'location',
+        targetName: 'Location',
+        dataFlow: 'Menu item → site ranging → pricing by location',
+        withoutThis: 'A menu item discontinued at one site stays live on delivery platforms for that site because location-menu mapping was never updated',
+      },
+      {
+        targetSlug: 'customer',
+        targetName: 'Customer',
+        dataFlow: 'Menu item → purchase history → customer preference → personalisation',
+        withoutThis: "Cannot identify Sarah Mitchell's dietary preferences or allergen history from transaction data",
+      },
+      {
+        targetSlug: 'financial',
+        targetName: 'Financial Domain',
+        dataFlow: 'Recipe cost (ingredients × portion yield) → food cost % → gross margin by menu item',
+        withoutThis: 'Without accurate recipe and logistical variant data, food cost is a guess. Menu pricing decisions are made on wrong margins.',
+      },
+    ],
+  },
+
+  'product-apparel': {
+    slug: 'product-apparel',
+    name: 'Apparel & Accessories',
+    tagline: 'A blue t-shirt in size medium is actually dozens of data attributes held together by brittle convention.',
+    analogy:
+      '👕 In apparel, the product domain is a size-colour matrix sitting on top of a supply chain. Get the matrix wrong and you can\'t count your stock. Get the supply chain wrong and you can\'t source it. Get both wrong simultaneously — which is common — and you have a data crisis dressed as a buying crisis.',
+    entities: [
+      {
+        name: 'Style',
+        definition: 'The base product concept — a garment design independent of colour or size.',
+        example: 'STY-0082 | Classic Crew-Neck Sweatshirt | Season: AW25 | Range: Essentials | Brand: Noesis Basics',
+      },
+      {
+        name: 'Colourway',
+        definition: 'A colour variant of a style, with canonical name and Pantone/hex reference.',
+        example: "CLR-0082-04 | Sage | Pantone: 7494 C | Hex: #9CAF88 | Aliases: 'Sage Green' (AU), 'Kaki Sauge' (FR)",
+      },
+      {
+        name: 'SKU',
+        definition: 'The atomic sellable unit: Style + Colourway + Size. The thing that goes on a hanger and gets a barcode.',
+        example: 'SKU-0082-04-M | Classic Crew-Neck | Sage | UK10/EU38/US8 | EAN: 5060123487291 | RRP: £45.00',
+      },
+      {
+        name: 'Size',
+        definition: 'The size variant with market-specific equivalents and measurement spec.',
+        example: 'SZ-M | UK: 12 | EU: 40 | US: 8 | AU: 14 | Chest: 96cm | Waist: 80cm | Length: 68cm',
+      },
+      {
+        name: 'Season',
+        definition: 'The commercial planning cycle — links styles to a buying season and range plan.',
+        example: 'SEA-AW25 | Autumn/Winter 2025 | Buying Deadline: 2025-02-28 | Drop 1: 2025-08-01 | Drop 2: 2025-10-01',
+      },
+      {
+        name: 'Range Plan',
+        definition: 'The strategic product assortment plan for a season — how many styles, at what price architecture, for which markets.',
+        example: 'RNG-AW25-ESS | Essentials Range | AW25 | Styles: 42 | SKUs: ~840 | Price Architecture: £25-£75 | Markets: UK, EU, AU',
+      },
+    ],
+    hierarchy: [
+      { level: 0, name: 'Product Domain — Apparel & Accessories' },
+      { level: 1, name: 'Brand (Noesis Basics)' },
+      { level: 2, name: 'Season (AW25)' },
+      { level: 3, name: 'Range / Collection (Essentials)' },
+      { level: 4, name: 'Style', description: 'Classic Crew-Neck Sweatshirt — STY-0082' },
+      { level: 5, name: 'Colourway', description: 'Sage — CLR-0082-04' },
+      { level: 6, name: 'SKU', description: 'STY-0082 + Sage + UK12 = SKU-0082-04-M' },
+      { level: 5, name: 'Material / Fabric', description: '80% Cotton, 20% Polyester | GSM: 280 | Care: 30° Machine Wash' },
+    ],
+    dmJourney: [
+      {
+        technique: 'Data Sources',
+        why: 'PLM (Centric/Gerber AccuMark), supplier tech packs, GS1/GTIN registration, buying office range plans, ERP style master.',
+        exampleChallenge:
+          "The AW25 Essentials range has 42 styles. Each style starts in the PLM as a tech pack. By the time it reaches the ERP, it's been re-keyed twice — once by the buying team and once by the data team. 12% have discrepancies.",
+      },
+      {
+        technique: 'Data Integration',
+        why: 'PLM → ERP (style master) → OMS → warehouse management → e-commerce PDP → wholesale portals. Each system needs different attribute sets.',
+        exampleChallenge:
+          "The ERP has the style master. The e-commerce platform needs 28 additional attributes the ERP doesn't hold. These are maintained in a separate spreadsheet by a single merchandiser. When she's on leave, nothing gets updated.",
+      },
+      {
+        technique: 'Data Quality',
+        why: 'Size chart standardisation across markets (UK/US/EU/AU), colour naming consistency (Sage ≠ Sage Green ≠ Dark Sage ≠ Khaki Sage), GTIN completeness, supplier spec accuracy.',
+        exampleChallenge:
+          "The Classic Crew-Neck comes in 5 colours across 6 sizes: 30 SKUs. Colour names were entered by three different buyers across two seasons. 'Sage' now exists as 4 different colour names in the product master. All 4 are the same hex code.",
+      },
+      {
+        technique: 'Data Governance',
+        why: 'Who owns style master data? (Buying vs. data team — a constant conflict.) New season style creation approval workflow. Seasonal data archiving policy.',
+        exampleChallenge:
+          'A new buyer creates 8 styles in the ERP before the data team has received the approved tech packs. 3 are duplicates of existing core styles from last season. The ERP now has parallel records for the same physical product.',
+      },
+      {
+        technique: 'Master Data Management',
+        why: 'Style master as golden record (one canonical record per style across buying, merchandising, logistics, retail); size master (one authoritative size chart per market); colour master (one canonical colour name with market aliases).',
+        exampleChallenge:
+          'Two brands merge into one. Brand A has 600 styles. Brand B has 400. 80 appear to be the same garment with different style codes. Without MDM, both go to market simultaneously, splitting demand and confusing allocation.',
+      },
+      {
+        technique: 'Reverse Integration',
+        why: 'Clean style/SKU data → e-commerce PDPs (product detail pages), → wholesale portals (NuOrder/Joor), → warehouse for pick/pack, → POS for scanning, → buying analytics for margin tracking.',
+        exampleChallenge:
+          "An e-commerce platform shows the Classic Crew-Neck as 'In Stock' in Sage UK12. The warehouse shows 0 units. The OMS shows 4 units reserved. The ERP shows 6 on a PO. All four systems are correct and none agree.",
+      },
+    ],
+    integrations: [
+      {
+        name: 'GS1 / GTIN',
+        category: 'Barcode Standard',
+        description: 'Global Trade Item Number registration — every sellable SKU needs a GTIN before it can be scanned, listed online, or shipped to wholesale.',
+      },
+      {
+        name: 'Akeneo / Contentful',
+        category: 'PIM',
+        description: 'Product Information Management — centralises enriched product attributes (descriptions, images, size guides) for distribution to e-commerce and wholesale channels.',
+      },
+      {
+        name: 'Centric PLM / Gerber AccuMark',
+        category: 'PLM',
+        description: 'Product Lifecycle Management — tech pack repository, sourcing, and development workflows; upstream source of style and specification data.',
+      },
+      {
+        name: 'NuOrder / Joor',
+        category: 'Wholesale',
+        description: 'Digital wholesale ordering platforms — receive style and SKU data from the product master for B2B buyer presentations and order management.',
+      },
+      {
+        name: 'Shopify / Salesforce Commerce Cloud',
+        category: 'E-Commerce',
+        description: 'Direct-to-consumer e-commerce — receives enriched SKU data including size guides, imagery, and availability; source of consumer demand signal.',
+      },
+    ],
+    scenarios: [
+      {
+        title: 'One Style, Four Colour Names',
+        narrative:
+          "The Classic Crew-Neck comes in Sage. It's been entered as 'Sage', 'Sage Green', 'Dark Sage', and 'Khaki Sage' across four buying seasons by three different buyers. All four are the same hex code. Your product master has four colour records for one colourway. Your e-commerce shows four variants. Customers are filtering by colour and missing the product.",
+        dmConcepts: ['Data Quality', 'Data Governance', 'MDM'],
+      },
+      {
+        title: 'The Mislabelled Knitwear',
+        narrative:
+          "A new supplier's size specifications use different chest measurements. Their 'Medium' is your 'Small'. The buying team knows. The data team doesn't. 4,000 units arrive. They're labelled, photographed, and listed online. The returns start on day one.",
+        dmConcepts: ['Data Quality', 'Data Integration', 'Data Governance'],
+      },
+      {
+        title: 'The E-Commerce Phantom Stock',
+        narrative:
+          "The website shows Sage UK12 in stock. Warehouse: 0 units. OMS: 4 units reserved. ERP: 6 units on an incoming PO. Customer buys it. It's not there. The complaint is about availability. The cause is four systems with four different truths about one SKU.",
+        dmConcepts: ['Data Integration', 'Data Quality', 'MDM'],
+      },
+    ],
+    crossDomainRelationships: [
+      {
+        targetSlug: 'supplier',
+        targetName: 'Supplier',
+        dataFlow: 'Style → supplier tech pack → fabric spec → GTIN → delivery lead time',
+        withoutThis: 'Cannot de-risk supply chain by style; cannot identify which products are at risk if a supplier fails',
+      },
+      {
+        targetSlug: 'location',
+        targetName: 'Location',
+        dataFlow: 'Style → range plan → site ranging → allocation',
+        withoutThis: 'Wrong ranging means wrong stock in wrong stores; allocation decisions are made on incorrect product hierarchy',
+      },
+      {
+        targetSlug: 'financial',
+        targetName: 'Financial Domain',
+        dataFlow: 'SKU → sell-through → revenue → margin by style/range',
+        withoutThis: 'Margin analysis by range is impossible; buying decisions are made on estimated not actual contribution',
+      },
+      {
+        targetSlug: 'customer',
+        targetName: 'Customer',
+        dataFlow: 'SKU purchase history → size preference → personalised recommendation',
+        withoutThis: 'Size recommendation engines fail; returns rates stay high; personalisation is guesswork',
+      },
+    ],
+  },
+
+  location: {
+    slug: 'location',
+    name: 'Location',
+    tagline: 'A store address seems simple. The data reality of location is anything but.',
+    analogy:
+      '📍 Location data is the skeleton of retail. Everything else — demand, footfall, range, compliance — hangs off it. A broken bone doesn\'t announce itself until weight is applied.',
+    entities: [
+      {
+        name: 'Site / Store',
+        definition: 'The individual trading location — the atomic unit of the location domain.',
+        example: 'STR-0042 | Oxford Street | Format: Large | Status: Trading | Opened: 2018-03-01 | Area: 4,200 sqft',
+      },
+      {
+        name: 'Trading Area',
+        definition: 'The commercial zone surrounding a site, defined by proximity or spend data.',
+        example: 'TA-0042 | Oxford Street Trading Area | Radius: 800m walk | Population: 142,000 | Daytime Workers: 89,000',
+      },
+      {
+        name: 'Catchment',
+        definition: 'The customer draw zone — typically defined as 5/10/20 minute travel isochrones.',
+        example: 'CA-0042 | 10-min Isochrone | Drive: 3.8km | Walk: 800m | Est. Customer Households: 28,400',
+      },
+      {
+        name: 'District',
+        definition: "An operational grouping of stores — the area manager's territory.",
+        example: 'DST-007 | Central London District | Stores: 12 | Area Manager: Rachel Wong | Format Mix: 3 Large, 9 Standard',
+      },
+      {
+        name: 'Region',
+        definition: "A business unit grouping of districts — the regional director's P&L.",
+        example: 'RGN-002 | London Region | Districts: 4 | Stores: 47 | RD: Tom Okafor | Revenue: £48.2M LTM',
+      },
+      {
+        name: 'Digital Listing',
+        definition: 'The online presence of a physical site — managed via YEXT and synced to 200+ platforms.',
+        example: 'DL-0042 | Oxford Street | YEXT ID: YXT-STR0042 | Google CID: 1829374652 | Last Sync: 2025-03-14 12:31',
+      },
+    ],
+    hierarchy: [
+      { level: 0, name: 'Location Domain — Noesis Foods Group' },
+      { level: 1, name: 'Division / Brand (Noesis Burger Co.)' },
+      { level: 2, name: 'Country / Market (United Kingdom)' },
+      { level: 3, name: 'Region', description: 'London Region — RGN-002' },
+      { level: 4, name: 'District', description: 'Central London — DST-007' },
+      { level: 5, name: 'Site / Store', description: 'Oxford Street — STR-0042' },
+      { level: 6, name: 'Trading Area', description: '800m walk zone' },
+      { level: 6, name: 'Catchment', description: '10-min isochrone — 28,400 households' },
+      { level: 6, name: 'Digital Listing', description: 'YEXT ID: YXT-STR0042' },
+      { level: 6, name: 'Cost Centre', description: 'CC-3042 — bridges to Financial Domain' },
+      { level: 1, name: 'Format (Large / Standard / Express / Drive-Thru)' },
+      { level: 2, name: 'Site', description: 'multiple sites share a format' },
+    ],
+    dmJourney: [
+      {
+        technique: 'Data Sources',
+        why: 'Property management system (lease dates, sqft, landlord), planning applications (new openings), Google Business Profile, YEXT, internal store master spreadsheets.',
+        exampleChallenge:
+          "Oxford Street's opening hours exist in: the store master (correct), the YEXT console (3 months out of date), Google Business Profile (wrong since a manual edit in 2023), and the delivery platform (never set up).",
+      },
+      {
+        technique: 'Data Integration',
+        why: 'Location master → ERP (for financial reporting) → POS (for store configuration) → loyalty platform (for store-based offers) → YEXT (for digital listings sync to 200+ platforms).',
+        exampleChallenge:
+          'A new store opens. Data must flow to 9 systems in sequence before trading day: Location master → ERP → POS → Loyalty → YEXT → Google → Delivery Platforms → CRM → Analytics. One failure blocks the chain.',
+      },
+      {
+        technique: 'Data Quality',
+        why: 'Address standardisation (SmartyStreets/Loqate), coordinate validation, opening hours completeness, format accuracy, trading status currency.',
+        exampleChallenge:
+          '340 stores. YEXT reports all synced to Google. A mystery shopper audit finds 23 stores with wrong opening hours on Google Maps. 8 of those have no opening hours in the location master. YEXT synced a blank.',
+      },
+      {
+        technique: 'Data Governance',
+        why: 'Who can change location data? (Operations vs. IT vs. Marketing — a 3-way dispute). Change management for store attribute updates (format change triggers 11 downstream updates). Which system is the SOR for each attribute?',
+        exampleChallenge:
+          'Oxford Street changes format from Large to Express after refurbishment. Format is updated in the store master. Not updated in: ranging allocation, marketing suppression, delivery radius, ERP reporting. 11 systems, 1 update.',
+      },
+      {
+        technique: 'Master Data Management',
+        why: 'Location golden record — one authoritative record per site with a canonical site ID; hierarchy management (district/region/country); duplicate detection (same site appearing under two brand codes); YEXT as the publication/MDM layer for digital presence.',
+        exampleChallenge:
+          'Post-merger: two location masters, 340 + 210 sites. 40 sites appear in both — acquired brand\'s locations that overlap geographically with our own. They need distinct IDs but linked parent records.',
+      },
+      {
+        technique: 'Reverse Integration',
+        why: 'YEXT pushes clean location data to 200+ platforms (Google, Apple Maps, Bing, TripAdvisor, Uber Eats). Clean location hierarchy flows to ERP, analytics, loyalty, and delivery radius engines.',
+        exampleChallenge:
+          "A store closes temporarily for refurbishment. Status is updated in the location master. YEXT sync is scheduled for midnight. At 8pm, a customer arrives. Google still shows 'Open'. The YEXT sync hadn't run.",
+      },
+    ],
+    integrations: [
+      {
+        name: 'YEXT',
+        category: 'Location Intelligence',
+        description: 'Digital listings management across 200+ platforms — syncs location master attributes (hours, address, status) to Google, Apple Maps, Bing, TripAdvisor, and delivery platforms.',
+      },
+      {
+        name: 'Google Business Profile API',
+        category: 'Digital Presence',
+        description: "Manages Google's representation of each physical site — primary source of consumer discovery; discrepancies from the location master directly impact foot traffic.",
+      },
+      {
+        name: 'HERE / Mapbox',
+        category: 'Geocoding',
+        description: 'Geocoding and isochrone analysis — converts addresses to coordinates and generates catchment travel-time polygons for commercial analysis.',
+      },
+      {
+        name: 'SmartyStreets / Loqate',
+        category: 'Address Validation',
+        description: 'Address standardisation and validation API — ensures address data conforms to postal authority formats before it enters the location master.',
+      },
+      {
+        name: 'Placer.ai / Verint',
+        category: 'DaaS',
+        description: 'Footfall analytics — mobile signal data transformed into store visit counts and trading area dwell times; linked to location master for site performance benchmarking.',
+      },
+    ],
+    scenarios: [
+      {
+        title: 'YEXT Said Synced. Google Said Open.',
+        narrative:
+          "340 stores. YEXT console reports 100% sync. A mystery shopper audit finds 23 stores with wrong hours on Google Maps. 8 have no opening hours in the location master at all. YEXT synced a blank. Google defaulted to 'Open'. Customers arrive to closed doors for 4 months.",
+        dmConcepts: ['Data Quality', 'Data Integration', 'Data Governance'],
+      },
+      {
+        title: 'The Format Change Cascade Nobody Planned',
+        narrative:
+          'Oxford Street changes from Large to Express. Format is updated in the store master. Ranging allocation still treats it as Large. Marketing suppression still uses Large thresholds. Delivery radius is wrong. 11 downstream systems, 1 update.',
+        dmConcepts: ['Data Governance', 'Data Integration'],
+      },
+      {
+        title: "The New Store That Couldn't Trade",
+        narrative:
+          "New store opening. Data needs to flow across 9 systems in sequence before day one. System 4 (loyalty platform) rejects the store record — postcode format validation fails. The chain stops. POS isn't configured. The store opens without a loyalty system for 3 days.",
+        dmConcepts: ['Data Quality', 'Data Integration'],
+      },
+    ],
+    crossDomainRelationships: [
+      {
+        targetSlug: 'financial',
+        targetName: 'Financial Domain',
+        dataFlow: 'Location hierarchy → cost centre hierarchy → store P&L',
+        withoutThis: "Regional P&Ls compare different baskets of stores when location moves district but cost centre doesn't",
+      },
+      {
+        targetSlug: 'customer',
+        targetName: 'Customer',
+        dataFlow: 'Store catchment → customer address → footfall attribution',
+        withoutThis: 'Cannot link customers to their nearest store; catchment analysis is impossible; personalisation by location fails',
+      },
+      {
+        targetSlug: 'supplier',
+        targetName: 'Supplier',
+        dataFlow: "Store location → supplier delivery zone → supply coverage map",
+        withoutThis: "Cannot identify which stores are at risk if a specific supplier's distribution centre is disrupted",
+      },
+      {
+        targetSlug: 'product-hospitality',
+        targetName: 'F&B · Hospitality',
+        dataFlow: 'Store → menu ranging → site-specific menu version',
+        withoutThis: 'A discontinued item stays live on delivery platforms because location-menu sync wasn\'t triggered',
+      },
+    ],
+  },
+
+  financial: {
+    slug: 'financial',
+    name: 'Financial Domain',
+    tagline: "Every number in your P&L traces back to a data record. Bad records, wrong numbers — forever.",
+    analogy:
+      '📊 The financial domain is the ledger that everything else posts to. Clean product data posts clean revenue. Clean location hierarchy generates clean store P&L. Clean supplier data generates accurate COGS. Dirty data anywhere upstream doesn\'t just cause a data problem — it causes a financial misstatement.',
+    entities: [
+      {
+        name: 'GL Account',
+        definition: 'The atomic unit of financial recording. Every transaction maps to one. Proliferate without governance and you can\'t consolidate.',
+        example: 'GL-4100 | Food & Beverage Revenue — UK | Account Group: Revenue | P&L Line: Net Revenue | Status: Active',
+      },
+      {
+        name: 'Account Group',
+        definition: 'Logical grouping of GL accounts.',
+        example: 'AG-40 | Revenue Group | Accounts: GL-4000 to GL-4999 | Mapped to: P&L Line 1 (Net Revenue) | Owner: CFO Office',
+      },
+      {
+        name: 'Cost Centre',
+        definition: 'The organisational unit to which costs are attributed. Must match operational reality or every cost allocation is wrong.',
+        example: 'CC-3042 | Oxford Street Store — Operations | District: Central London | Region: London | P&L Owner: Regional Director',
+      },
+      {
+        name: 'Profit Centre',
+        definition: 'The unit of commercial P&L accountability — a store, a category, a channel.',
+        example: 'PC-0108 | London Region — Dine-In Format | Revenue: £28.4M LTM | Margin: 14.2% | Owner: Tom Okafor',
+      },
+      {
+        name: 'Legal Entity / Company Code',
+        definition: 'The registered legal company. Post-acquisition, you may have 15 entities with inconsistent CoA mappings.',
+        example: 'LE-0042 | Noesis Foods UK Ltd | Reg No: 09812345 | ERP Code: UK01 | Currency: GBP | Consolidation Group: Noesis Foods Group',
+      },
+      {
+        name: 'Chart of Accounts',
+        definition: 'The master reference list of all GL accounts. The most foundational reference data in finance. Rarely governed properly.',
+        example: 'COA-UK-v3.2 | Noesis Foods UK | Total Accounts: 4,200 | Account Groups: 8 | Last Governed: 2022-01-01 | Pending Review: 340 accounts',
+      },
+      {
+        name: 'Budget Hierarchy',
+        definition: 'The planning structure for financial targets — often mirrors the operational hierarchy but diverges in practice.',
+        example: 'BUD-FY26 | FY2026 | Structure: Group → Region → District → Store | Tool: Anaplan | Approved: 2025-11-30',
+      },
+    ],
+    hierarchy: [
+      { level: 0, name: 'Financial Domain — Noesis Foods Group' },
+      { level: 1, name: 'Legal Entity (Noesis Foods UK Ltd — LE-0042)' },
+      { level: 2, name: 'Chart of Accounts', description: 'UK CoA v3.2 — 4,200 accounts' },
+      { level: 3, name: 'Account Group', description: 'Revenue: GL-4000–4999' },
+      { level: 4, name: 'GL Account', description: 'GL-4100 | F&B Revenue — UK' },
+      { level: 2, name: 'Cost Centre Hierarchy' },
+      { level: 3, name: 'Region (London Region)' },
+      { level: 4, name: 'District (Central London)' },
+      { level: 5, name: 'Cost Centre', description: 'CC-3042 | Oxford Street Ops' },
+      { level: 2, name: 'Profit Centre Hierarchy' },
+      { level: 3, name: 'Channel (Dine-In / Delivery / Drive-Thru)' },
+      { level: 4, name: 'Region', description: 'London Region — PC-0108' },
+      { level: 5, name: 'District → Store (Oxford Street profit centre)' },
+      { level: 2, name: 'Budget Hierarchy', description: 'FY26: Group → Region → District → Store' },
+    ],
+    dmJourney: [
+      {
+        technique: 'Data Sources',
+        why: 'ERP systems (SAP S/4HANA, Oracle Fusion), FP&A tools (Anaplan, Adaptive Insights), acquired legacy accounting platforms, manual GL journals, intercompany netting feeds.',
+        exampleChallenge:
+          "Post-acquisition: Noesis Foods UK runs SAP. The acquired company runs Sage 200. Chart of accounts don't align. Revenue account GL-4100 in SAP maps to three different accounts in Sage depending on the revenue type. Nobody mapped them before the migration started.",
+      },
+      {
+        technique: 'Data Integration',
+        why: 'ERP → consolidation platform → reporting layer; budget tool → actuals → variance analysis; intercompany elimination feeds; period-end close data flows between entities.',
+        exampleChallenge:
+          'The period-end close requires intercompany eliminations across 6 legal entities. Two entities use different transaction reference formats. Automated matching covers 78%. The remaining 22% is manual — 3 accountants, 4 days, every month.',
+      },
+      {
+        technique: 'Data Quality',
+        why: 'Account code completeness (is every transaction coded?), cost centre assignment accuracy (are costs hitting the right CC?), duplicate account detection, intercompany elimination accuracy.',
+        exampleChallenge:
+          "Oxford Street's refurbishment costs are split across 3 cost centres — the store CC, the CapEx project code, and a regional overhead CC — because the coding guidance wasn't communicated before the project started. The store's P&L overstates OpEx.",
+      },
+      {
+        technique: 'Data Governance',
+        why: 'Who can create a new GL account? (The most contested governance question in finance — operations wants new codes for everything, Finance wants control.) Who approves cost centre changes? Change control for legal entity restructures.',
+        exampleChallenge:
+          "A new product line launches. The finance business partner creates 12 new GL accounts 'just in case'. 4 are duplicates of existing accounts. 3 are used inconsistently across markets. Quarter-end takes an extra 3 days to close.",
+      },
+      {
+        technique: 'Master Data Management',
+        why: "CoA harmonisation post-acquisition; legal entity hierarchy management (OpCo → HoldCo → Ultimate Parent); cost centre golden record across ERP and FP&A tool; budget hierarchy synchronisation.",
+        exampleChallenge:
+          "Post-merger: Company A has 2,400 GL accounts. Company B has 1,800. Finance mandates a single CoA in 6 months. 600 accounts appear to overlap but have different definitions. 'Revenue: Food' in Company A maps to 3 accounts in Company B by channel. The ERP migration starts in 3 months. The mapping isn't done.",
+      },
+      {
+        technique: 'Reverse Integration',
+        why: 'Clean financial hierarchy → BI/analytics (Power BI/Tableau) → executive dashboards; consolidated P&L → FP&A for next-year planning; intercompany-free actuals → group reporting tool; store P&L → regional performance dashboards.',
+        exampleChallenge:
+          "The board pack shows London Region revenue as £48.2M. The CFO's Anaplan model shows £47.8M. The difference is 4 stores that moved district in Q3. The location master was updated. The cost centre hierarchy in the ERP wasn't. The ERP is wrong. Both numbers are 'right'.",
+      },
+    ],
+    integrations: [
+      {
+        name: 'SAP S/4HANA / Oracle Fusion',
+        category: 'ERP',
+        description: 'Financial system of record — GL, AP, AR, and asset accounting; source of all transaction data and the home of the Chart of Accounts master.',
+      },
+      {
+        name: 'Anaplan / Adaptive Insights / Pigment',
+        category: 'FP&A',
+        description: 'Financial planning and analysis — rolling forecasts, budget hierarchies, and variance analysis; must stay synchronised with ERP actuals.',
+      },
+      {
+        name: 'BlackLine',
+        category: 'Close Automation',
+        description: 'Account reconciliation and close management — automates matching of intercompany transactions and flags unreconciled items before period-end.',
+      },
+      {
+        name: 'Workiva',
+        category: 'Regulatory Reporting',
+        description: 'Statutory and compliance reporting — connects ERP data to formatted financial statements; used for external audit and regulatory submissions.',
+      },
+      {
+        name: 'OneStream / Oracle Hyperion EPM',
+        category: 'Consolidation',
+        description: "Group financial consolidation — aggregates legal entity P&Ls, applies intercompany eliminations, and produces the group's consolidated financial statements.",
+      },
+    ],
+    scenarios: [
+      {
+        title: 'The Post-Acquisition CoA Nightmare',
+        narrative:
+          "Two companies merge. Company A: 2,400 GL accounts. Company B: 1,800. 'Revenue: Food' maps to three accounts in Company B by channel. The ERP migration starts in 3 months. The Chart of Accounts mapping isn't done. The first consolidated P&L will be wrong. It takes 11 weeks to find all the variances.",
+        dmConcepts: ['MDM', 'Data Integration', 'Data Governance'],
+      },
+      {
+        title: 'The Restructure Nobody Told Finance',
+        narrative:
+          "40 stores move to a new district configuration. Operations updates the org chart. Finance doesn't update the cost centre hierarchy in the ERP for 2 months. Two quarters of regional P&Ls compare different baskets of stores. The CFO's YoY performance review is comparing apples to oranges.",
+        dmConcepts: ['Data Quality', 'Data Governance', 'Location Domain'],
+      },
+      {
+        title: '12 GL Accounts, Zero Governance',
+        narrative:
+          "A new product line launches. The finance business partner creates 12 new GL accounts. 4 are duplicates. 3 are coded inconsistently across markets. Quarter-end takes an extra 3 days. The product line's P&L is split across 9 account codes. By the time someone notices, 2 quarters of data are wrong.",
+        dmConcepts: ['Data Governance', 'Data Quality'],
+      },
+    ],
+    crossDomainRelationships: [
+      {
+        targetSlug: 'location',
+        targetName: 'Location',
+        dataFlow: 'Location hierarchy → cost centre hierarchy → store P&L',
+        withoutThis: "Regional P&Ls compare different baskets of stores when stores move district but their cost centres don't follow",
+      },
+      {
+        targetSlug: 'supplier',
+        targetName: 'Supplier',
+        dataFlow: 'Supplier master → payment terms → AP journal → COGS',
+        withoutThis: 'Wrong payment terms mean wrong cash flow forecast and incorrect COGS — margin calculations are corrupted',
+      },
+      {
+        targetSlug: 'customer',
+        targetName: 'Customer',
+        dataFlow: 'Customer ID → transaction → GL revenue → segment P&L',
+        withoutThis: "Revenue by customer segment is impossible; customer profitability analysis doesn't exist",
+      },
+      {
+        targetSlug: 'product-hospitality',
+        targetName: 'F&B · Hospitality',
+        dataFlow: 'Menu item → recipe cost → food cost % → gross margin by item',
+        withoutThis: 'Without accurate recipe costs, menu pricing decisions are made on estimated — not actual — margins',
+      },
+      {
+        targetSlug: 'employee',
+        targetName: 'Employee',
+        dataFlow: 'Employee → cost centre → payroll journal → labour cost by store',
+        withoutThis: 'Labour cost per department is wrong; performance bonuses calculated on incorrect baselines',
       },
     ],
   },
