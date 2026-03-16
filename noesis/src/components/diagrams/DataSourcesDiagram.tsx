@@ -1,118 +1,195 @@
 export function DataSourcesDiagram() {
-  const lineColor = 'var(--color-accent-blue)';
-  const textColor = 'white';
-  const leafColor = 'var(--color-accent-blue)';
-
-  // Root node at top center
-  const root = { cx: 380, cy: 60 };
-
-  // Four category nodes below root (spread across)
-  const categories = [
-    { cx: 100, cy: 180, label: 'Databases' },
-    { cx: 260, cy: 180, label: 'APIs' },
-    { cx: 440, cy: 180, label: 'Files' },
-    { cx: 620, cy: 180, label: 'Streams' },
-  ];
-
-  // Leaf nodes under each category
-  const leaves: Record<string, { label: string }[]> = {
-    Databases: [{ label: 'PostgreSQL' }, { label: 'Oracle' }, { label: 'MongoDB' }],
-    APIs: [{ label: 'REST' }, { label: 'GraphQL' }, { label: 'gRPC' }],
-    Files: [{ label: 'CSV' }, { label: 'JSON' }, { label: 'Parquet' }],
-    Streams: [{ label: 'Kafka' }, { label: 'Kinesis' }, { label: 'Event Hub' }],
-  };
-
-  // Leaf vertical position
-  const leafStartY = 310;
-  const leafSpacing = 50;
-  const leafWidth = 90;
-  const leafHeight = 28;
-  const leafRx = 6;
-
   return (
-    <svg
-      viewBox="0 0 760 430"
-      className="w-full max-w-4xl mx-auto my-8"
-      style={{ backgroundColor: 'var(--color-noir)', borderRadius: 'var(--radius-md)' }}
-      role="img"
-      aria-label="Data source taxonomy: Enterprise Data branches into Databases, APIs, Files, and Streams, each with specific examples."
+    <div
+      className="w-full max-w-4xl mx-auto my-8 rounded-2xl overflow-hidden"
+      style={{ background: '#f8f8fa', boxShadow: '0 2px 20px rgba(0,0,0,0.08)' }}
     >
-      {/* Root node */}
-      <circle cx={root.cx} cy={root.cy} r={52} fill="none" stroke={lineColor} strokeWidth="2" />
-      <text x={root.cx} y={root.cy - 8} textAnchor="middle" fill={textColor} fontSize="13" fontWeight="700">
-        Enterprise
-      </text>
-      <text x={root.cx} y={root.cy + 10} textAnchor="middle" fill={textColor} fontSize="13" fontWeight="700">
-        Data
-      </text>
+      <svg
+        viewBox="0 0 760 420"
+        className="w-full"
+        role="img"
+        aria-label="Tree diagram showing Enterprise Data broken into four categories: Databases, APIs, Files, and Streams, each with three example leaf nodes"
+      >
+        <defs>
+          <filter id="cardShadow-ds" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.08)" />
+          </filter>
+          <marker id="arrow-ds" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0071e3" opacity="0.7" />
+          </marker>
+          <style>{`
+            @keyframes fadeInUp-ds {
+              from { opacity: 0; transform: translateY(6px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes drawLine-ds {
+              from { stroke-dashoffset: 300; }
+              to { stroke-dashoffset: 0; }
+            }
+          `}</style>
+        </defs>
 
-      {categories.map((cat) => {
-        const catLeaves = leaves[cat.label] || [];
-        return (
-          <g key={cat.label}>
-            {/* Line from root to category */}
-            <line
-              x1={root.cx}
-              y1={root.cy + 52}
-              x2={cat.cx}
-              y2={cat.cy - 30}
-              stroke={lineColor}
-              strokeWidth="1.5"
-              opacity="0.6"
-            />
+        {/* Root node */}
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0s' }}>
+          <rect
+            x={300} y={20} width={160} height={44} rx={10}
+            fill="#eff6ff" stroke="#0071e3" strokeWidth={1.5}
+            filter="url(#cardShadow-ds)"
+          />
+          <text
+            x={380} y={47}
+            textAnchor="middle" fill="#1d1d1f" fontSize={13} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif"
+          >
+            Enterprise Data
+          </text>
+        </g>
 
-            {/* Category circle */}
-            <circle cx={cat.cx} cy={cat.cy} r={30} fill="none" stroke={lineColor} strokeWidth="2" />
-            <text x={cat.cx} y={cat.cy} textAnchor="middle" dominantBaseline="middle" fill={textColor} fontSize="11" fontWeight="600">
-              {cat.label}
-            </text>
+        {/* Connector lines: root to categories */}
+        <line
+          x1={380} y1={64} x2={110} y2={130}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.4}
+          strokeDasharray="300" strokeDashoffset="300"
+          style={{ animation: 'drawLine-ds 0.6s ease forwards', animationDelay: '0.05s' }}
+        />
+        <line
+          x1={380} y1={64} x2={280} y2={130}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.4}
+          strokeDasharray="300" strokeDashoffset="300"
+          style={{ animation: 'drawLine-ds 0.6s ease forwards', animationDelay: '0.1s' }}
+        />
+        <line
+          x1={380} y1={64} x2={480} y2={130}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.4}
+          strokeDasharray="300" strokeDashoffset="300"
+          style={{ animation: 'drawLine-ds 0.6s ease forwards', animationDelay: '0.15s' }}
+        />
+        <line
+          x1={380} y1={64} x2={650} y2={130}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.4}
+          strokeDasharray="300" strokeDashoffset="300"
+          style={{ animation: 'drawLine-ds 0.6s ease forwards', animationDelay: '0.2s' }}
+        />
 
-            {/* Leaf nodes */}
-            {catLeaves.map((leaf, i) => {
-              const lx = cat.cx - leafWidth / 2;
-              const ly = leafStartY + i * leafSpacing;
-              const lineCy = ly + leafHeight / 2;
-              return (
-                <g key={leaf.label}>
-                  {/* Line from category to leaf */}
-                  <line
-                    x1={cat.cx}
-                    y1={cat.cy + 30}
-                    x2={cat.cx}
-                    y2={lineCy}
-                    stroke={lineColor}
-                    strokeWidth="1"
-                    opacity="0.4"
-                  />
-                  {/* Leaf rounded rect */}
-                  <rect
-                    x={lx}
-                    y={ly}
-                    width={leafWidth}
-                    height={leafHeight}
-                    rx={leafRx}
-                    fill="none"
-                    stroke={leafColor}
-                    strokeWidth="1"
-                    opacity="0.7"
-                  />
-                  <text
-                    x={cat.cx}
-                    y={ly + leafHeight / 2}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fill={textColor}
-                    fontSize="10"
-                    opacity="0.85"
-                  >
-                    {leaf.label}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
-        );
-      })}
-    </svg>
+        {/* Category: Databases */}
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.1s' }}>
+          <rect x={40} y={130} width={140} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-ds)" />
+          <text x={110} y={155} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+            Databases
+          </text>
+        </g>
+        {/* Category: APIs */}
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.15s' }}>
+          <rect x={210} y={130} width={140} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-ds)" />
+          <text x={280} y={155} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+            APIs
+          </text>
+        </g>
+        {/* Category: Files */}
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.2s' }}>
+          <rect x={410} y={130} width={140} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-ds)" />
+          <text x={480} y={155} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+            Files
+          </text>
+        </g>
+        {/* Category: Streams */}
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.25s' }}>
+          <rect x={580} y={130} width={140} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-ds)" />
+          <text x={650} y={155} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+            Streams
+          </text>
+        </g>
+
+        {/* Vertical connectors: category bottoms to leaf centers */}
+        {/* Databases column */}
+        <line x1={110} y1={170} x2={110} y2={226} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        <line x1={110} y1={170} x2={110} y2={281} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        <line x1={110} y1={170} x2={110} y2={336} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        {/* APIs column */}
+        <line x1={280} y1={170} x2={280} y2={226} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        <line x1={280} y1={170} x2={280} y2={281} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        <line x1={280} y1={170} x2={280} y2={336} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        {/* Files column */}
+        <line x1={480} y1={170} x2={480} y2={226} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        <line x1={480} y1={170} x2={480} y2={281} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        <line x1={480} y1={170} x2={480} y2={336} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        {/* Streams column */}
+        <line x1={650} y1={170} x2={650} y2={226} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        <line x1={650} y1={170} x2={650} y2={281} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+        <line x1={650} y1={170} x2={650} y2={336} stroke="#0071e3" strokeWidth={1} opacity={0.25} />
+
+        {/* Leaf nodes — Databases */}
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.3s' }}>
+          <rect x={50} y={226} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={110} y={244} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">PostgreSQL</text>
+        </g>
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.35s' }}>
+          <rect x={50} y={281} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={110} y={299} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Oracle</text>
+        </g>
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.4s' }}>
+          <rect x={50} y={336} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={110} y={354} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">MongoDB</text>
+        </g>
+
+        {/* Leaf nodes — APIs */}
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.35s' }}>
+          <rect x={220} y={226} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={280} y={244} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">REST</text>
+        </g>
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.4s' }}>
+          <rect x={220} y={281} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={280} y={299} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">GraphQL</text>
+        </g>
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.45s' }}>
+          <rect x={220} y={336} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={280} y={354} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">gRPC</text>
+        </g>
+
+        {/* Leaf nodes — Files */}
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.4s' }}>
+          <rect x={420} y={226} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={480} y={244} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">CSV</text>
+        </g>
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.45s' }}>
+          <rect x={420} y={281} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={480} y={299} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Parquet</text>
+        </g>
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.5s' }}>
+          <rect x={420} y={336} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={480} y={354} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">JSON</text>
+        </g>
+
+        {/* Leaf nodes — Streams */}
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.45s' }}>
+          <rect x={590} y={226} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={650} y={244} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Kafka</text>
+        </g>
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.5s' }}>
+          <rect x={590} y={281} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={650} y={299} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Kinesis</text>
+        </g>
+        <g style={{ animation: 'fadeInUp-ds 0.4s ease forwards', animationDelay: '0.55s' }}>
+          <rect x={590} y={336} width={120} height={28} rx={6} fill="#ffffff" stroke="#e5e5e7" />
+          <text x={650} y={354} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Event Hub</text>
+        </g>
+      </svg>
+    </div>
   );
 }

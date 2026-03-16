@@ -16,9 +16,9 @@ const sizeClasses = {
 const variantClasses = {
   primary: [
     'bg-[var(--color-accent-blue)]',
-    'text-[var(--color-noir)]',
+    'text-white',
     'font-semibold',
-    'hover:brightness-110',
+    'hover:bg-[var(--color-accent-blue-dark)]',
     'hover:shadow-[var(--shadow-glow)]',
     'active:scale-[0.98]',
     'transition-all duration-200',
@@ -28,13 +28,13 @@ const variantClasses = {
     'border border-[var(--color-accent-blue)]',
     'text-[var(--color-accent-blue)]',
     'font-semibold',
-    'hover:bg-[rgba(0,217,255,0.1)]',
+    'hover:bg-[rgba(0,113,227,0.06)]',
     'transition-all duration-200',
     'disabled:opacity-50 disabled:pointer-events-none',
   ].join(' '),
   ghost: [
     'text-[var(--color-text-secondary)]',
-    'hover:text-white',
+    'hover:text-[var(--color-text-primary)]',
     'hover:bg-[var(--color-glass-bg)]',
     'transition-all duration-200',
   ].join(' '),

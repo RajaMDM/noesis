@@ -36,8 +36,8 @@ export function ProgressStrip({ currentSlug }: ProgressStripProps) {
                   isActive
                     ? 'bg-[var(--color-accent-blue)] text-white'
                     : isPast
-                    ? 'bg-[var(--color-glass-bg)] border border-[var(--color-accent-blue)] border-opacity-40 text-[var(--color-accent-blue)]'
-                    : 'bg-[var(--color-glass-bg)] border border-[var(--color-glass-border)] text-[var(--color-text-muted)] hover:border-[var(--color-accent-blue)] hover:text-[var(--color-text-secondary)]',
+                    ? 'bg-[rgba(0,113,227,0.08)] border border-[var(--color-accent-blue)] border-opacity-40 text-[var(--color-accent-blue)]'
+                    : 'bg-white border border-[var(--color-glass-border)] text-[var(--color-text-muted)] hover:border-[var(--color-accent-blue)] hover:text-[var(--color-text-primary)]',
                 ]
                   .filter(Boolean)
                   .join(' ')}

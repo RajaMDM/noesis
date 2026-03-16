@@ -1,130 +1,120 @@
 export function DataGovernanceDiagram() {
-  const lineColor = 'var(--color-accent-blue)';
-  const textColor = 'white';
-  const mutedText = 'var(--color-text-secondary)';
-
-  // Three horizontal bands — bottom (widest) to top (narrowest)
-  // viewBox: 800 x 400
-  const bands = [
-    {
-      label: 'Policies & Standards',
-      sublabel: 'Foundation',
-      x: 50,
-      y: 290,
-      width: 700,
-      height: 70,
-      opacity: '0.14',
-    },
-    {
-      label: 'Stewards & Councils · Data Catalog',
-      sublabel: 'Coordination',
-      x: 100,
-      y: 190,
-      width: 600,
-      height: 70,
-      opacity: '0.10',
-    },
-    {
-      label: 'Compliance & Audit',
-      sublabel: 'Oversight',
-      x: 170,
-      y: 90,
-      width: 460,
-      height: 70,
-      opacity: '0.07',
-    },
-  ];
-
-  const arrowX = 730;
-  const upArrowY1 = 350;
-  const upArrowY2 = 110;
-  const downArrowX = 755;
-
   return (
-    <svg
-      viewBox="0 0 800 400"
-      className="w-full max-w-4xl mx-auto my-8"
-      style={{ backgroundColor: 'var(--color-noir)', borderRadius: 'var(--radius-md)' }}
-      role="img"
-      aria-label="Governance framework pyramid: Policies and Standards at the foundation, Stewards and Councils plus Data Catalog in the middle, Compliance and Audit at the top."
+    <div
+      className="w-full max-w-4xl mx-auto my-8 rounded-2xl overflow-hidden"
+      style={{ background: '#f8f8fa', boxShadow: '0 2px 20px rgba(0,0,0,0.08)' }}
     >
-      <defs>
-        <marker id="arrow-up" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto">
-          <path d="M0,8 L4,0 L8,8 Z" fill={lineColor} />
-        </marker>
-        <marker id="arrow-down" markerWidth="8" markerHeight="8" refX="4" refY="0" orient="auto">
-          <path d="M0,0 L4,8 L8,0 Z" fill={lineColor} opacity="0.6" />
-        </marker>
-      </defs>
+      <svg
+        viewBox="0 0 760 420"
+        className="w-full"
+        role="img"
+        aria-label="Layered architecture diagram showing three governance layers — Foundation Policies, Stewards and Catalog, and Governance Council — with a Compliance panel showing GDPR, CCPA, BCBS 239, and HIPAA"
+      >
+        <defs>
+          <filter id="cardShadow-dg" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.08)" />
+          </filter>
+          <marker id="arrow-dg" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0071e3" opacity="0.8" />
+          </marker>
+          <marker id="arrow-dg-amber" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#f59e0b" opacity="0.7" />
+          </marker>
+          <style>{`
+            @keyframes fadeInUp-dg {
+              from { opacity: 0; transform: translateY(6px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes drawLine-dg {
+              from { stroke-dashoffset: 300; }
+              to { stroke-dashoffset: 0; }
+            }
+          `}</style>
+        </defs>
 
-      {/* Render bands bottom to top so bottom overlaps nothing */}
-      {bands.map((band) => (
-        <g key={band.label}>
-          <rect
-            x={band.x}
-            y={band.y}
-            width={band.width}
-            height={band.height}
-            rx="10"
-            fill={`rgba(0,217,255,${band.opacity})`}
-            stroke={lineColor}
-            strokeWidth="1.5"
-          />
-          <text
-            x={band.x + band.width / 2}
-            y={band.y + band.height / 2 - 7}
-            textAnchor="middle"
-            fill={textColor}
-            fontSize="13"
-            fontWeight="700"
-          >
-            {band.label}
-          </text>
-          <text
-            x={band.x + band.width / 2}
-            y={band.y + band.height / 2 + 12}
-            textAnchor="middle"
-            fill={mutedText}
-            fontSize="10"
-          >
-            {band.sublabel}
+        {/* ── Layer 1: Foundation (bottom) ── */}
+        <g style={{ animation: 'fadeInUp-dg 0.4s ease forwards', animationDelay: '0s' }}>
+          <rect x={40} y={310} width={540} height={70} rx={10} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-dg)" />
+          <text x={310} y={340} textAnchor="middle" fill="#1d1d1f" fontSize={13} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Policies &amp; Standards</text>
+          <text x={310} y={360} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+            Data Definitions · Quality SLAs · Access Controls · Retention Rules
           </text>
         </g>
-      ))}
 
-      {/* Upward arrow on right — Policy enforcement */}
-      <line
-        x1={arrowX}
-        y1={upArrowY1}
-        x2={arrowX}
-        y2={upArrowY2}
-        stroke={lineColor}
-        strokeWidth="2"
-        markerEnd="url(#arrow-up)"
-      />
-      <text x={arrowX + 6} y={240} fill={lineColor} fontSize="9" fontWeight="600">
-        Policy
-      </text>
-      <text x={arrowX + 6} y={254} fill={lineColor} fontSize="9" fontWeight="600">
-        enforce-
-      </text>
-      <text x={arrowX + 6} y={268} fill={lineColor} fontSize="9" fontWeight="600">
-        ment
-      </text>
+        {/* Arrow: Layer 1 → Layer 2 */}
+        <line x1={310} y1={310} x2={310} y2={292}
+          stroke="#0071e3" strokeWidth={2} opacity={0.7}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-dg)"
+          style={{ animation: 'drawLine-dg 0.6s ease forwards', animationDelay: '0.1s' }}
+        />
 
-      {/* Downward arrow — Audit findings */}
-      <line
-        x1={downArrowX}
-        y1={upArrowY2}
-        x2={downArrowX}
-        y2={upArrowY1}
-        stroke={lineColor}
-        strokeWidth="2"
-        opacity="0.55"
-        markerEnd="url(#arrow-down)"
-      />
-      <text x={downArrowX + 6} y={208} fill={mutedText} fontSize="9">Audit</text>
-      <text x={downArrowX + 6} y={221} fill={mutedText} fontSize="9">findings</text>
-    </svg>
+        {/* ── Layer 2: Management (middle) ── */}
+        <g style={{ animation: 'fadeInUp-dg 0.4s ease forwards', animationDelay: '0.15s' }}>
+          <rect x={40} y={210} width={540} height={80} rx={10} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-dg)" />
+          <text x={310} y={242} textAnchor="middle" fill="#1d1d1f" fontSize={13} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Stewards &amp; Catalog</text>
+          <text x={310} y={262} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+            Named Owners · Data Catalog · Lineage Tracking · Issue Escalation
+          </text>
+        </g>
+
+        {/* Arrow: Layer 2 → Layer 3 */}
+        <line x1={310} y1={210} x2={310} y2={192}
+          stroke="#0071e3" strokeWidth={2} opacity={0.7}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-dg)"
+          style={{ animation: 'drawLine-dg 0.6s ease forwards', animationDelay: '0.25s' }}
+        />
+
+        {/* ── Layer 3: Oversight (top) ── */}
+        <g style={{ animation: 'fadeInUp-dg 0.4s ease forwards', animationDelay: '0.3s' }}>
+          <rect x={40} y={110} width={540} height={80} rx={10} fill="#eff6ff" stroke="#0071e3" strokeWidth={1.5} filter="url(#cardShadow-dg)" />
+          <text x={310} y={142} textAnchor="middle" fill="#1d1d1f" fontSize={13} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Governance Council</text>
+          <text x={310} y={162} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+            Policy Decisions · Ownership Disputes · Standards Approval
+          </text>
+        </g>
+
+        {/* ── Right: Compliance panel ── */}
+        <g style={{ animation: 'fadeInUp-dg 0.4s ease forwards', animationDelay: '0.4s' }}>
+          <rect x={620} y={110} width={110} height={270} rx={10} fill="#fff8f0" stroke="#f59e0b" strokeWidth={1.5} filter="url(#cardShadow-dg)" />
+          <text x={675} y={135} textAnchor="middle" fill="#1d1d1f" fontSize={11} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Compliance</text>
+          <text x={675} y={160} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">GDPR</text>
+          <text x={675} y={185} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">CCPA</text>
+          <text x={675} y={210} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">BCBS 239</text>
+          <text x={675} y={235} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">HIPAA</text>
+        </g>
+
+        {/* Arrow: Governance Council → Compliance */}
+        <line x1={580} y1={150} x2={618} y2={150}
+          stroke="#f59e0b" strokeWidth={1.5} opacity={0.6}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-dg-amber)"
+          style={{ animation: 'drawLine-dg 0.6s ease forwards', animationDelay: '0.5s' }}
+        />
+
+        {/* Layer labels on left side */}
+        <text x={28} y={352} textAnchor="middle" fill="#6e6e73" fontSize={8} fontWeight={600}
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif"
+          transform="rotate(-90, 28, 345)">FOUNDATION</text>
+        <text x={28} y={255} textAnchor="middle" fill="#6e6e73" fontSize={8} fontWeight={600}
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif"
+          transform="rotate(-90, 28, 250)">MANAGEMENT</text>
+        <text x={28} y={155} textAnchor="middle" fill="#0071e3" fontSize={8} fontWeight={600}
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif"
+          transform="rotate(-90, 28, 150)">OVERSIGHT</text>
+      </svg>
+    </div>
   );
 }

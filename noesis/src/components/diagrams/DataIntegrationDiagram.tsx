@@ -1,118 +1,193 @@
 export function DataIntegrationDiagram() {
-  const lineColor = 'var(--color-accent-blue)';
-  const textColor = 'white';
-  const mutedText = 'var(--color-text-secondary)';
-
-  // Source system boxes (left column)
-  const sources = [
-    { label: 'CRM', y: 60 },
-    { label: 'ERP', y: 175 },
-    { label: 'Files', y: 290 },
-  ];
-
-  // Arrow marker definition
   return (
-    <svg
-      viewBox="0 0 800 400"
-      className="w-full max-w-4xl mx-auto my-8"
-      style={{ backgroundColor: 'var(--color-noir)', borderRadius: 'var(--radius-md)' }}
-      role="img"
-      aria-label="ETL vs ELT pipeline: source systems extract to staging, then either transform-first (ETL) or load-first (ELT) into the data warehouse."
+    <div
+      className="w-full max-w-4xl mx-auto my-8 rounded-2xl overflow-hidden"
+      style={{ background: '#f8f8fa', boxShadow: '0 2px 20px rgba(0,0,0,0.08)' }}
     >
-      <defs>
-        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L8,3 z" fill={lineColor} />
-        </marker>
-        <marker id="arrow-muted" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.3)" />
-        </marker>
-      </defs>
+      <svg
+        viewBox="0 0 760 380"
+        className="w-full"
+        role="img"
+        aria-label="Pipeline flow diagram comparing ETL and ELT data integration paths from source systems into a data warehouse"
+      >
+        <defs>
+          <filter id="cardShadow-di" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.08)" />
+          </filter>
+          <marker id="arrow-di" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0071e3" opacity="0.7" />
+          </marker>
+          <marker id="arrow-di-gray" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#6e6e73" opacity="0.6" />
+          </marker>
+          <style>{`
+            @keyframes fadeInUp-di {
+              from { opacity: 0; transform: translateY(6px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes drawLine-di {
+              from { stroke-dashoffset: 400; }
+              to { stroke-dashoffset: 0; }
+            }
+          `}</style>
+        </defs>
 
-      {/* Source system boxes */}
-      {sources.map((src) => (
-        <g key={src.label}>
-          <rect x="20" y={src.y} width="100" height="50" rx="8" fill="none" stroke={lineColor} strokeWidth="1.5" opacity="0.7" />
-          <text x="70" y={src.y + 30} textAnchor="middle" dominantBaseline="middle" fill={textColor} fontSize="13" fontWeight="600">
-            {src.label}
-          </text>
+        {/* ── Left column: Source Systems ── */}
+        <text x={75} y={45} textAnchor="middle" fontSize={10} fill="#6e6e73" fontWeight={600}
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Sources</text>
+
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0s' }}>
+          <rect x={20} y={60} width={110} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-di)" />
+          <text x={75} y={85} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">CRM</text>
         </g>
-      ))}
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0.1s' }}>
+          <rect x={20} y={120} width={110} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-di)" />
+          <text x={75} y={145} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">ERP</text>
+        </g>
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0.1s' }}>
+          <rect x={20} y={180} width={110} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-di)" />
+          <text x={75} y={205} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Files</text>
+        </g>
 
-      {/* Arrows from sources to Extract box */}
-      {sources.map((src) => (
-        <line
-          key={`arr-${src.label}`}
-          x1="120"
-          y1={src.y + 25}
-          x2="195"
-          y2="200"
-          stroke={lineColor}
-          strokeWidth="1.5"
-          opacity="0.5"
-          markerEnd="url(#arrow)"
+        {/* ── ETL Path label ── */}
+        <text x={370} y={65} textAnchor="middle" fontSize={10} fill="#6e6e73"
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">ETL Path</text>
+
+        {/* ETL: Extract */}
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0.2s' }}>
+          <rect x={180} y={80} width={100} height={40} rx={8} fill="#eff6ff" stroke="#0071e3" filter="url(#cardShadow-di)" />
+          <text x={230} y={105} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Extract</text>
+        </g>
+        {/* ETL: Transform */}
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0.3s' }}>
+          <rect x={320} y={80} width={110} height={40} rx={8} fill="#eff6ff" stroke="#0071e3" filter="url(#cardShadow-di)" />
+          <text x={375} y={105} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Transform</text>
+        </g>
+        {/* ETL: Load */}
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0.4s' }}>
+          <rect x={480} y={80} width={90} height={40} rx={8} fill="#eff6ff" stroke="#0071e3" filter="url(#cardShadow-di)" />
+          <text x={525} y={105} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Load</text>
+        </g>
+
+        {/* ── ELT Path label ── */}
+        <text x={370} y={175} textAnchor="middle" fontSize={10} fill="#6e6e73"
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">ELT Path</text>
+
+        {/* ELT: Extract */}
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0.2s' }}>
+          <rect x={180} y={190} width={100} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-di)" />
+          <text x={230} y={215} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Extract</text>
+        </g>
+        {/* ELT: Load */}
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0.3s' }}>
+          <rect x={320} y={190} width={90} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-di)" />
+          <text x={365} y={215} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Load</text>
+        </g>
+        {/* ELT: Transform */}
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0.4s' }}>
+          <rect x={460} y={190} width={110} height={40} rx={8} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-di)" />
+          <text x={515} y={215} textAnchor="middle" fill="#1d1d1f" fontSize={12} fontWeight={600}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Transform</text>
+        </g>
+
+        {/* ── Right: Data Warehouse ── */}
+        <g style={{ animation: 'fadeInUp-di 0.4s ease forwards', animationDelay: '0.5s' }}>
+          <rect x={620} y={80} width={120} height={150} rx={10} fill="#eff6ff" stroke="#0071e3" strokeWidth={1.5} filter="url(#cardShadow-di)" />
+          <text x={680} y={148} textAnchor="middle" fill="#1d1d1f" fontSize={13} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Data</text>
+          <text x={680} y={168} textAnchor="middle" fill="#1d1d1f" fontSize={13} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Warehouse</text>
+        </g>
+
+        {/* ── Connectors ── */}
+        {/* Sources → ETL Extract (from source right edges to extract left, averaged at y~140) */}
+        <line x1={130} y1={80} x2={180} y2={100}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.5}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.15s' }}
         />
-      ))}
+        <line x1={130} y1={140} x2={180} y2={110}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.5}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.15s' }}
+        />
+        {/* Sources → ELT Extract */}
+        <line x1={130} y1={140} x2={180} y2={200}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.5}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.15s' }}
+        />
+        <line x1={130} y1={200} x2={180} y2={210}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.5}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.15s' }}
+        />
 
-      {/* Extract box */}
-      <rect x="200" y="165" width="110" height="60" rx="8" fill="none" stroke={lineColor} strokeWidth="2" />
-      <text x="255" y="200" textAnchor="middle" dominantBaseline="middle" fill={textColor} fontSize="13" fontWeight="700">
-        Extract
-      </text>
+        {/* ETL: Extract → Transform → Load */}
+        <line x1={280} y1={100} x2={320} y2={100}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.7}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.3s' }}
+        />
+        <line x1={430} y1={100} x2={480} y2={100}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.7}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.4s' }}
+        />
 
-      {/* Arrow Extract → Stage */}
-      <line x1="310" y1="195" x2="355" y2="195" stroke={lineColor} strokeWidth="2" markerEnd="url(#arrow)" />
+        {/* ELT: Extract → Load → Transform */}
+        <line x1={280} y1={210} x2={320} y2={210}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.7}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.3s' }}
+        />
+        <line x1={410} y1={210} x2={460} y2={210}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.7}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.4s' }}
+        />
 
-      {/* Stage box */}
-      <rect x="360" y="165" width="110" height="60" rx="8" fill="none" stroke={lineColor} strokeWidth="2" />
-      <text x="415" y="200" textAnchor="middle" dominantBaseline="middle" fill={textColor} fontSize="13" fontWeight="700">
-        Stage
-      </text>
+        {/* ETL Load → Warehouse */}
+        <line x1={570} y1={100} x2={620} y2={125}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.7}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.5s' }}
+        />
+        {/* ELT Transform → Warehouse */}
+        <line x1={570} y1={210} x2={620} y2={185}
+          stroke="#0071e3" strokeWidth={1.5} opacity={0.7}
+          strokeDasharray="300" strokeDashoffset="300"
+          markerEnd="url(#arrow-di)"
+          style={{ animation: 'drawLine-di 0.6s ease forwards', animationDelay: '0.5s' }}
+        />
 
-      {/* Fork: upper path (ETL) and lower path (ELT) */}
-      {/* Vertical fork line from stage */}
-      <line x1="470" y1="145" x2="470" y2="255" stroke={lineColor} strokeWidth="1.5" opacity="0.5" strokeDasharray="5,4" />
-
-      {/* Upper: Transform → Load (ETL) */}
-      {/* Horizontal line to Transform */}
-      <line x1="470" y1="145" x2="530" y2="145" stroke={lineColor} strokeWidth="1.5" markerEnd="url(#arrow)" />
-      <rect x="535" y="118" width="110" height="54" rx="8" fill="none" stroke={lineColor} strokeWidth="1.5" opacity="0.9" />
-      <text x="590" y="140" textAnchor="middle" fill={textColor} fontSize="12" fontWeight="600">Transform</text>
-      <text x="590" y="158" textAnchor="middle" fill={mutedText} fontSize="10">then Load</text>
-      {/* ETL Badge */}
-      <rect x="535" y="82" width="44" height="22" rx="6" fill={lineColor} />
-      <text x="557" y="97" textAnchor="middle" dominantBaseline="middle" fill="#080808" fontSize="10" fontWeight="700">ETL</text>
-      {/* Batch badge */}
-      <rect x="586" y="82" width="60" height="22" rx="6" fill="rgba(0,217,255,0.15)" stroke={lineColor} strokeWidth="1" />
-      <text x="616" y="97" textAnchor="middle" dominantBaseline="middle" fill={lineColor} fontSize="9">Batch</text>
-
-      {/* Arrow from Transform to Warehouse (upper) */}
-      <line x1="645" y1="145" x2="685" y2="145" stroke={lineColor} strokeWidth="1.5" markerEnd="url(#arrow)" />
-
-      {/* Lower: Load → Transform (ELT) */}
-      <line x1="470" y1="255" x2="530" y2="255" stroke={lineColor} strokeWidth="1.5" markerEnd="url(#arrow)" />
-      <rect x="535" y="228" width="110" height="54" rx="8" fill="none" stroke={lineColor} strokeWidth="1.5" opacity="0.9" />
-      <text x="590" y="250" textAnchor="middle" fill={textColor} fontSize="12" fontWeight="600">Load</text>
-      <text x="590" y="268" textAnchor="middle" fill={mutedText} fontSize="10">then Transform</text>
-      {/* ELT badge */}
-      <rect x="535" y="290" width="44" height="22" rx="6" fill={lineColor} />
-      <text x="557" y="305" textAnchor="middle" dominantBaseline="middle" fill="#080808" fontSize="10" fontWeight="700">ELT</text>
-      {/* Streaming badge */}
-      <rect x="586" y="290" width="60" height="22" rx="6" fill="rgba(0,217,255,0.15)" stroke={lineColor} strokeWidth="1" />
-      <text x="616" y="305" textAnchor="middle" dominantBaseline="middle" fill={lineColor} fontSize="9">Streaming</text>
-
-      {/* Arrow from ELT box to Warehouse (lower) */}
-      <line x1="645" y1="255" x2="685" y2="255" stroke={lineColor} strokeWidth="1.5" markerEnd="url(#arrow)" />
-
-      {/* Data Warehouse box (right) */}
-      <rect x="690" y="100" width="90" height="200" rx="10" fill="none" stroke={lineColor} strokeWidth="2" />
-      <text x="735" y="185" textAnchor="middle" fill={textColor} fontSize="11" fontWeight="700">Data</text>
-      <text x="735" y="205" textAnchor="middle" fill={textColor} fontSize="11" fontWeight="700">Warehouse</text>
-
-      {/* Stage → fork connecting line */}
-      <line x1="415" y1="165" x2="415" y2="145" stroke={lineColor} strokeWidth="1.5" opacity="0.4" />
-      <line x1="415" y1="145" x2="470" y2="145" stroke={lineColor} strokeWidth="1.5" opacity="0.4" />
-      <line x1="415" y1="225" x2="415" y2="255" stroke={lineColor} strokeWidth="1.5" opacity="0.4" />
-      <line x1="415" y1="255" x2="470" y2="255" stroke={lineColor} strokeWidth="1.5" opacity="0.4" />
-    </svg>
+        {/* ── Bottom labels ── */}
+        <text x={370} y={295} textAnchor="middle" fontSize={9} fill="#86868b"
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+          Batch / Scheduled
+        </text>
+        <text x={370} y={340} textAnchor="middle" fontSize={9} fill="#86868b"
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+          Real-time / Cloud-native
+        </text>
+      </svg>
+    </div>
   );
 }

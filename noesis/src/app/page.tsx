@@ -73,15 +73,8 @@ export default function HomePage() {
         ref={heroRef}
         className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden bg-[var(--color-noir)]"
       >
-        {/* Background glow — parallax */}
-        <motion.div
-          style={{ y: heroY }}
-          className="absolute inset-0 pointer-events-none"
-          aria-hidden="true"
-        >
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[var(--color-accent-blue)] opacity-[0.05] rounded-full blur-3xl" />
-          <div className="absolute top-2/3 left-1/4 w-[300px] h-[300px] bg-[var(--color-accent-blue)] opacity-[0.03] rounded-full blur-2xl" />
-        </motion.div>
+        {/* Background gradient — light mode */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,113,227,0.04)] to-transparent pointer-events-none" aria-hidden="true" />
 
         {/* Hero content */}
         <motion.div
@@ -96,7 +89,7 @@ export default function HomePage() {
             Built by a practitioner · 20+ years in the field
           </div>
 
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-4 leading-none tracking-tight">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-[var(--color-text-primary)] mb-4 leading-none tracking-tight">
             Noesis
           </h1>
 
@@ -141,7 +134,7 @@ export default function HomePage() {
           transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
           aria-hidden="true"
         >
-          <div className="w-px h-12 bg-gradient-to-b from-[var(--color-accent-blue)] to-transparent mx-auto" />
+          <div className="w-px h-12 bg-gradient-to-b from-[rgba(0,113,227,0.4)] to-transparent mx-auto" />
         </motion.div>
       </section>
 
@@ -158,7 +151,7 @@ export default function HomePage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--color-text-primary)] mb-4">
               Seven Topics. One Platform.
             </h2>
             <p className="text-[var(--color-text-secondary)] text-lg max-w-xl mx-auto">
@@ -188,7 +181,7 @@ export default function HomePage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text-primary)] mb-4">
               What Makes Noesis Different
             </h2>
             <p className="text-[var(--color-text-secondary)] max-w-xl mx-auto">
@@ -206,10 +199,10 @@ export default function HomePage() {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <GlassCard className="h-full">
-                <div className="mb-4 p-3 rounded-[var(--radius-sm)] bg-[var(--color-accent-blue)] bg-opacity-10 w-fit">
+                <div className="mb-4 p-3 rounded-[var(--radius-sm)] bg-[rgba(0,113,227,0.08)] w-fit">
                   <Brain className="w-6 h-6 text-[var(--color-accent-blue)]" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
                   Think Through It
                 </h3>
                 <p className="text-xs font-mono text-[var(--color-accent-blue)] mb-3 uppercase tracking-wider">
@@ -231,10 +224,10 @@ export default function HomePage() {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <GlassCard className="h-full">
-                <div className="mb-4 p-3 rounded-[var(--radius-sm)] bg-[var(--color-accent-blue)] bg-opacity-10 w-fit">
+                <div className="mb-4 p-3 rounded-[var(--radius-sm)] bg-[rgba(0,113,227,0.08)] w-fit">
                   <Briefcase className="w-6 h-6 text-[var(--color-accent-blue)]" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
                   From the Field
                 </h3>
                 <p className="text-xs font-mono text-[var(--color-accent-blue)] mb-3 uppercase tracking-wider">
@@ -256,10 +249,10 @@ export default function HomePage() {
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <GlassCard className="h-full">
-                <div className="mb-4 p-3 rounded-[var(--radius-sm)] bg-[var(--color-accent-blue)] bg-opacity-10 w-fit">
+                <div className="mb-4 p-3 rounded-[var(--radius-sm)] bg-[rgba(0,113,227,0.08)] w-fit">
                   <Key className="w-6 h-6 text-[var(--color-accent-blue)]" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
                   Your AI, Your Way
                 </h3>
                 <p className="text-xs font-mono text-[var(--color-accent-blue)] mb-3 uppercase tracking-wider">
@@ -292,7 +285,7 @@ export default function HomePage() {
             <div className="relative">
               <div className="absolute -left-4 top-0 bottom-0 w-0.5 bg-[var(--color-accent-blue)] opacity-60 rounded-full" />
               <blockquote className="pl-8">
-                <p className="text-lg sm:text-xl md:text-2xl text-white leading-relaxed mb-6 font-light">
+                <p className="text-lg sm:text-xl md:text-2xl text-[var(--color-text-primary)] leading-relaxed mb-6 font-light">
                   &ldquo;20 years. Every kind of environment — enterprise platforms, custom builds,
                   everything in between. What I&apos;ve learned is this: the platform is the weapon.
                   You pick the right one for the job and you execute. What makes data management
@@ -301,7 +294,7 @@ export default function HomePage() {
                 </p>
                 <footer className="flex flex-col gap-2">
                   <div>
-                    <p className="text-white font-semibold">Raja Shahnawaz Soni</p>
+                    <p className="text-[var(--color-text-primary)] font-semibold">Raja Shahnawaz Soni</p>
                     <p className="text-[var(--color-text-muted)] text-sm font-mono">
                       Senior Data Leader & MDM Architect · Dubai, UAE
                     </p>
@@ -334,7 +327,7 @@ export default function HomePage() {
                   className="group flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)] border border-[var(--color-glass-border)] bg-[var(--color-glass-bg)] hover:border-[var(--color-accent-blue)] transition-colors"
                 >
                   <div className="flex-1">
-                    <p className="text-white text-sm font-semibold group-hover:text-[var(--color-accent-blue)] transition-colors">
+                    <p className="text-[var(--color-text-primary)] text-sm font-semibold group-hover:text-[var(--color-accent-blue)] transition-colors">
                       The Data Alchemist
                     </p>
                     <p className="text-[var(--color-text-muted)] text-xs font-mono">Platform I · 7 modules · AI tutor</p>
@@ -349,7 +342,7 @@ export default function HomePage() {
                   className="group flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)] border border-[var(--color-glass-border)] bg-[var(--color-glass-bg)] hover:border-[var(--color-accent-blue)] transition-colors"
                 >
                   <div className="flex-1">
-                    <p className="text-white text-sm font-semibold group-hover:text-[var(--color-accent-blue)] transition-colors">
+                    <p className="text-[var(--color-text-primary)] text-sm font-semibold group-hover:text-[var(--color-accent-blue)] transition-colors">
                       SYNAPTIQ
                     </p>
                     <p className="text-[var(--color-text-muted)] text-xs font-mono">Platform II · 6-stage enterprise architecture</p>
@@ -385,7 +378,7 @@ export default function HomePage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text-primary)] mb-4">
               What Colleagues Say
             </h2>
             <p className="text-[var(--color-text-secondary)] max-w-xl mx-auto">
@@ -407,7 +400,7 @@ export default function HomePage() {
                     &ldquo;{t.text}&rdquo;
                   </p>
                   <div className="border-t border-[var(--color-glass-border)] pt-4">
-                    <p className="text-white font-semibold text-sm">{t.name}</p>
+                    <p className="text-[var(--color-text-primary)] font-semibold text-sm">{t.name}</p>
                     <p className="text-[var(--color-text-muted)] text-xs font-mono mt-0.5">{t.title}</p>
                     <p className="text-[var(--color-text-muted)] text-xs font-mono opacity-60 mt-0.5">{t.date} · LinkedIn</p>
                   </div>
@@ -470,7 +463,7 @@ export default function HomePage() {
                 <p className="text-xs font-mono text-[var(--color-accent-blue)] uppercase tracking-wider mb-4">
                   About the Author
                 </p>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text-primary)] mb-4">
                   Raja Shahnawaz Soni
                 </h2>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed mb-4">
@@ -515,7 +508,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="group flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)] border border-[var(--color-glass-border)] bg-[var(--color-glass-bg)] hover:border-[var(--color-accent-blue)] transition-colors"
                 >
-                  <span className="text-white text-sm group-hover:text-[var(--color-accent-blue)] transition-colors">
+                  <span className="text-[var(--color-text-primary)] text-sm group-hover:text-[var(--color-accent-blue)] transition-colors">
                     LinkedIn
                   </span>
                   <ExternalLink className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent-blue)] transition-colors ml-auto" />
@@ -526,7 +519,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="group flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)] border border-[var(--color-glass-border)] bg-[var(--color-glass-bg)] hover:border-[var(--color-accent-blue)] transition-colors"
                 >
-                  <span className="text-white text-sm group-hover:text-[var(--color-accent-blue)] transition-colors">
+                  <span className="text-[var(--color-text-primary)] text-sm group-hover:text-[var(--color-accent-blue)] transition-colors">
                     GitHub
                   </span>
                   <ExternalLink className="w-4 h-4 text-[var(--color-text-muted)] group-hover:text-[var(--color-accent-blue)] transition-colors ml-auto" />
@@ -541,7 +534,7 @@ export default function HomePage() {
       <footer className="w-full bg-[var(--color-noir)] border-t border-[var(--color-glass-border)] px-4 sm:px-6 md:px-8 py-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--color-text-muted)]">
           <div className="flex flex-col sm:flex-row items-center gap-2">
-            <p className="font-semibold text-white">Noesis</p>
+            <p className="font-semibold text-[var(--color-text-primary)]">Noesis</p>
             <span className="hidden sm:inline opacity-30">·</span>
             <p>Built by{' '}
               <a

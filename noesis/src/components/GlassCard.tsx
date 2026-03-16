@@ -12,14 +12,13 @@ export function GlassCard({ children, className = '', onClick }: GlassCardProps)
       onClick={onClick}
       className={[
         'relative',
-        'bg-[var(--color-glass-bg)]',
-        'backdrop-blur-[10px]',
+        'bg-white',
         'border border-[var(--color-glass-border)]',
         'rounded-[var(--radius-md)]',
         'p-6',
         'shadow-[var(--shadow-glass)]',
         'transition-all duration-300',
-        'hover:bg-[var(--color-glass-bg-hover)]',
+        'hover:shadow-[var(--shadow-glow)]',
         'hover:border-[var(--color-glass-border-hover)]',
         onClick ? 'cursor-pointer' : '',
         className,

@@ -34,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="bg-noir text-white antialiased">
+      <body className="antialiased">
         <Navigation />
         <main>{children}</main>
       </body>

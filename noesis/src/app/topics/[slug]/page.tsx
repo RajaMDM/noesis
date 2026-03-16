@@ -64,7 +64,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         {/* Back link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-white transition-colors mb-8 text-sm"
+          className="inline-flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-8 text-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to all topics
@@ -75,7 +75,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
           <div className="mb-6 text-[var(--color-accent-blue)]">
             <Icon className="w-12 h-12" />
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[var(--color-text-primary)] mb-4 leading-tight">
             {title}
           </h1>
           <p className="text-xl text-[var(--color-text-secondary)] max-w-2xl leading-relaxed">
@@ -85,7 +85,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
 
         {/* 1. Overview */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-white mb-4">Overview</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">Overview</h2>
           <p className="text-[var(--color-text-secondary)] leading-relaxed text-base whitespace-pre-line">
             {content.overview}
           </p>
@@ -93,7 +93,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
 
         {/* 2. How AI Applies */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-white mb-4">How AI Applies</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">How AI Applies</h2>
           <p className="text-[var(--color-text-secondary)] leading-relaxed text-base whitespace-pre-line">
             {content.howAIApplies}
           </p>
@@ -107,7 +107,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
                 From the Field
               </span>
             </div>
-            <p className="text-white leading-relaxed mb-6 text-base">
+            <p className="text-[var(--color-text-primary)] leading-relaxed mb-6 text-base">
               {content.fromTheField.text}
             </p>
             <p className="text-[var(--color-text-muted)] text-sm font-mono">
@@ -119,11 +119,11 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         {/* Topic-specific optional block: Tools (Data Quality, MDM) */}
         {content.tools && content.tools.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-6">Tools &amp; Agents</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Tools &amp; Agents</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {content.tools.map((tool) => (
                 <GlassCard key={tool.name}>
-                  <h3 className="text-lg font-semibold text-white mb-2">{tool.name}</h3>
+                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">{tool.name}</h3>
                   <p className="text-[var(--color-text-secondary)] text-sm mb-3">{tool.description}</p>
                   {tool.link && (
                     <a
@@ -144,7 +144,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         {/* Topic-specific: Policy Framework (Data Governance) */}
         {content.policyFramework && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-4">Governance Essentials</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">Governance Essentials</h2>
             <div className="text-[var(--color-text-secondary)] leading-relaxed text-base whitespace-pre-line">
               {content.policyFramework}
             </div>
@@ -154,7 +154,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         {/* Topic-specific: Matching Algorithm (MDM) */}
         {content.matchingAlgorithm && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-4">How MDM Matching Works</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">How MDM Matching Works</h2>
             <div className="text-[var(--color-text-secondary)] leading-relaxed text-base">
               {content.matchingAlgorithm}
             </div>
@@ -164,7 +164,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         {/* Topic-specific: Activation Examples (Reverse Integration) */}
         {content.activationExamples && content.activationExamples.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-6">Activation Use Cases</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Activation Use Cases</h2>
             <ul className="space-y-3">
               {content.activationExamples.map((example, idx) => (
                 <li key={idx} className="flex gap-3">
@@ -179,11 +179,11 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         {/* Topic-specific: Emerging Tools (AI in Data Management) */}
         {content.emergingTools && content.emergingTools.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-6">Emerging AI Tools</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Emerging AI Tools</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {content.emergingTools.map((tool) => (
                 <GlassCard key={tool.name}>
-                  <h3 className="text-base font-semibold text-white mb-2">{tool.name}</h3>
+                  <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-2">{tool.name}</h3>
                   <p className="text-[var(--color-text-secondary)] text-sm">{tool.capability}</p>
                 </GlassCard>
               ))}
@@ -193,7 +193,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
 
         {/* 4. Architecture Diagram */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-white mb-2">Architecture</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">Architecture</h2>
           <p className="text-[var(--color-text-muted)] text-sm mb-6">{content.architectureCaption}</p>
           {DiagramComponent && <DiagramComponent />}
         </section>
@@ -204,7 +204,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
         {/* 6. Further Reading (optional) */}
         {content.furtherReading && content.furtherReading.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-4">Further Reading</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-4">Further Reading</h2>
             <ul className="space-y-2">
               {content.furtherReading.map((item) => (
                 <li key={item.title}>
@@ -225,7 +225,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
 
         {/* 7. Where to Go Next */}
         <section className="mb-12 pt-8 border-t border-[var(--color-glass-border)]">
-          <h2 className="text-2xl font-bold text-white mb-6">Where to Go Next</h2>
+          <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Where to Go Next</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {nextTopic && (
               <Link href={`/topics/${nextTopic.slug}`} className="col-span-1 sm:col-span-2 md:col-span-1">
@@ -233,7 +233,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
                   <p className="text-xs font-mono text-[var(--color-accent-blue)] uppercase tracking-wider mb-2">
                     Next in Path
                   </p>
-                  <p className="text-white font-semibold">{nextTopic.title}</p>
+                  <p className="text-[var(--color-text-primary)] font-semibold">{nextTopic.title}</p>
                   <p className="text-[var(--color-text-muted)] text-sm mt-1">{nextTopic.description}</p>
                 </GlassCard>
               </Link>
@@ -244,7 +244,7 @@ export default async function TopicPage({ params }: { params: Promise<{ slug: st
                   <p className="text-xs font-mono text-[var(--color-text-muted)] uppercase tracking-wider mb-2">
                     Related
                   </p>
-                  <p className="text-white font-semibold text-sm">{related.title}</p>
+                  <p className="text-[var(--color-text-primary)] font-semibold text-sm">{related.title}</p>
                 </GlassCard>
               </Link>
             ))}

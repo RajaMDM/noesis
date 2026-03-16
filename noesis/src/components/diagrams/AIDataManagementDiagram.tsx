@@ -1,162 +1,133 @@
 export function AIDataManagementDiagram() {
-  const lineColor = 'var(--color-accent-blue)';
-  const textColor = 'white';
-  const mutedText = 'var(--color-text-secondary)';
-
-  // Three horizontal layers
-  // viewBox: 800 x 420
-  const layers = [
-    {
-      id: 'storage',
-      label: 'Storage & Compute',
-      y: 330,
-      height: 60,
-      fill: 'rgba(255,255,255,0.04)',
-      stroke: 'rgba(255,255,255,0.20)',
-      textColor: mutedText,
-      sections: [],
-    },
-    {
-      id: 'data-mgmt',
-      label: 'Data Management Layer',
-      y: 200,
-      height: 100,
-      fill: 'rgba(0,217,255,0.07)',
-      stroke: 'rgba(0,217,255,0.45)',
-      textColor: textColor,
-      sections: ['Quality', 'MDM', 'Governance', 'Integration'],
-    },
-    {
-      id: 'ai',
-      label: 'AI / ML Layer',
-      y: 60,
-      height: 100,
-      fill: 'rgba(0,217,255,0.14)',
-      stroke: lineColor,
-      textColor: textColor,
-      sections: ['Models', 'Feature Store', 'Vector DBs', 'Agents'],
-    },
-  ];
-
-  const layerX = 60;
-  const layerW = 680;
-
   return (
-    <svg
-      viewBox="0 0 800 420"
-      className="w-full max-w-4xl mx-auto my-8"
-      style={{ backgroundColor: 'var(--color-noir)', borderRadius: 'var(--radius-md)' }}
-      role="img"
-      aria-label="AI and data management stack: storage and compute at base, data management layer (quality, MDM, governance, integration) in the middle, AI and ML layer (models, feature stores, vector databases, agents) at top with mutual dependency arrows."
+    <div
+      className="w-full max-w-4xl mx-auto my-8 rounded-2xl overflow-hidden"
+      style={{ background: '#f8f8fa', boxShadow: '0 2px 20px rgba(0,0,0,0.08)' }}
     >
-      <defs>
-        <marker id="arrow-stack-up" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto">
-          <path d="M0,8 L4,0 L8,8 Z" fill={lineColor} />
-        </marker>
-        <marker id="arrow-stack-down" markerWidth="8" markerHeight="8" refX="4" refY="0" orient="auto">
-          <path d="M0,0 L4,8 L8,0 Z" fill={lineColor} />
-        </marker>
-      </defs>
+      <svg
+        viewBox="0 0 760 440"
+        className="w-full"
+        role="img"
+        aria-label="Three-layer stack diagram showing Storage and Compute at the bottom, Data Management with Quality, MDM, Governance, and Integration in the middle, and an AI and Machine Learning layer with ML Models, AI Agents, Feature Stores, and Vector DBs on top, with bidirectional arrows between layers"
+      >
+        <defs>
+          <filter id="cardShadow-ai" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(0,0,0,0.08)" />
+          </filter>
+          <marker id="arrow-ai" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0071e3" opacity="0.8" />
+          </marker>
+          <marker id="arrow-ai-gray" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#6e6e73" opacity="0.6" />
+          </marker>
+          <style>{`
+            @keyframes fadeInUp-ai {
+              from { opacity: 0; transform: translateY(6px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes drawLine-ai {
+              from { stroke-dashoffset: 400; }
+              to { stroke-dashoffset: 0; }
+            }
+          `}</style>
+        </defs>
 
-      {/* Render layers */}
-      {layers.map((layer) => (
-        <g key={layer.id}>
-          <rect
-            x={layerX}
-            y={layer.y}
-            width={layerW}
-            height={layer.height}
-            rx="10"
-            fill={layer.fill}
-            stroke={layer.stroke}
-            strokeWidth="1.8"
-          />
-
-          {/* Layer title */}
-          <text
-            x={layerX + 12}
-            y={layer.y + 20}
-            fill={layer.textColor}
-            fontSize="12"
-            fontWeight="700"
-          >
-            {layer.label}
+        {/* ── Layer 1: Storage & Compute (bottom) ── */}
+        <g style={{ animation: 'fadeInUp-ai 0.4s ease forwards', animationDelay: '0s' }}>
+          <rect x={60} y={340} width={500} height={60} rx={10} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-ai)" />
+          <text x={310} y={365} textAnchor="middle" fill="#1d1d1f" fontSize={13} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Storage &amp; Compute</text>
+          <text x={310} y={383} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+            Data Lakes · Warehouses · Cloud Platforms
           </text>
-
-          {/* Section sub-boxes */}
-          {layer.sections.length > 0 && (() => {
-            const secCount = layer.sections.length;
-            const secPad = 10;
-            const secW = (layerW - (secCount + 1) * secPad) / secCount;
-            const secH = layer.height - 44;
-            const secY = layer.y + 32;
-            return layer.sections.map((sec, i) => {
-              const secX = layerX + secPad + i * (secW + secPad);
-              return (
-                <g key={sec}>
-                  <rect
-                    x={secX}
-                    y={secY}
-                    width={secW}
-                    height={secH}
-                    rx="6"
-                    fill="rgba(0,217,255,0.10)"
-                    stroke={layer.stroke}
-                    strokeWidth="1"
-                  />
-                  <text
-                    x={secX + secW / 2}
-                    y={secY + secH / 2}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fill={textColor}
-                    fontSize="11"
-                    fontWeight="600"
-                  >
-                    {sec}
-                  </text>
-                </g>
-              );
-            });
-          })()}
         </g>
-      ))}
 
-      {/* One-way arrow: Storage → Data Management */}
-      <line
-        x1="750"
-        y1="325"
-        x2="750"
-        y2="305"
-        stroke="rgba(255,255,255,0.35)"
-        strokeWidth="2"
-        markerEnd="url(#arrow-stack-up)"
-      />
+        {/* Connector: Storage → Data Management */}
+        <line x1={310} y1={340} x2={310} y2={322}
+          stroke="#6e6e73" strokeWidth={1.5} opacity={0.5}
+          strokeDasharray="400" strokeDashoffset="400"
+          markerEnd="url(#arrow-ai-gray)"
+          style={{ animation: 'drawLine-ai 0.6s ease forwards', animationDelay: '0.1s' }}
+        />
 
-      {/* Bidirectional arrows between Data Management and AI layers */}
-      {/* Up arrow */}
-      <line
-        x1="762"
-        y1="196"
-        x2="762"
-        y2="165"
-        stroke={lineColor}
-        strokeWidth="2.5"
-        markerEnd="url(#arrow-stack-up)"
-      />
-      {/* Down arrow */}
-      <line
-        x1="748"
-        y1="165"
-        x2="748"
-        y2="196"
-        stroke={lineColor}
-        strokeWidth="2.5"
-        markerEnd="url(#arrow-stack-down)"
-      />
-      {/* Mutual dependency label */}
-      <text x="770" y="185" fill={lineColor} fontSize="9" fontWeight="700">mutual</text>
-      <text x="770" y="197" fill={lineColor} fontSize="9" fontWeight="700">dependency</text>
-    </svg>
+        {/* ── Layer 2: Data Management (middle) ── */}
+        <g style={{ animation: 'fadeInUp-ai 0.4s ease forwards', animationDelay: '0.2s' }}>
+          <rect x={60} y={210} width={500} height={110} rx={10} fill="#ffffff" stroke="#e5e5e7" filter="url(#cardShadow-ai)" />
+          <text x={310} y={234} textAnchor="middle" fill="#1d1d1f" fontSize={13} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Data Management</text>
+
+          {/* Sub-node pills */}
+          {/* Quality */}
+          <rect x={80} y={255} width={90} height={30} rx={6} fill="#f5f5f7" stroke="#e5e5e7" />
+          <text x={125} y={275} textAnchor="middle" fill="#1d1d1f" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Quality</text>
+          {/* MDM */}
+          <rect x={190} y={255} width={90} height={30} rx={6} fill="#f5f5f7" stroke="#e5e5e7" />
+          <text x={235} y={275} textAnchor="middle" fill="#1d1d1f" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">MDM</text>
+          {/* Governance */}
+          <rect x={300} y={255} width={110} height={30} rx={6} fill="#f5f5f7" stroke="#e5e5e7" />
+          <text x={355} y={275} textAnchor="middle" fill="#1d1d1f" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Governance</text>
+          {/* Integration */}
+          <rect x={430} y={255} width={110} height={30} rx={6} fill="#f5f5f7" stroke="#e5e5e7" />
+          <text x={485} y={275} textAnchor="middle" fill="#1d1d1f" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Integration</text>
+        </g>
+
+        {/* Bidirectional arrows between Data Management and AI layer */}
+        {/* Up arrow: Data Management → AI (left channel) */}
+        <line x1={270} y1={210} x2={270} y2={192}
+          stroke="#0071e3" strokeWidth={2} opacity={0.8}
+          strokeDasharray="400" strokeDashoffset="400"
+          markerEnd="url(#arrow-ai)"
+          style={{ animation: 'drawLine-ai 0.6s ease forwards', animationDelay: '0.25s' }}
+        />
+        {/* Down arrow: AI → Data Management (right channel) */}
+        <line x1={350} y1={192} x2={350} y2={210}
+          stroke="#0071e3" strokeWidth={2} opacity={0.8}
+          strokeDasharray="400" strokeDashoffset="400"
+          markerEnd="url(#arrow-ai)"
+          style={{ animation: 'drawLine-ai 0.6s ease forwards', animationDelay: '0.3s' }}
+        />
+
+        {/* Arrow labels */}
+        <text x={220} y={201} textAnchor="middle" fill="#0071e3" fontSize={9}
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">AI improves data</text>
+        <text x={405} y={201} textAnchor="middle" fill="#0071e3" fontSize={9}
+          fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Data enables AI</text>
+
+        {/* ── Layer 3: AI & ML (top) ── */}
+        <g style={{ animation: 'fadeInUp-ai 0.4s ease forwards', animationDelay: '0.4s' }}>
+          <rect x={60} y={60} width={500} height={130} rx={10} fill="#eff6ff" stroke="#0071e3" strokeWidth={2} filter="url(#cardShadow-ai)" />
+          <text x={310} y={85} textAnchor="middle" fill="#1d1d1f" fontSize={13} fontWeight={700}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">AI &amp; Machine Learning Layer</text>
+
+          {/* Sub-node pills */}
+          {/* ML Models */}
+          <rect x={80} y={105} width={100} height={30} rx={6} fill="#ffffff" stroke="#bfdbfe" />
+          <text x={130} y={125} textAnchor="middle" fill="#1d1d1f" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">ML Models</text>
+          {/* AI Agents */}
+          <rect x={200} y={105} width={100} height={30} rx={6} fill="#ffffff" stroke="#bfdbfe" />
+          <text x={250} y={125} textAnchor="middle" fill="#1d1d1f" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">AI Agents</text>
+          {/* Feature Stores */}
+          <rect x={320} y={105} width={120} height={30} rx={6} fill="#ffffff" stroke="#bfdbfe" />
+          <text x={380} y={125} textAnchor="middle" fill="#1d1d1f" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Feature Stores</text>
+          {/* Vector DBs */}
+          <rect x={460} y={105} width={90} height={30} rx={6} fill="#ffffff" stroke="#bfdbfe" />
+          <text x={505} y={125} textAnchor="middle" fill="#1d1d1f" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">Vector DBs</text>
+
+          <text x={310} y={165} textAnchor="middle" fill="#6e6e73" fontSize={10}
+            fontFamily="system-ui, -apple-system, 'SF Pro Display', sans-serif">
+            Autonomous Pipelines · Semantic Discovery · AI Stewards
+          </text>
+        </g>
+      </svg>
+    </div>
   );
 }
