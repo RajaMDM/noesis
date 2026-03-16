@@ -1,6 +1,7 @@
 export interface DomainEntity {
   name: string;
   definition: string;
+  example?: string; // Short concrete example, 1–2 sentences, uses "NouraCo" fictional universe
 }
 
 export interface DomainDMStep {
@@ -41,31 +42,43 @@ export const domainContent: Record<string, DomainContent> = {
         name: 'Individual / Person',
         definition:
           'A natural person who interacts with your organisation as a buyer, prospect, or loyalty member. The atomic unit of customer identity.',
+        example:
+          'Sarah Al-Mansouri appears as S-00412 in CRM, LYL-88821 in Loyalty, and USR-2291 in the app. Three IDs. One person.',
       },
       {
         name: 'Household',
         definition:
           'A logical grouping of individuals sharing an address or financial relationship — critical for retail, utilities, and financial services targeting.',
+        example:
+          'The Al-Mansouri household: 4 members, 1 billing address, 2 loyalty cards. Targeted as one unit for family meal promotions.',
       },
       {
         name: 'Organisation / Account',
         definition:
           'A legal entity that purchases on behalf of a company. In B2B contexts, a single organisation may have dozens of contacts and locations.',
+        example:
+          'Noura Catering LLC: 3 contacts, 2 delivery sites, 1 credit account — and zero unified account ID across ERP, CRM, and billing.',
       },
       {
-        name: 'Contact Point',
+        name: 'Contact',
         definition:
-          'Email, phone, or address associated with a customer. Contact points change frequently and must be versioned, not overwritten.',
+          'A named individual associated with an organisation or household — the human touchpoint for sales, procurement, or account management. Contacts exist in multiple systems with no guarantee of consistency.',
+        example:
+          'Ahmed Ibrahim — Procurement Manager, Noura Catering LLC. Known in CRM. Unknown in the billing system. Two versions of his email exist.',
       },
       {
-        name: 'Interaction / Event',
+        name: 'Loyalty Member',
         definition:
-          'A timestamped record of any engagement — purchase, click, call, or complaint. The raw material of behavioural analytics.',
+          'A customer enrolled in a structured rewards programme, carrying a tier status, points balance, and enrolment history. Loyalty members are frequently duplicated across CRM and loyalty platforms.',
+        example:
+          "Gold tier member 'S. Mansouri' — 14,200 points, joined 2019. Matches 3 CRM records. Exactly one is correct.",
       },
       {
-        name: 'Golden Record',
+        name: 'Consent Record',
         definition:
-          'The single, authoritative, de-duplicated view of a customer assembled from all contributing source systems via MDM.',
+          'A timestamped, channel-specific record of a customer\'s marketing and data processing preferences. Legally required under GDPR and CCPA — the source of truth for what you are permitted to do with a customer\'s data.',
+        example:
+          'Marketing opt-in: Email ✓, SMS ✗, Push ✗. Captured at checkout, 14 Mar 2025. GDPR lawful basis: consent. Stored in OneTrust.',
       },
     ],
     dmJourney: [
@@ -161,34 +174,46 @@ export const domainContent: Record<string, DomainContent> = {
       'Location data is like GPS coordinates on a treasure map — a single digit wrong and you\'re digging in the wrong field.',
     entities: [
       {
-        name: 'Address',
+        name: 'Store / Site',
         definition:
-          'A structured representation of a physical location: street, city, postcode, country. Must be validated against postal authority reference data to be operationally useful.',
+          'A named, uniquely identified physical trading location with operational attributes: format, trading hours, seating capacity, and status. The atomic unit of the estate.',
+        example:
+          'Noura Kitchen Dubai Mall — Unit G-114, Ground Floor. Format: Inline Dine-In. Status: Trading. Opened: 12 Sep 2021.',
       },
       {
-        name: 'Geographic Point',
+        name: 'Region',
         definition:
-          'Latitude/longitude coordinates. The machine-readable truth behind an address — essential for routing, proximity calculations, and geospatial analytics.',
+          'A high-level geographic grouping of districts — typically country or multi-country. Used for financial reporting, leadership accountability, and range planning at scale.',
+        example:
+          'UAE — sits under Gulf Region in the hierarchy. Contains 3 districts, 24 stores, 4 dark kitchens.',
       },
       {
-        name: 'Location / Site',
+        name: 'District',
         definition:
-          'A named physical place — store, warehouse, office, or customer premises — that persists over time and carries operational attributes like trading hours and capacity.',
+          'A mid-tier grouping of stores managed by a single District Manager. Districts are the operational unit for scheduling, performance management, and local marketing execution.',
+        example:
+          'Downtown Dubai District — 7 stores, 2 dark kitchens, 1 concession. District Manager: Khalid Hassan. Weekly footfall target: 18,000.',
       },
       {
-        name: 'Administrative Hierarchy',
+        name: 'Trading Area',
         definition:
-          'The nested structure of regions: country → state/province → city → district → postcode. Critical for tax jurisdiction, regulatory compliance, and territory management.',
+          'A defined geographic zone around a site used for local marketing spend, range planning, and competitive analysis. Usually defined by drive time or radius, indexed against demographic and spend data.',
+        example:
+          'Downtown Dubai Trading Zone — 1.2km radius, indexed HIGH for casual dining spend. Used for range planning and local marketing budgets.',
       },
       {
-        name: 'Geofence / Zone',
+        name: 'Catchment',
         definition:
-          'A defined geographic boundary used for delivery zoning, regulatory jurisdiction, or marketing audience segmentation.',
+          'The actual geographic origin of a site\'s customer transactions, derived from loyalty and card data. Distinct from a trading area — this is measured, not planned.',
+        example:
+          'Noura Kitchen DM catchment: 73% of transactions originate within 3km. Primary draw zones: Downtown Residents + Tourist Corridor.',
       },
       {
-        name: 'Point of Interest (POI)',
+        name: 'Format',
         definition:
-          'A categorised, named location — competitor store, landmark, transport hub — used in site selection, field sales, and competitive analysis.',
+          'A classification of site type based on physical size, service model, and product range. Format drives range allocation, staffing models, and capital expenditure categories.',
+        example:
+          "Inline Dine-In — 85 covers, full kitchen, average transaction AED 120. Distinct from 'Express Kiosk' (no seating, 22 SKUs only).",
       },
     ],
     dmJourney: [
@@ -278,34 +303,46 @@ export const domainContent: Record<string, DomainContent> = {
       'Supplier data is like air traffic control — one wrong identifier and you\'re routing cargo to the wrong airport while the right one sits empty.',
     entities: [
       {
-        name: 'Supplier / Vendor',
+        name: 'Vendor / Supplier',
         definition:
           'A legal entity that provides goods or services. Must be uniquely identified across procurement, finance, and logistics systems — a surprisingly rare achievement.',
+        example:
+          'Al Barakah Fresh Foods LLC — D&B DUNS: 34-812-6621. Approved status. 47 active product lines. Primary protein supplier for UAE Noura Kitchen.',
       },
       {
-        name: 'Supplier Site / Location',
+        name: 'Supplier Site',
         definition:
-          'A physical address where goods ship from or invoices originate. One supplier may have dozens of sites with different lead times and contacts.',
+          'A physical location from which a supplier ships goods or issues invoices. One supplier may have multiple sites with different lead times, capabilities, and contacts.',
+        example:
+          'Al Barakah — Ras Al Khor Industrial Area, Unit 12B. Handles Dubai and Abu Dhabi distribution. Cold storage capacity: 800 pallets.',
       },
       {
-        name: 'Supplier Contact',
+        name: 'Contact',
         definition:
-          'Named individuals at the supplier — account manager, quality contact, invoicing. Contact data decays rapidly; supplier contacts change jobs often.',
+          'A named individual at the supplier — account manager, quality lead, or invoicing contact. Supplier contacts change frequently and exist in multiple internal systems without synchronisation.',
+        example:
+          "Fatima Al-Rashidi — Accounts Manager. Holds relationship with 4 buyers. In supplier portal. Not in CRM. Not in ERP contacts. Third system, third record.",
       },
       {
-        name: 'Contract / Agreement',
+        name: 'Product Listing',
         definition:
-          'The terms under which a supplier operates: pricing tiers, payment terms, SLAs, and compliance requirements. Contracts must link to the supplier master, not float independently.',
+          'A specific item offered by the supplier: a purchasable product with its own supplier SKU, unit of measure, pricing, and compliance attributes. The link between supplier catalogue and internal procurement.',
+        example:
+          'ABFF-CHKN-WHL-1.4 — Whole Mandi Chicken, 1.4–1.6kg, chilled, Halal cert #UAE-HAL-2024. Price: AED 28.50/unit. Min order: 20 units.',
       },
       {
-        name: 'Supplier Category',
+        name: 'Certificate',
         definition:
-          'A taxonomy node classifying what the supplier provides — raw materials, logistics, professional services. Critical for spend analysis and risk aggregation.',
+          'A compliance or quality certification held by the supplier — food safety, ESG, halal, ISO. Certificates expire and must trigger re-qualification workflows. An expired certificate against an active supplier is a regulatory and operational risk.',
+        example:
+          'HACCP Certificate #UAE-2024-0041 — valid: 01 Jan 2024 to 31 Dec 2025. STATUS: EXPIRED. 3 open purchase orders still reference this supplier.',
       },
       {
-        name: 'Certification / Compliance Record',
+        name: 'Contract',
         definition:
-          'ISO certifications, ESG ratings, audit results, and regulatory approvals. These expire and must trigger re-qualification workflows when they do.',
+          'The formal agreement governing a supplier relationship: pricing tiers, minimum spend, exclusivity clauses, SLAs, and payment terms. Contracts must link to the supplier master — floating contracts are an unmanaged financial and legal risk.',
+        example:
+          'SA-2024-ALB-007 — 2-year supply agreement, min. AED 15,000/week, exclusivity clause on Mandi chicken. Signed: Docusign. Stored: SharePoint (not ERP).',
       },
     ],
     dmJourney: [
@@ -401,34 +438,60 @@ export const domainContent: Record<string, DomainContent> = {
       'F&B product data is like a nutritional label — one missing allergen and the consequences go well beyond a data quality score.',
     entities: [
       {
-        name: 'Recipe / Formulation',
+        name: 'Menu',
         definition:
-          'The structured definition of a product\'s composition: ingredients, quantities, processing steps, and yield. The master recipe is the source of truth for everything downstream — costing, labelling, regulatory filing.',
+          'The top-level catalogue of items available for sale at a venue or brand. A menu has a validity window, applies to specific sites, and contains one or more sub-menus. It is the contract between kitchen capability and customer expectation.',
+        example:
+          'Noura Kitchen Lunch Menu — valid Mon–Fri 11:30–15:30 — 42 items across 6 sub-menus. Applies to 12 Dubai outlets. Version: 2.4. POS sync status: ✓.',
       },
       {
-        name: 'Ingredient / Raw Material',
+        name: 'Sub-Menu',
         definition:
-          'A purchased input with its own data profile: supplier, country of origin, allergen declarations, and shelf life. Ingredient changes cascade through every recipe that uses them.',
+          'A logical grouping of menu items within a menu — typically by course, cuisine type, or daypart. Sub-menus drive how items are presented on digital displays and POS screens.',
+        example:
+          '"Grills & Mains" — 9 items, average price AED 95. Position: 3rd on screen. Flagged as upsell target for Mandi upgrade modifiers.',
       },
       {
-        name: 'Finished Product / SKU',
+        name: 'Menu Item',
         definition:
-          'The sellable unit with its own GTIN/barcode, packaging configuration, and regulatory registration. One recipe may produce multiple SKUs (sizes, markets, private label).',
+          'A named, priced, sellable product as it appears to the customer. A menu item is not the same as a logistical variant — it is the customer-facing representation, assembled from one or more recipe components.',
+        example:
+          '"Chicken Mandi (Serve 1)" — AED 89. Live on POS ✓, live on digital menu ✓, Nutritics nutritional profile calibrated ✓, allergens declared ✓.',
+      },
+      {
+        name: 'Logistical Variant',
+        definition:
+          'The physical form in which a product arrives from a supplier — distinct from how it appears on the menu. One menu item may require splitting, portioning, or assembling multiple logistical variants. This is the critical link between supplier data and kitchen operations.',
+        example:
+          '"Whole Mandi Chicken — 1.4–1.6kg, fresh chilled, Halal certified." Arrives as 1 unit from Al Barakah. Kitchen trims and joints it → yields exactly 1 menu serve of Chicken Mandi. The menu never shows this variant.',
+      },
+      {
+        name: 'Recipe',
+        definition:
+          'The ingredient-level specification for a menu item: quantities, preparation method, cooking time, and yield per portion. Recipes are the source of truth for food cost, nutritional calculation, and allergen declarations.',
+        example:
+          'Chicken Mandi Serve 1: 1× whole Mandi chicken LV (1.4kg), 150g long-grain rice, 22g ras el hanout blend, 200ml chicken stock, 15ml vegetable oil. Yield: 1 portion. Cook: 45 min. Food cost: AED 31.20.',
+      },
+      {
+        name: 'Ingredient',
+        definition:
+          'A raw material used in one or more recipes. Each ingredient carries allergen flags, a supplier SKU reference, unit of measure, and cost per unit. Ingredient changes ripple through every recipe that uses them.',
+        example:
+          '"Sesame Oil" — SKU: CHEF-OIL-SES-1L — Allergen: Sesame (MUST DECLARE, EU/UK Natasha\'s Law). Used in 14 recipes. If supplier changes the formulation, all 14 menu items need a nutritional and allergen review.',
+      },
+      {
+        name: 'Modifier',
+        definition:
+          'An optional addition, substitution, or customisation that a customer can apply to a menu item at point of order. Modifiers must link to recipe adjustments and nutritional recalculations — they are not just price changes.',
+        example:
+          '"Saffron Rice Upgrade — +AED 8." Triggers: swap 150g long-grain rice → 150g saffron rice. Recipe delta: +AED 2.40 food cost. Calorie delta: +45 kcal. Allergen delta: none. All must flow to the nutritional display.',
       },
       {
         name: 'Nutritional Profile',
         definition:
-          'Calculated or lab-measured nutritional values per serving and per 100g. Must match between recipe system, label, and retailer portal — three common sources of drift.',
-      },
-      {
-        name: 'Allergen Declaration',
-        definition:
-          'The fourteen major allergens (EU) or nine major allergens (US) present in or may be present in the product. A single wrong declaration is a safety incident and potential product recall.',
-      },
-      {
-        name: 'Shelf Life / Date Coding',
-        definition:
-          'Best before, use by, and shelf life parameters that drive distribution rules, waste management, and consumer safety. Must be managed at both recipe and batch level.',
+          'The calculated per-portion nutritional values for a menu item — calories, macros, allergens, and dietary flags. Derived from recipe ingredients via a nutritional DaaS (e.g. Nutritics). Mandatory for sites with 250+ employees under UK/EU calorie labelling legislation.',
+        example:
+          '"Chicken Mandi Serve 1: 847 kcal | 52g protein | 28g fat | 89g carbs." Allergens: gluten (bread garnish), sesame (oil). Calorie label required at 8 of 12 Dubai outlets. Last Nutritics sync: 14 Mar 2026.',
       },
     ],
     dmJourney: [
@@ -518,34 +581,53 @@ export const domainContent: Record<string, DomainContent> = {
       'Apparel data is like a matrix — style × colour × size — and a gap in any cell breaks an order, a replenishment, or a customer experience.',
     entities: [
       {
-        name: 'Style / Parent Product',
+        name: 'Style',
         definition:
-          'The design concept that exists independent of colour or size: "Women\'s Slim Fit Blazer". The parent that all variants inherit attributes from.',
-      },
-      {
-        name: 'Colour / Colourway',
-        definition:
-          'A specific colourway of a style, with its own name (e.g., "Midnight Navy"), associated colour codes, and fabric references. A style typically has 3–12 colourways.',
-      },
-      {
-        name: 'Size',
-        definition:
-          'A size variant within a colourway. Sizes differ by market (UK 12 ≠ US 12 ≠ EU 42) and by category (clothing vs footwear vs accessories). Size data is a global harmonisation problem.',
+          'The design concept that exists independent of colour or size — the parent product from which all variants inherit core attributes. A style has a unique code, a buyer, a season, and a PLM lifecycle status.',
+        example:
+          "NTS-TS-2024-007 'TrailBreaker Tee' — 3 colourways, 6 sizes, 18 SKUs. Season: AW24. Buyer: Reem Al-Hadidi. PLM status: Approved.",
       },
       {
         name: 'SKU',
         definition:
-          'The atomic sellable unit: one style, one colour, one size. A single collection with 200 styles × 6 colours × 10 sizes = 12,000 SKUs — each needing a full data record.',
+          'The atomic sellable unit: one style, one colour, one size. Each SKU requires a full data record — GTIN, dimensions, weight, and stock — to trade across any channel.',
+        example:
+          'NTS-TB-TGR-M — TrailBreaker Tee, Tiger Orange, Size M. GTIN: 06291234500042. WMS stock: 340 units. E-commerce status: Live.',
       },
       {
-        name: 'Material / BOM',
+        name: 'Colorway',
         definition:
-          'The bill of materials: fabrics, trims, labels, and packaging. Material data drives sustainability reporting, country of origin calculation, and tariff classification.',
+          'A specific colour variant of a style, with its own canonical name, Pantone reference, and regional market alias. Colourway naming inconsistency is one of the most common causes of digital asset mismatches.',
+        example:
+          "Tiger Orange — Pantone 1585 C. Market alias: 'Orange' (UAE), 'Burnt Orange' (UK). Used across 6 styles in AW24. Photo shoot: confirmed.",
       },
       {
-        name: 'Size Chart / Fit Data',
+        name: 'Size',
         definition:
-          'Garment measurements for each size, used in e-commerce fit recommendations and returns reduction programmes. Inconsistently maintained and rarely linked to the product master.',
+          'A size variant within a colourway. Sizes differ by market (UK 12 ≠ US 12 ≠ EU 42) and by category. Size harmonisation across markets is a persistent data quality problem.',
+        example:
+          'Size M — NouraSport standard: chest 96–101cm. Maps to UK 12–14, US M, EU 40–42, AU 12. Supplier spec says chest 94cm. Discrepancy flagged.',
+      },
+      {
+        name: 'Supplier',
+        definition:
+          'The manufacturer or sourcing partner responsible for producing the style. In apparel, supplier data includes lead times, fabric specifications, sustainability audit status, and country of origin — all of which affect cost, compliance, and time to market.',
+        example:
+          'PeakThread Bangladesh Ltd — Dhaka Industrial Zone, Unit 4C. Lead time: 84 days. Fabric: moisture-wicking poly-cotton. SEDEX audit: passed Feb 2024.',
+      },
+      {
+        name: 'Season',
+        definition:
+          'The commercial planning period that governs when a range is bought, built, and sold. Seasons define the lifecycle container for styles and SKUs — from buy window to markdown.',
+        example:
+          'AW24 — Buy window: Feb–Mar 2024. Go-live: 01 Aug 2024. Total range: 847 styles, 12,400 SKUs. Markdown start: 01 Jan 2025.',
+      },
+      {
+        name: 'Range Plan',
+        definition:
+          'The structured buying plan for a season and category: target style count, SKU depth, investment budget, and open-to-buy. Range plans are the commercial contract between buying and finance.',
+        example:
+          'AW24 Womenswear Active — planned: 120 styles, 2,160 SKUs. Signed budget: AED 4.2M. 14 styles still awaiting supplier confirmation.',
       },
     ],
     dmJourney: [
@@ -641,34 +723,53 @@ export const domainContent: Record<string, DomainContent> = {
       'Employee data is like a personnel file kept in twelve different cabinets by twelve different departments — each with a slightly different name on the folder.',
     entities: [
       {
-        name: 'Person / Worker',
+        name: 'Employee',
         definition:
           'The individual — full-time employee, contractor, or agency worker. The atomic unit. Must be uniquely identified across HR, payroll, IT, and facilities systems.',
+        example:
+          'Layla Nasser — Workday ID: EMP-00421, Payroll ID: 8841. Cost centre updated in Workday on 01 Mar. Not yet updated in the expenses system.',
       },
       {
-        name: 'Position / Role',
+        name: 'Position',
         definition:
           'The job role that exists in the organisational structure, independent of who fills it. Positions can be vacant. One person can hold multiple positions in a matrix organisation.',
+        example:
+          'Senior Data Analyst — Grade 7, Analytics job family. Headcount plan: 3 FTE approved. 1 filled, 2 open. Reports to: Head of Consumer Insight.',
       },
       {
-        name: 'Organisational Unit',
+        name: 'Cost Centre',
         definition:
-          'Department, team, or cost centre. The hierarchical unit that determines reporting lines, budget ownership, and access controls. Restructures make org hierarchy the most volatile data in the enterprise.',
+          'The financial unit to which an employee\'s salary and expenses are charged. Cost centres exist in both HR and finance systems — and frequently fall out of sync during org changes.',
+        example:
+          'CC-5520 — Digital & Analytics, Dubai HQ. Workday: 14 employees. Payroll: 13 employees. Gap: Layla\'s transfer not yet reflected in payroll.',
       },
       {
-        name: 'Employment Record',
+        name: 'Org Unit',
         definition:
-          'The contract of employment: start date, employment type, hours, compensation, and termination data. Must be maintained with legal precision — it is the source of truth for payroll and statutory obligations.',
+          'Department, team, or division in the organisational hierarchy. Org units determine reporting lines, budget ownership, and access controls. Restructures make org hierarchy the most volatile data in the enterprise.',
+        example:
+          'Digital & Data Division → Analytics Team → Consumer Insights. 8 employees, 2 vacancies, 1 contractor not in Workday.',
       },
       {
-        name: 'Identity / Access Record',
+        name: 'Contract',
         definition:
-          'The digital identity of the employee: Active Directory account, email, system access rights, and MFA enrolment. Tightly coupled to employment status — a joiners/movers/leavers process failure is a security incident.',
+          'The employment contract: type (permanent, fixed-term, zero-hours), hours, compensation, notice period, and statutory entitlements. Must be maintained with legal precision — the source of truth for payroll and statutory obligations.',
+        example:
+          'Full-time permanent, UAE Labour Law. 30 days annual leave. Gratuity: AED 2,800/year accruing. Notice period: 30 days (not reflected in access policy).',
       },
       {
-        name: 'Skills / Competency Profile',
+        name: 'Skills / Competencies',
         definition:
-          'Structured records of qualifications, certifications, and competencies. Essential for workforce planning, role matching, and learning & development — but among the least reliably maintained employee data.',
+          'Structured records of qualifications, certifications, and competencies. Essential for workforce planning, role matching, and L&D — but among the least reliably maintained employee data.',
+        example:
+          'Layla Nasser: SQL (Advanced), Python (Intermediate), dbt (Advanced), Tableau (Basic). 2 skills listed on LinkedIn but not validated in Workday.',
+      },
+      {
+        name: 'Work Location',
+        definition:
+          'The physical site where an employee is assigned to work — office, store, or remote designation. Work location drives facilities allocation, access card setup, and in some jurisdictions, local tax obligations.',
+        example:
+          'Dubai HQ — Noesis Tower, Floor 12. Assigned desk: 12-F-044. Badge access profile: last updated when Layla was on Floor 9. Not corrected.',
       },
     ],
     dmJourney: [

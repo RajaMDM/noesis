@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { domains } from '@/lib/domains';
 import { domainContent } from '@/lib/domain-content';
 import { ChatPanel } from '@/components/ChatPanel';
+import { DMJourneyFlow } from '@/components/DMJourneyFlow';
 
 export async function generateStaticParams() {
   return domains.map((d) => ({ slug: d.slug }));
@@ -78,36 +79,26 @@ export default async function DomainPage({ params }: { params: Promise<{ slug: s
                 >
                   {entity.name}
                 </p>
-                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
+                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed mb-0">
                   {entity.definition}
                 </p>
+                {entity.example && (
+                  <p className="text-[11px] text-[var(--color-text-muted)] italic mt-2 pt-2 border-t border-[var(--color-glass-border)] leading-relaxed">
+                    e.g. {entity.example}
+                  </p>
+                )}
               </div>
             ))}
           </div>
         </section>
 
-        {/* DM Journey */}
+        {/* DM Journey — animated pipeline */}
         <section className="mb-12">
           <h2 className="text-lg font-bold text-[var(--color-text-primary)] mb-1">Data Management Journey</h2>
-          <p className="text-sm text-[var(--color-text-muted)] mb-5">Not every domain needs the full stack — here&apos;s what matters here</p>
-          <div className="space-y-3">
-            {content.dmJourney.map((step) => (
-              <div
-                key={step.technique}
-                className="flex gap-4 bg-white border border-[var(--color-glass-border)] rounded-xl p-5 shadow-[var(--shadow-glass)]"
-              >
-                <span
-                  className="flex-shrink-0 text-xs font-bold font-mono px-2.5 py-1 rounded-lg h-fit mt-0.5"
-                  style={{ color: domain.color, background: `${domain.color}12` }}
-                >
-                  {step.technique}
-                </span>
-                <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
-                  {step.why}
-                </p>
-              </div>
-            ))}
-          </div>
+          <p className="text-sm text-[var(--color-text-muted)] mb-5">
+            The full journey — Sources to Publication. Tap any stage to see what it means for this domain.
+          </p>
+          <DMJourneyFlow stages={content.dmJourney} color={domain.color} />
         </section>
 
         {/* Operational Integrations */}
