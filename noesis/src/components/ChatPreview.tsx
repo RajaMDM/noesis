@@ -187,9 +187,13 @@ interface ChatPreviewProps {
 export function ChatPreview({ topicTitle, modeId }: ChatPreviewProps) {
   const [visibleCount, setVisibleCount] = useState(0);
   const [showTyping, setShowTyping] = useState(false);
+  const [loopKey, setLoopKey] = useState(0);
 
   const preview = PREVIEWS[modeId];
   const exchanges = preview?.exchanges(topicTitle) ?? [];
+
+  // Reset loopKey when mode or topic changes so the new preview starts at iteration 0
+  useEffect(() => { setLoopKey(0); }, [modeId, topicTitle]);
 
   useEffect(() => {
     setVisibleCount(0);
@@ -198,9 +202,9 @@ export function ChatPreview({ topicTitle, modeId }: ChatPreviewProps) {
     const timeouts: ReturnType<typeof setTimeout>[] = [];
 
     exchanges.forEach((msg, i) => {
-      // Show typing dots before assistant messages
+      // Show typing dots before assistant messages — clamp to 0 so negative delays fire immediately
       if (msg.role === 'assistant' && msg.typingBefore) {
-        const t = setTimeout(() => setShowTyping(true), msg.delay - msg.typingBefore);
+        const t = setTimeout(() => setShowTyping(true), Math.max(0, msg.delay - msg.typingBefore));
         timeouts.push(t);
       }
       // Show the message
@@ -211,17 +215,15 @@ export function ChatPreview({ topicTitle, modeId }: ChatPreviewProps) {
       timeouts.push(t2);
     });
 
-    // Loop: reset after last message + 3s pause
+    // Loop: increment loopKey so the effect re-runs and reschedules all timeouts from scratch
     const lastDelay = exchanges[exchanges.length - 1]?.delay ?? 0;
-    const loopTimeout = setTimeout(() => {
-      setVisibleCount(0);
-      setShowTyping(false);
-    }, lastDelay + 3200);
+    const loopTimeout = setTimeout(() => setLoopKey(k => k + 1), lastDelay + 3000);
     timeouts.push(loopTimeout);
 
     return () => timeouts.forEach(clearTimeout);
+  // loopKey intentionally in deps — it triggers the restart
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modeId, topicTitle]);
+  }, [modeId, topicTitle, loopKey]);
 
   const color = preview?.color ?? '#0071e3';
 
