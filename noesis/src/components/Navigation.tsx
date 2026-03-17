@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, Search } from 'lucide-react';
 import { topics } from '@/lib/topics';
+import { SearchTrigger } from '@/components/SearchModal';
 
 export function Navigation() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,19 +59,35 @@ export function Navigation() {
           >
             Playbooks
           </Link>
+          <Link
+            href="/glossary"
+            className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors text-sm font-medium"
+          >
+            Glossary
+          </Link>
           <span className="text-[var(--color-text-muted)] text-sm cursor-not-allowed" title="Coming in Phase 4">
             Chat
           </span>
+          <SearchTrigger />
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          className="md:hidden p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-text-primary)]"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-        >
-          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* Mobile: search icon + hamburger */}
+        <div className="md:hidden flex items-center gap-1">
+          <button
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-text-secondary)]"
+            onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))}
+            aria-label="Open search"
+          >
+            <Search className="w-5 h-5" />
+          </button>
+          <button
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-text-primary)]"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          >
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
@@ -96,6 +113,13 @@ export function Navigation() {
               onClick={() => setMenuOpen(false)}
             >
               Playbooks
+            </Link>
+            <Link
+              href="/glossary"
+              className="block px-2 py-3 text-[var(--color-text-secondary)] hover:text-[var(--color-accent-blue)] hover:bg-[rgba(0,113,227,0.04)] rounded-[var(--radius-sm)] transition-colors font-medium"
+              onClick={() => setMenuOpen(false)}
+            >
+              Glossary
             </Link>
             <div className="border-t border-[var(--color-glass-border)] pt-3 mt-3">
               <span className="block px-2 py-3 text-[var(--color-text-muted)] text-sm">Chat (coming soon)</span>
