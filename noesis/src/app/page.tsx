@@ -144,6 +144,40 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+      {/* ─── Differentiation Strip ───────────────────────────────── */}
+      <div className="w-full bg-[var(--color-noir)] px-4 sm:px-6 md:px-8 pt-16 pb-0">
+        <div className="max-w-5xl mx-auto mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              {
+                icon: '🏗️',
+                title: 'Practitioner-authored',
+                body: '20+ years of enterprise data leadership — MDM implementations, post-acquisition integrations, regulatory programmes. Not synthesised. Lived.',
+              },
+              {
+                icon: '🎯',
+                title: 'Domain-deep, not generic',
+                body: 'Noesis knows what a Logistical Variant is, why YEXT matters for Location MDM, and what GDPR Article 17 means for your Customer golden record. Generic AI doesn\'t.',
+              },
+              {
+                icon: '🤖',
+                title: 'Your AI, your key',
+                body: 'Bring your own Anthropic, OpenAI, Gemini, Mistral, or Groq key. Five learning modes. Zero data sent to any server. Your conversations stay yours.',
+              },
+            ].map((card) => (
+              <div
+                key={card.title}
+                className="bg-white border border-[var(--color-glass-border)] rounded-2xl p-6 shadow-[var(--shadow-glass)]"
+              >
+                <span className="text-2xl block mb-3">{card.icon}</span>
+                <h3 className="text-sm font-bold text-[var(--color-text-primary)] mb-2">{card.title}</h3>
+                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">{card.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ─── Topic Cards Grid ────────────────────────────────────── */}
       <section
         id="topics"

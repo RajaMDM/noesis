@@ -36,8 +36,8 @@ export const PROVIDERS: ProviderConfig[] = [
     id: 'openai',
     name: 'OpenAI',
     shortName: 'GPT',
-    defaultModel: 'gpt-4o-mini',
-    suggestions: ['gpt-4o-mini', 'gpt-4o', 'o1', 'o3-mini', 'gpt-4-turbo'],
+    defaultModel: 'gpt-4o',
+    suggestions: ['gpt-4o', 'gpt-4o-mini', 'o3-mini', 'o1'],
     modelsDocsUrl: 'https://platform.openai.com/docs/models',
     docsUrl: 'https://platform.openai.com/api-keys',
     keyPlaceholder: 'sk-proj-...',
@@ -48,7 +48,7 @@ export const PROVIDERS: ProviderConfig[] = [
     name: 'Google Gemini',
     shortName: 'Gemini',
     defaultModel: 'gemini-2.0-flash',
-    suggestions: ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-pro'],
+    suggestions: ['gemini-2.0-flash', 'gemini-2.0-pro-exp', 'gemini-1.5-pro'],
     modelsDocsUrl: 'https://ai.google.dev/gemini-api/docs/models',
     docsUrl: 'https://aistudio.google.com/app/apikey',
     keyPlaceholder: 'AIza...',
@@ -58,8 +58,8 @@ export const PROVIDERS: ProviderConfig[] = [
     id: 'mistral',
     name: 'Mistral AI',
     shortName: 'Mistral',
-    defaultModel: 'mistral-small-latest',
-    suggestions: ['mistral-small-latest', 'mistral-large-latest', 'mistral-medium-latest', 'open-mistral-nemo'],
+    defaultModel: 'mistral-large-latest',
+    suggestions: ['mistral-large-latest', 'mistral-small-latest', 'codestral-latest'],
     modelsDocsUrl: 'https://docs.mistral.ai/getting-started/models/models_overview/',
     docsUrl: 'https://console.mistral.ai/api-keys',
     keyPlaceholder: 'your-mistral-key',
@@ -70,7 +70,7 @@ export const PROVIDERS: ProviderConfig[] = [
     name: 'Groq (Open Models)',
     shortName: 'Groq',
     defaultModel: 'llama-3.3-70b-versatile',
-    suggestions: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768', 'gemma2-9b-it'],
+    suggestions: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'gemma2-9b-it'],
     modelsDocsUrl: 'https://console.groq.com/docs/models',
     docsUrl: 'https://console.groq.com/keys',
     keyPlaceholder: 'gsk_...',
@@ -84,7 +84,7 @@ const API_KEY = (p: ProviderId) => `noesis__ai_key__${p}`;
 
 export function useProviderKey() {
   const [provider, setProviderState] = useState<ProviderId>('anthropic');
-  const [model, setModelState] = useState<string>('claude-haiku-4-5-20251001');
+  const [model, setModelState] = useState<string>(PROVIDERS[0].defaultModel);
   const [apiKey, setApiKeyState] = useState<string>('');
   const [loaded, setLoaded] = useState(false);
 

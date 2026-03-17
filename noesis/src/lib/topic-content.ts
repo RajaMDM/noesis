@@ -51,9 +51,9 @@ export const topicContent: Record<string, TopicContent> = {
     tagline: "Before you can trust any data, you need to know where it lives.",
     analogy: "🏗️ Like a construction audit before demolition — you can't fix what you haven't mapped.",
     keyInsights: [
-      "Most enterprises have 50+ data sources — fewer than half are formally documented.",
-      "Source latency is your analytical ceiling. Real-time sources unlock real-time decisions.",
-      "A data catalogue isn't optional. It's your expedition map before you can explore anything.",
+      "Most enterprises have 15–30 data sources. Fewer than 5 agree on the same number.",
+      "Source latency determines your analytical ceiling — batch pipelines mean batch decisions.",
+      "A data catalogue isn't optional. It's your map before the expedition.",
     ],
     overview: `Your marketing team pulls a customer report. Your finance team pulls another. Both are looking at the same metric, from the same CRM, on the same day — and they get different numbers.
 
@@ -91,9 +91,9 @@ Perhaps the most valuable capability is schema drift detection. When an upstream
     tagline: "Data doesn't move itself. Architecture decides the consequences.",
     analogy: "🚰 ETL filters water before the pipe. ELT pumps first, filters at the tap. Same destination — very different behaviour under pressure.",
     keyInsights: [
-      "ETL filters before storing. ELT stores everything, filters on demand. The choice reshapes your data culture.",
-      "Bad pipelines create data debt — errors compound until reconciliation costs more than rebuilding.",
-      "Modern integration is event-driven. Your pipeline should react in milliseconds, not run overnight.",
+      "ETL moves data. ELT moves trust. The pipeline you choose shapes your analytics culture.",
+      "Bad integration creates data debt — errors compound until reconciliation costs more than rebuilding.",
+      "Modern integration is event-driven, not scheduled. Your pipeline should react, not wait.",
     ],
     overview: `Twelve ERP systems. Five countries. Six different date formats. That was the reality for a logistics company I worked with that had grown through three years of acquisitions. The data existed. It just existed in isolation — locked in systems that had never been designed to talk to each other.
 
@@ -133,9 +133,9 @@ The third area is operational intelligence. ML models monitor running pipelines 
     tagline: "Garbage in, garbage out. With AI: garbage in, confidently wrong output at scale.",
     analogy: "🍕 DQ checks your ingredients before they hit the oven — not after you've served a thousand slices.",
     keyInsights: [
-      "87% of AI projects cite poor data quality as their primary failure mode — not the algorithm.",
-      "Completeness, accuracy, consistency, timeliness — miss one dimension and the others collapse.",
-      "Data cleaning consumes ~60% of a data team's time. AI is starting to flip that ratio.",
+      "87% of AI projects cite poor data quality as their primary failure mode.",
+      "Completeness, consistency, accuracy, timeliness — miss one and the others collapse downstream.",
+      "Manual data cleaning consumes ~60% of a data team's time. AI flips that ratio.",
     ],
     overview: `A customer once complained that she'd received three copies of the same promotional mailer — addressed to three slightly different name variants, sent to three addresses she'd lived at over the past decade. The company hadn't been sloppy. They'd been thorough. They'd stored every address and name variation ever given, and nobody had ever decided which one was current.
 
@@ -194,9 +194,9 @@ RSPDQ — Raja's Semantic Pattern Duplicate Query — represents a newer class o
     tagline: "One truth. No duplicates. No excuses.",
     analogy: "👑 Every department has their own 'Customer John'. MDM is the royal decree: THIS is the one true John.",
     keyInsights: [
-      "The average enterprise has 4.7 duplicate records per unique customer. MDM finds the one.",
-      "'John Smith, J. Smith, Jonathan Smith' — same person, three systems, three wrong answers.",
-      "Without MDM, 'total revenue' means a different number in every spreadsheet in the building.",
+      "The average enterprise has 4.7 records per unique customer. MDM finds the one that's real.",
+      "Match, merge, steward — MDM is detective work at database scale.",
+      "Without MDM, 'total revenue' means a different number in every spreadsheet.",
     ],
     overview: `Three systems. One customer. Three different records. Your CRM shows "Mrs. Alicia Johnson, New York." Your billing system has "A. Johnson, NY." Your loyalty program says "Alicia M. Johnson-Williams, Manhattan."
 
@@ -249,9 +249,9 @@ The result of combining these capabilities: higher match precision, lower manual
     tagline: "Your best insights are useless if they never leave the warehouse.",
     analogy: "📊 You wrote the world's most accurate report. Reverse integration decides who actually gets to read it.",
     keyInsights: [
-      "A warehouse that never feeds a business system is just an expensive read-only mirror.",
-      "The last mile of analytics: getting the right insight to the right system at the right moment.",
-      "Most companies build 90% of the analytics stack and skip the 10% that drives actual action.",
+      "Data warehouses were built to answer questions. Reverse integration makes them take action.",
+      "Most companies have 90% of the analytics infrastructure and 10% of the activation.",
+      "Insights that stay in a dashboard don't change anything. Reverse integration closes the loop.",
     ],
     overview: `Your analytics team just finished a churn prediction model. It's 87% accurate. It correctly identifies at-risk customers 90 days before they cancel. It runs on two years of behavioral data and it works.
 
@@ -301,9 +301,9 @@ The architecture that emerges is powerful: raw data flows in, AI computes intell
     tagline: "The constitution that governs everything else.",
     analogy: "🏛️ Governance is the constitution. DQ is the police. MDM is the census bureau. Without it, everyone makes their own rules.",
     keyInsights: [
-      "Governance without enforcement is documentation. Enforcement without culture is just bureaucracy.",
-      "GDPR, CCPA, HIPAA — the governance framework you skip today is the fine you pay tomorrow.",
-      "A data steward is not a data janitor. Governance means ownership, not cleanup.",
+      "Governance without enforcement is documentation. Enforcement without culture is bureaucracy.",
+      "GDPR, CCPA, HIPAA — the governance you skip today is the fine you pay tomorrow.",
+      "A data steward is not a data janitor. Governance is ownership, not cleanup.",
     ],
     overview: `Two business units. One company. A simple question: who owns the customer record?
 
@@ -354,9 +354,9 @@ The stewards aren't replaced. They're freed from the volume work to focus on the
     tagline: "AI needs data management more than analytics ever did.",
     analogy: "✈️ Modern aircraft fly themselves — but the pilot's job evolved into oversight and judgment on edge cases. So does yours.",
     keyInsights: [
-      "AI doesn't fix bad data. It amplifies it — at speed, at scale, with confident wrong answers.",
       "LLMs hallucinate enterprise facts unless grounded in your actual governed data.",
-      "The data engineer didn't become obsolete. They became the most critical role in AI delivery.",
+      "AI needs clean, governed, integrated data. Poor data management is why AI projects fail.",
+      "The data engineer's role didn't disappear — it became the most critical role in AI delivery.",
     ],
     overview: `Here's the paradox at the center of modern AI: the models are remarkable. GPT-4, Claude, Gemini — they can reason, summarise, generate, and explain in ways that seemed impossible five years ago. But they are only as good as the data they are trained and grounded on. Bad data doesn't just produce bad outputs. It produces confidently wrong outputs — and confident wrongness is far more dangerous than obvious wrongness.
 
