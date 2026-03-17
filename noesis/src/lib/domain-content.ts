@@ -1222,4 +1222,398 @@ export const domainContent: Record<string, DomainContent> = {
       },
     ],
   },
+
+  'product-beauty': {
+    slug: 'product-beauty',
+    name: 'Beauty & Wellness',
+    tagline:
+      'INCI lists, CPSR compliance, claims substantiation. In beauty, product data is a regulatory document — not a catalogue entry.',
+    analogy:
+      '💄 Think of a beauty product as an iceberg in a regulatory sea. What the customer sees — name, shade, benefit claim — is the tip. Below: INCI list, CPSR, stability data, claims substantiation, country-specific regulatory filings, and the integration layer keeping all of it in sync across 40+ markets.',
+    entities: [
+      {
+        name: 'Formulation',
+        definition:
+          'The precise composition of a cosmetic product, specified by INCI names and percentages.',
+        example:
+          'FORM-0041 | Noesis Skin Hydrating Serum | Version 3.1 | INCI count: 28 | Status: Approved | Stability: 36mo',
+      },
+      {
+        name: 'INCI Name',
+        definition:
+          "International Nomenclature of Cosmetic Ingredients — the globally standardised name for a cosmetic ingredient. 'Aqua' not 'Water'. 'Tocopherol' not 'Vitamin E'.",
+        example:
+          'INCI-0892 | Hyaluronic Acid → INCI: Sodium Hyaluronate | Function: Humectant | Concentration: 1.5% | Allergen: No',
+      },
+      {
+        name: 'CPSR',
+        definition:
+          'Cosmetic Product Safety Report — the mandatory EU safety assessment required before market launch. Two parts: safety profile and assessor sign-off.',
+        example:
+          'CPSR-0041-EU | Hydrating Serum | Assessor: Dr A. Patel (Reg. No. 00234) | Approved: 2024-01-15 | Markets: EU27, UK',
+      },
+      {
+        name: 'Product Claim',
+        definition:
+          "A marketing statement about a product's benefit or efficacy. Every claim requires substantiation data — clinical study, consumer perception test, or technical dossier.",
+        example:
+          "CLM-0041-003 | '72-hour hydration' | Type: Efficacy | Evidence: Clinical Study CS-2023-441 | Status: Substantiated",
+      },
+      {
+        name: 'Shade / Variant',
+        definition:
+          'A colour or formulation variant of a base product — e.g., a foundation in 40 shades. Each shade may have a different INCI list (different pigments).',
+        example:
+          'SHD-0071-18 | Foundation SPF30 | Shade: N30 Natural | Pigments: CI 77492, CI 77491 | Fitzpatrick: 3-4',
+      },
+      {
+        name: 'Regulatory Filing',
+        definition:
+          'A country-specific product notification or registration required to sell in a given market. EU CPNP, UK SCPN, China CSAR — each has different data requirements.',
+        example:
+          'REG-0041-CN | Hydrating Serum | Market: China | Type: CSAR (mandatory animal testing waiver) | Status: Approved | Expiry: 2026-01',
+      },
+      {
+        name: 'Responsible Person',
+        definition:
+          "The EU-designated legal entity responsible for a cosmetic product's compliance on the EU market. Must hold the Product Information File (PIF).",
+        example:
+          'RP-001 | Noesis Skin EU Ltd | Reg: DE-2019-0441 | PIF Location: Hamburg | Contact: compliance@noesisskin.eu',
+      },
+    ],
+    hierarchy: [
+      { level: 0, name: 'Product Domain — Beauty & Wellness' },
+      { level: 1, name: 'Brand (Noesis Skin)' },
+      { level: 2, name: 'Range / Collection', description: 'Hydration Range / Colour Collection' },
+      { level: 3, name: 'Product', description: 'Hydrating Serum' },
+      { level: 4, name: 'Formulation', description: 'Version 3.1 — 28 INCI ingredients' },
+      { level: 5, name: 'INCI Ingredient', description: 'Sodium Hyaluronate — 1.5%' },
+      { level: 4, name: 'Shade / Variant', description: 'for colour cosmetics' },
+      { level: 5, name: 'Pigment / Colorant', description: 'CI 77492 — Iron Oxide Yellow' },
+      { level: 4, name: 'CPSR', description: 'Safety Report — per product per market' },
+      { level: 4, name: 'Regulatory Filing', description: 'CPNP EU / SCPN UK / CSAR China' },
+      { level: 4, name: 'Product Claims', description: '72-hr hydration / Dermatologist tested' },
+      { level: 5, name: 'Claim Substantiation', description: 'Clinical study / Consumer perception' },
+      { level: 1, name: 'Responsible Person', description: 'EU legal entity holding the PIF' },
+    ],
+    dmJourney: [
+      {
+        technique: 'Data Sources',
+        why: 'PLM/formulation systems, regulatory databases (CosIng EU, Mintel GNPD), INCI dictionary, clinical study reports, country-specific filing portals (CPNP, SCPN, CSAR).',
+        exampleChallenge:
+          "The Hydrating Serum formula exists in the formulation system (version 3.1), on a PDF sent to the safety assessor (version 3.0), and in the EU CPNP notification (version 2.9). Three versions of the same product in three systems — none of them labelled as out of date.",
+      },
+      {
+        technique: 'Data Integration',
+        why: 'Formulation system → safety assessment → regulatory filing portal → PIM → e-commerce PDP → label artwork → factory batch specification.',
+        exampleChallenge:
+          "A formula change (ingredient substitution) triggers a CPSR update, which triggers re-notification on EU CPNP, which triggers label artwork change, which triggers factory specification update. In Noesis Skin's current setup, each step is a manual email.",
+      },
+      {
+        technique: 'Data Quality',
+        why: 'INCI name accuracy (global standardised names, no synonyms), concentration completeness (all ingredients at declared %, total = 100%), claim substantiation coverage (every claim has evidence), shade/variant completeness (every shade has its full INCI list).',
+        exampleChallenge:
+          "An e-commerce listing for Foundation SPF30 Shade N30 shows 'Vitamin E' in the ingredient list. The INCI standard requires 'Tocopherol'. Trading Standards raises a non-compliance notice. The error exists in 23 product listings across 4 markets.",
+      },
+      {
+        technique: 'Data Governance',
+        why: 'Who can approve a formula change? (Regulatory, R&D, and Marketing all have opinions.) Claims governance — who can approve a new claim without a clinical study? Responsible Person designation (must be a legal entity, not a person).',
+        exampleChallenge:
+          "Marketing adds '100% natural' to the Hydrating Serum packaging without regulatory review. Two ingredients in the formula are synthetic preservatives. The claim is not substantiated. The product ships to Germany before the error is caught.",
+      },
+      {
+        technique: 'Master Data Management',
+        why: 'Product golden record across formulation system, regulatory filing tracker, PIM, and e-commerce; INCI ingredient master (one canonical definition per ingredient across all products); shade master (consistent naming across brand portfolio, especially post-acquisition).',
+        exampleChallenge:
+          "Noesis Skin acquires a competitor. 340 new products, 1,200 INCI ingredients to integrate. 180 ingredients exist in both companies' masters under different synonyms — 'Water' and 'Aqua', 'Glycerin' and 'Glycerol'. The INCI master must be reconciled before safety assessments can be cross-referenced.",
+      },
+      {
+        technique: 'Reverse Integration',
+        why: 'Clean regulatory data → label artwork generation (auto-populate INCI list), → e-commerce PDP (complete ingredient list, allergen warnings), → Amazon/retailer portals (product compliance data), → country-specific filing portals, → factory batch specs.',
+        exampleChallenge:
+          "CPNP notification for the UK market (post-Brexit SCPN) requires a specific data format. The formulation system holds the data. The SCPN portal requires manual re-entry. 47 products, 47 manual entries. One error causes a non-compliance notice that delays UK launch by 3 weeks.",
+      },
+    ],
+    integrations: [
+      {
+        name: 'EU CPNP',
+        category: 'Regulatory Portal',
+        description:
+          'Cosmetic Products Notification Portal — mandatory EU filing before market launch; requires product name, responsible person, INCI list, and safety assessor details.',
+      },
+      {
+        name: 'UK SCPN',
+        category: 'Regulatory Portal',
+        description:
+          'Submit Cosmetic Product Notification — UK post-Brexit equivalent of CPNP; separate submission required for GB market access.',
+      },
+      {
+        name: 'CosIng',
+        category: 'Regulatory Database',
+        description:
+          'EU cosmetic ingredient database — the authoritative reference for INCI names, functions, and permitted concentrations in cosmetic formulations.',
+      },
+      {
+        name: 'Centric PLM / Optiva',
+        category: 'PLM',
+        description:
+          'Formulation and product lifecycle management — source of truth for INCI lists, concentrations, and formula versions; upstream of all regulatory and commercial systems.',
+      },
+      {
+        name: 'Akeneo PIM',
+        category: 'PIM',
+        description:
+          'Product information management — receives clean formulation and regulatory data and distributes to e-commerce PDPs, retailer portals, and Amazon.',
+      },
+      {
+        name: 'Mintel GNPD',
+        category: 'DaaS',
+        description:
+          'Global New Products Database — market intelligence for competitive benchmarking of claims, ingredients, and positioning.',
+      },
+    ],
+    scenarios: [
+      {
+        title: 'The Formula That Launched in Three Versions',
+        narrative:
+          "The Hydrating Serum version 3.1 is in the formulation system. Version 3.0 is in the safety report. Version 2.9 is in the EU notification. All three are 'current'. A formula change triggered three parallel updates, none of which completed before the product shipped. The label is wrong. The CPNP is wrong. The CPSR doesn't match what's in the bottle.",
+        dmConcepts: ['Data Integration', 'Data Governance', 'Data Quality'],
+      },
+      {
+        title: 'The Claim Nobody Signed Off',
+        narrative:
+          "Marketing adds '100% natural' to packaging without regulatory review. Two ingredients are synthetic preservatives. The product ships to Germany. A competitor files a complaint with the Wettbewerbszentrale. A cease-and-desist arrives 6 weeks after launch. 40,000 units in market with a claim that can't be substantiated.",
+        dmConcepts: ['Data Governance', 'Data Quality'],
+      },
+      {
+        title: 'The Acquisition INCI Swamp',
+        narrative:
+          "You acquire a beauty brand with 340 products and 1,200 INCI ingredients. 180 ingredients exist in both masters under different synonyms. Safety cross-referencing can't start until the INCI master is reconciled. The regulatory team is doing it manually in Excel. It will take 4 months. Your insurance requires it done in 6 weeks.",
+        dmConcepts: ['MDM', 'Data Quality', 'Data Integration'],
+      },
+    ],
+    crossDomainRelationships: [
+      {
+        targetSlug: 'supplier',
+        targetName: 'Supplier',
+        dataFlow: 'INCI ingredient → supplier → material safety data → cost',
+        withoutThis:
+          'Cannot verify ingredient origin or purity without clean supplier-ingredient links; cost-per-formula is a guess',
+      },
+      {
+        targetSlug: 'customer',
+        targetName: 'Customer',
+        dataFlow: 'Product claim → customer purchase decision → repeat purchase',
+        withoutThis:
+          'Unsubstantiated claims that are legally challenged lead to product withdrawal affecting customer loyalty',
+      },
+      {
+        targetSlug: 'location',
+        targetName: 'Location',
+        dataFlow: 'Regulatory filing → approved markets → where product can be sold',
+        withoutThis:
+          'Selling a product in China without CSAR approval is a regulatory offence — market availability data must be governed',
+      },
+      {
+        targetSlug: 'financial',
+        targetName: 'Financial Domain',
+        dataFlow: 'Formulation cost → COGS → margin by product/range',
+        withoutThis:
+          'Without accurate formulation data, product margin is wrong; reformulations that change cost are invisible to finance',
+      },
+    ],
+  },
+
+  'product-fmcg': {
+    slug: 'product-fmcg',
+    name: 'FMCG · CPG',
+    tagline:
+      'From formulation to shelf — the data journey of a consumer packaged good spans R&D, regulatory, commercial, and logistics. Most of the failures happen at the handoffs.',
+    analogy:
+      '📦 An FMCG product looks simple on a shelf — a box with a barcode. Behind it: a formulation, a batch record, a shelf-life specification, a cost of goods model, a promotional pricing history, and 12 retailer-specific data feeds each with their own attribute requirements. The barcode is the tip. The data is the iceberg.',
+    entities: [
+      {
+        name: 'Product / SKU',
+        definition:
+          'The consumer-facing sellable unit — brand, variant, pack size, format.',
+        example:
+          'SKU-NE-0091 | Noesis Essentials Oat Milk 1L | EAN: 5060123487219 | RRP: £1.80 | Format: Ambient | Category: Dairy Alternative',
+      },
+      {
+        name: 'Formulation',
+        definition:
+          'The precise recipe of ingredients, including permitted additives and their E-number classifications.',
+        example:
+          'FORM-NE-0091 | Oat Milk 1L | Ingredients: Oat Base (10%), Water, Sunflower Oil, E471, Sea Salt, Vitamin D3 | Allergens: Gluten (Oats)',
+      },
+      {
+        name: 'Batch Record',
+        definition:
+          'The production-level record linking a batch of product to its exact formulation, ingredients (with lot numbers), production date, and quality checks.',
+        example:
+          'BATCH-NE-20250314-441 | Oat Milk 1L | Production: 2025-03-14 | Lot: OAT-UK-0441 | Best Before: 2025-09-14 | QA: Pass',
+      },
+      {
+        name: 'Shelf Life Specification',
+        definition:
+          'The defined minimum and maximum life at each stage of the supply chain — factory, DC, store, consumer. Determines date coding and replenishment frequency.',
+        example:
+          'SLS-NE-0091 | Oat Milk 1L | Factory: 180 days | DC: 150 days | Store: 90 days | Consumer: 7 days after opening',
+      },
+      {
+        name: 'Retailer Data Feed',
+        definition:
+          "A retailer-specific product data template — each major retailer (Tesco, Sainsbury's, Walmart, Carrefour) has different attribute requirements, formats, and submission portals.",
+        example:
+          "RDF-NE-TESCO-0091 | Oat Milk 1L | Tesco Item Code: 00234441 | Submitted: 2025-01-08 | Status: Live | Next Review: 2025-07-01",
+      },
+      {
+        name: 'Promotional Pricing',
+        definition:
+          'Time-limited pricing events — TPR, EDLP, multibuys — that must be governed in the product master and communicated to retailer systems accurately.',
+        example:
+          "PROMO-NE-0091-Q1 | Oat Milk 1L | 3 for £5.00 | Mechanic: Multibuy | Start: 2025-01-06 | End: 2025-03-29 | Retailers: Tesco, Sainsbury's",
+      },
+      {
+        name: 'Nutritional Panel',
+        definition:
+          'The mandatory per-100g/ml and per-serving nutritional declaration on-pack and in retailer data portals. Regulatory in all major markets.',
+        example:
+          'NUT-NE-0091 | Per 100ml: Energy 44kcal | Fat 1.5g | Carbs 6.6g | Protein 0.3g | Salt 0.1g | Vit D: 15%NRV',
+      },
+    ],
+    hierarchy: [
+      { level: 0, name: 'Product Domain — FMCG / CPG' },
+      { level: 1, name: 'Brand (Noesis Essentials)' },
+      { level: 2, name: 'Category', description: 'Dairy Alternatives' },
+      { level: 3, name: 'Range', description: 'Oat Milk' },
+      { level: 4, name: 'SKU', description: 'Oat Milk 1L — SKU-NE-0091' },
+      { level: 5, name: 'Formulation', description: 'ingredients, additives, allergens' },
+      { level: 6, name: 'Batch Record', description: 'production lot, QA, dates' },
+      { level: 5, name: 'Shelf Life Specification', description: 'factory → DC → store → consumer' },
+      { level: 5, name: 'Nutritional Panel', description: 'per 100g/ml, per serving, NRV%' },
+      { level: 5, name: 'Retailer Data Feed', description: "one per retailer — Tesco, Sainsbury's, etc." },
+      { level: 5, name: 'Promotional Pricing', description: 'TPR, multibuy, EDLP' },
+    ],
+    dmJourney: [
+      {
+        technique: 'Data Sources',
+        why: "R&D formulation system, ERP (SAP/Oracle), retailer portals (Tesco Connect, Sainsbury's Brand Hub, GS1 DataSync), GS1 GTIN registry, nutritional calculation tools.",
+        exampleChallenge:
+          "Noesis Essentials Oat Milk 1L has a product record in: SAP (the ERP), GS1 DataSync (barcode registry), Tesco Connect (retailer portal), Sainsbury's Brand Hub (different portal, different format), and an internal NPD tracker spreadsheet. Five records, one product, zero shared key.",
+      },
+      {
+        technique: 'Data Integration',
+        why: 'R&D → formulation approval → ERP (product master creation) → GS1 GTIN registration → retailer data feeds → warehouse management → store planogram systems.',
+        exampleChallenge:
+          'A recipe change (oil substitution to reduce cost by £0.02/unit) triggers: new formulation approval, updated nutritional panel, updated allergen declaration, updated on-pack artwork, re-submission to all retailer portals. The integration is manual email at each step. It takes 11 weeks.',
+      },
+      {
+        technique: 'Data Quality',
+        why: 'GTIN completeness (every SKU has a valid barcode), nutritional data accuracy (declared vs. actual — laboratory tested), shelf-life data currency (accurate dates across all retailer systems), ingredient declaration completeness (all ingredients listed, E-numbers correct).',
+        exampleChallenge:
+          "A retailer audit finds Oat Milk 1L listed with an incorrect protein value on their portal (0.8g per 100ml instead of 0.3g). The error was introduced during manual re-entry into the retailer portal 18 months ago. The product has been live with incorrect nutritional data for 6 seasons. Trading Standards is notified.",
+      },
+      {
+        technique: 'Data Governance',
+        why: 'Who approves a formulation change? (R&D, Regulatory, Supply Chain, Finance, Marketing — all need sign-off.) New product launch governance — what data completeness is required before a SKU can go live? Promotional pricing approval workflow.',
+        exampleChallenge:
+          "A buyer agrees a promotional price with Tesco — 3 for £5. The price is communicated via email. The product master isn't updated. The ERP invoice price is wrong. Noesis Essentials over-funds the promotion by £0.15 per case for 8 weeks. Nobody notices until the quarterly margin review.",
+      },
+      {
+        technique: 'Master Data Management',
+        why: "Product golden record across R&D, ERP, and retailer portals; GTIN as the global product identifier; post-acquisition product master consolidation; range rationalisation (which SKUs to keep when two portfolios merge).",
+        exampleChallenge:
+          'Post-acquisition: two product masters, 1,400 combined SKUs. 200 appear to be the same product under different brand names. 80 have different GTIN codes despite being the same physical product (different packaging markets). Range rationalisation requires MDM before it can start.',
+      },
+      {
+        technique: 'Reverse Integration',
+        why: "Clean product master → retailer data portals (Tesco Connect, GS1 DataSync), → e-commerce PDP (product copy, nutritional, allergens), → warehouse management (pick/pack spec), → factory batch scheduling, → promotional funding systems.",
+        exampleChallenge:
+          'A product reformulation changes the allergen profile (removes gluten). This must update: all retailer portals, the GS1 DataSync record, the e-commerce PDP across 6 markets, the on-pack artwork brief, and the promotional POS materials — simultaneously, on a defined effective date. Manual processes make simultaneous impossible.',
+      },
+    ],
+    integrations: [
+      {
+        name: 'GS1 / GTIN Registry',
+        category: 'Product Identification',
+        description:
+          'Global product identification standard — every consumer-facing SKU requires a GS1 GTIN (barcode); the anchor identifier for retailer systems and supply chain.',
+      },
+      {
+        name: 'GS1 DataSync',
+        category: 'Retailer Data Pool',
+        description:
+          'Global data synchronisation network — connects brand product masters to retailer systems; reduces manual re-entry across multiple retailer portals.',
+      },
+      {
+        name: "Tesco Connect / Sainsbury's Brand Hub",
+        category: 'Retailer Portal',
+        description:
+          'Retailer-specific product data submission portals — each with unique attribute sets, formats, and governance requirements; a separate integration per retailer.',
+      },
+      {
+        name: 'Salsify / Akeneo',
+        category: 'PIM',
+        description:
+          'Product information management and retailer content syndication — centralises product master data and distributes to retailer portals, e-commerce PDPs, and marketplaces.',
+      },
+      {
+        name: 'SAP S/4HANA',
+        category: 'ERP',
+        description:
+          'ERP product master — holds SKU definitions, pricing, shelf life, and COGS data; upstream source for supply chain and financial systems.',
+      },
+    ],
+    scenarios: [
+      {
+        title: 'The 18-Month Nutritional Error',
+        narrative:
+          "Oat Milk 1L has had the wrong protein value on Tesco's portal for 18 months — 0.8g instead of 0.3g. The error came from a manual re-entry during a portal migration. A Trading Standards audit finds it. The product must be relisted. 6 seasons of nutritional data on a major retailer's site were wrong.",
+        dmConcepts: ['Data Quality', 'Data Integration', 'Data Governance'],
+      },
+      {
+        title: 'The Promotion Nobody Told the System About',
+        narrative:
+          "A buyer agrees a 3-for-£5 multibuy with Tesco via email. The product master isn't updated. The ERP invoices at full price. Noesis Essentials over-funds the promotion by £0.15 per case for 8 weeks across 340 Tesco stores. The quarterly margin review finds a £180,000 variance.",
+        dmConcepts: ['Data Governance', 'Data Integration', 'Financial Domain'],
+      },
+      {
+        title: 'The Post-Acquisition Range Disaster',
+        narrative:
+          "Two product portfolios, 1,400 SKUs, 200 apparent duplicates, 80 with different GTINs for the same physical product across different markets. Range rationalisation can't start until MDM determines what's genuinely unique. The board wants the combined range in market within 6 months.",
+        dmConcepts: ['MDM', 'Data Integration', 'Data Quality'],
+      },
+    ],
+    crossDomainRelationships: [
+      {
+        targetSlug: 'supplier',
+        targetName: 'Supplier',
+        dataFlow: 'Ingredient → supplier → batch lot → traceability',
+        withoutThis:
+          'Cannot trace a product recall to its ingredient source without clean supplier-ingredient-batch links',
+      },
+      {
+        targetSlug: 'location',
+        targetName: 'Location',
+        dataFlow: 'SKU → retailer → store format → ranging decision',
+        withoutThis:
+          'Wrong range data means the wrong products are stocked in the wrong stores; ranging analytics are based on incorrect product hierarchy',
+      },
+      {
+        targetSlug: 'financial',
+        targetName: 'Financial Domain',
+        dataFlow: 'SKU → formulation cost → COGS → margin by product',
+        withoutThis:
+          'Margin per SKU is wrong if formulation cost data is stale or the product master is out of sync with the ERP',
+      },
+      {
+        targetSlug: 'customer',
+        targetName: 'Customer',
+        dataFlow: 'SKU → purchase history → repeat purchase → customer lifetime value',
+        withoutThis:
+          'Without clean product master data, customer product affinity analysis produces wrong recommendations',
+      },
+    ],
+  },
 };

@@ -65,6 +65,12 @@ export function Navigation() {
           >
             Glossary
           </Link>
+          <Link
+            href="/about"
+            className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors text-sm font-medium"
+          >
+            About
+          </Link>
           <span className="text-[var(--color-text-muted)] text-sm cursor-not-allowed" title="Coming in Phase 4">
             Chat
           </span>
@@ -120,6 +126,13 @@ export function Navigation() {
               onClick={() => setMenuOpen(false)}
             >
               Glossary
+            </Link>
+            <Link
+              href="/about"
+              className="block px-2 py-3 text-[var(--color-text-secondary)] hover:text-[var(--color-accent-blue)] hover:bg-[rgba(0,113,227,0.04)] rounded-[var(--radius-sm)] transition-colors font-medium"
+              onClick={() => setMenuOpen(false)}
+            >
+              About
             </Link>
             <div className="border-t border-[var(--color-glass-border)] pt-3 mt-3">
               <span className="block px-2 py-3 text-[var(--color-text-muted)] text-sm">Chat (coming soon)</span>

@@ -120,7 +120,6 @@ export const domains: Domain[] = [
     icon: Leaf,
     color: '#7c3aed',
     dmTechniques: ['Data Quality', 'Governance', 'Data Integration'],
-    comingSoon: true,
   },
   {
     slug: 'product-fmcg',
@@ -130,7 +129,6 @@ export const domains: Domain[] = [
     icon: ShoppingBag,
     color: '#7c3aed',
     dmTechniques: ['MDM', 'Data Quality', 'Data Integration', 'Governance'],
-    comingSoon: true,
   },
   // ── LOCATION ──
   {

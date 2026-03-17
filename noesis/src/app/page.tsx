@@ -570,6 +570,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ─── About strip ────────────────────────────────────────── */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 border-t border-[var(--color-glass-border)]">
+        <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+          <div className="w-12 h-12 rounded-xl bg-[rgba(0,113,227,0.08)] flex items-center justify-center flex-shrink-0">
+            <span className="text-lg font-bold text-[var(--color-accent-blue)]">RS</span>
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">Built by Raja Shahnawaz Soni</p>
+            <p className="text-xs text-[var(--color-text-muted)] leading-relaxed max-w-lg">
+              20+ years in enterprise data management — retail, hospitality, financial services. Every concept, scenario, and domain playbook on this platform comes from real implementations, not synthesised content.
+            </p>
+          </div>
+          <Link
+            href="/about"
+            className="flex-shrink-0 px-4 py-2 rounded-xl border border-[var(--color-glass-border)] bg-white text-xs font-semibold text-[var(--color-text-secondary)] hover:border-[var(--color-accent-blue)] hover:text-[var(--color-accent-blue)] transition-all"
+          >
+            About Noesis →
+          </Link>
+        </div>
+      </div>
+
       {/* ─── Footer ─────────────────────────────────────────────── */}
       <footer className="w-full bg-[var(--color-noir)] border-t border-[var(--color-glass-border)] px-4 sm:px-6 md:px-8 py-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--color-text-muted)]">
