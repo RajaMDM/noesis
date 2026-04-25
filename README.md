@@ -4,21 +4,20 @@
 [![Active work](https://img.shields.io/badge/Active%20work-The%20MDM%20Lab-0EA5E9?style=for-the-badge)](https://data-alchemist.raja-cloudmdm.workers.dev)
 [![Stack](https://img.shields.io/badge/Stack-Next.js%20%2B%20TypeScript-3178C6?style=for-the-badge)]()
 
-> The intended next-generation successor to **The MDM Lab** — same domain, very different posture: BYOK API keys, Socratic-only AI mode, immersive UI. Fully spec'd, scaffolded, currently paused while the live MDM Lab keeps shipping.
+> A planned alternative to **The MDM Lab** with two main differences: BYOK API keys (users supply their own) and a Socratic mode where the AI only asks questions. Spec'd and scaffolded; currently paused.
 
 ---
 
 ## What Noesis is meant to be
 
-An interactive, visually immersive education portal that teaches data management — covering Data Sources, Data Integration, Data Quality, MDM, Reverse Integration, Data Governance, and AI's evolving role across all of these. Built for a mixed audience (practitioners, career switchers, business stakeholders).
+An education portal for data management — covering Data Sources, Data Integration, Data Quality, MDM, Reverse Integration, Data Governance, and how AI applies to each. Audience: practitioners, career switchers, business stakeholders.
 
-The differentiators that make it *not* a clone of The MDM Lab:
+The two differences that make it not a clone of The MDM Lab:
 
-- **BYOK (Bring Your Own Key)** — users supply their own OpenAI / Anthropic / Google API key. Keys stay client-side. The platform never handles user keys on the server. This unlocks audiences (enterprise users, regulated environments) who can't or won't share data with a third-party AI proxy.
-- **Socratic Dialogue mode** — the AI is constrained to *only* ask questions. No answers, no summaries — just questions tuned to the learner's last response, until the learner reaches insight on their own. A standard Q&A mode is available alongside, with a hard UI separation between the two.
-- **Hybrid path** — recommended progression with a free-exploration override.
-- **Community content** — contribution and moderation system for curated explanations.
-- **Immersive aesthetic** — dark mode, gradients, motion, premium feel.
+- **BYOK (Bring Your Own Key)** — users supply their own OpenAI / Anthropic / Google API key. Keys stay client-side; the platform never sees them. Aimed at enterprise / regulated environments that can't route data through a third-party AI proxy.
+- **Socratic mode** — the AI is constrained to only ask questions. No answers, no summaries — just follow-up questions tuned to the learner's last response. A standard Q&A mode is available alongside.
+
+Other planned features: hybrid learning path (recommended progression with free-exploration override), community contribution + moderation for curated explanations.
 
 ## Status today
 
